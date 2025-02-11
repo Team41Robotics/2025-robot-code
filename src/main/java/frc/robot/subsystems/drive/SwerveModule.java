@@ -4,7 +4,6 @@ import static java.lang.Math.PI;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -100,8 +99,6 @@ public class SwerveModule {
 	public void periodic() {
 		double target_vel = Math.abs(Math.cos((getDirection() - target_state.angle.getRadians())))
 				* target_state.speedMetersPerSecond;
-
-		Logger.recordOutput(name + "__ERROR", MathUtil.angleModulus(getDirection() - target_state.angle.getRadians()));
 
 		io.setTurnVoltage(pidTurn.calculate(getDirection(), target_state.angle.getRadians()));
 		io.setDriveVelocity(target_vel);

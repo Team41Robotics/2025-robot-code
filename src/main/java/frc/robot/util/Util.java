@@ -18,8 +18,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
-import static frc.robot.RobotContainer.robot;
 import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
 import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
 import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
@@ -77,7 +75,6 @@ public class Util {
 	 * @return The ChassisSpeeds object representing the speeds of the robot chassis.
 	 */
 	public static ChassisSpeeds joystickToSpeeds(double vx, double vy, double w, boolean turbo, Rotation2d rot) {
-		double time = Timer.getFPGATimestamp();
 		double mag = Math.hypot(vx, vy);
 		double mag_curved = MathUtil.clamp(Util.sensCurve(mag, 0.15) * 1.5, -1, 1);
 
@@ -86,13 +83,11 @@ public class Util {
 
 		double speed_mult = turbo ? TURBO_SPEED_MULT : SPEED_MULT;
 		double angular_mult = turbo ? TURBO_ANGULAR_SPEED_MULT : ANGULAR_SPEED_MULT;
-		if (robot.isEnabled()) System.out.println("SUSVE6: " + (Timer.getFPGATimestamp() - time));
 		ChassisSpeeds ret = ChassisSpeeds.fromFieldRelativeSpeeds(
 				cos(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
 				sin(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
 				MathUtil.applyDeadband(w, 0.1) * ANGULAR_MAX_SPEED * angular_mult,
 				rot);
-		if (robot.isEnabled()) System.out.println("SUSVE6: " + (Timer.getFPGATimestamp() - time));
 		return ret;
 	}
 

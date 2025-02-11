@@ -1,14 +1,15 @@
 package frc.robot.subsystems.vision;
 
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.imu;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.imu;
 import frc.robot.constants.LimelightConfiguration;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends SubsystemBase {
 	private LimelightIO io;
@@ -22,7 +23,7 @@ public class VisionSubsystem extends SubsystemBase {
 		config = _config;
 		io = new LimelightIO(config.Name);
 
-		// System.out.println("Initialized limelight with name, " + config.Name + "");
+		System.out.println("Initialized limelight with name, " + config.Name);
 	}
 
 	@Override
@@ -35,9 +36,11 @@ public class VisionSubsystem extends SubsystemBase {
 
 		if (Math.abs(imu.getAngularVelocity()) > 720) {
 			doRejectUpdate = true;
+			System.out.println("Rejected update: Too fast");
 		}
 		if (!hasTarget()) {
 			doRejectUpdate = true;
+			System.out.println("Rejected update: No targets");
 		}
 		if (!doRejectUpdate) {
 			robotToField = mt2.pose;

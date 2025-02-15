@@ -51,7 +51,6 @@ public class SwerveModule {
 	 * @param state the desired state of the SwerveModule
 	 */
 	public void setState(SwerveModuleState state) {
-		//System.out.println("Setting states ");
 		state.optimize(new Rotation2d(getDirection()));
 		target_state = state;
 	}

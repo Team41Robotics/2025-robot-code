@@ -1,6 +1,6 @@
 package frc.robot;
 
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
 
 import com.studica.frc.AHRS;
 
@@ -34,6 +34,11 @@ public class IMU {
 	public void zeroYaw() {
 		imu.zeroYaw();
 	}
+
+	/**
+	 * Returns angular velocity in degrees per second
+	 * @return The angular velocity in degrees per second
+	 */
 
 	public double getAngularVelocity() {
 		return imu.getRate();

@@ -23,6 +23,7 @@ public class VisionSubsystem extends SubsystemBase {
 		config = _config;
 		io = new LimelightIO(config.Name);
 
+
 		System.out.println("Initialized limelight with name, " + config.Name);
 	}
 

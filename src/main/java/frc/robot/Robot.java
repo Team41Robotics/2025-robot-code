@@ -22,7 +22,7 @@ public class Robot extends LoggedRobot {
 
 	@Override
 	public void robotInit() {
-		Util.getAprilTagPose(1); // Dont ask lmao
+		Util.getAprilTagPose(1); // Dont ask lmao, removing this will kill the robot
 		initSubsystems();
 		RobotContainer.robot = this;
 		Logger.recordMetadata("ProjectName", "Robot2025");
@@ -42,7 +42,6 @@ public class Robot extends LoggedRobot {
 	@Override
 	public void robotPeriodic() {
 		CommandScheduler.getInstance().run();
-		LimelightHelpers.SetRobotOrientation("limelight", imu.yaw(), 0, 0, 0, 0, 0);
 	}
 
 	@Override

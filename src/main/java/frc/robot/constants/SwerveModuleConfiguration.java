@@ -7,9 +7,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
  * Includes motor ports, encoder ports, and offset angles.
  */
 public enum SwerveModuleConfiguration {
-	NW(18, 9, 10, 0),
-	NE(17, 7, 8, 0),
-	SW(15, 11, 12, 0),
+	NW(15, 9, 10, 0),
+	NE(18, 7, 8, 0),
+	SW(17, 11, 12, 0),
 	SE(16, 5, 6, 0);
 	public int ENCODER, TURN_MOTOR, DRIVE_MOTOR;
 	public Rotation2d offset;

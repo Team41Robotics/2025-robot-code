@@ -22,7 +22,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.RobotContainer.drive;
@@ -114,7 +113,6 @@ public class SwerveSubsystem extends SubsystemBase {
 	 * @param speed the desired speed of the swerve subsystem
 	 */
 	public void drive(ChassisSpeeds speed) {
-		System.out.println("Driving " + Timer.getFPGATimestamp());
 		speed = ChassisSpeeds.discretize(speed, 0.02);
 		desired_speeds = speed;
 		SwerveModuleState[] states = kinematics.toSwerveModuleStates(speed);
@@ -186,15 +184,6 @@ public class SwerveSubsystem extends SubsystemBase {
 	public void periodic() {
 		for (SwerveModule module : modules) module.periodic();
 		pose_est.update(new Rotation2d(imu.yaw()), getPositions());
-
-		// est_pos = photon.getEstimatedGlobalPose();
-
-		// if (est_pos.isPresent()) {
-		//	EstimatedRobotPose new_pose = est_pos.get();
-		//	Logger.recordOutput("PhotonPose", new_pose.estimatedPose.toPose2d());
-		//	pose_est.addVisionMeasurement(new_pose.estimatedPose.toPose2d(), new_pose.timestampSeconds);
-		// }
-
 		updateLogging();
 	}
 
@@ -236,7 +225,7 @@ public class SwerveSubsystem extends SubsystemBase {
 		PathPlannerPath path = PathPlannerPath.fromPathFile(fileString);
 		return AutoBuilder.followPath(path);
 	}
-	// TODO: Compensate for latency
+	
 	public void addLimelightMeasurement(Pose2d est, double timeStamp) {
 		pose_est.addVisionMeasurement(est, timeStamp);
 	}

@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.imu;
 import frc.robot.constants.LimelightConfiguration;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -16,14 +15,12 @@ public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
 	private final LimelightInputsAutoLogged inputs = new LimelightInputsAutoLogged();
 	private Pose2d robotToField = new Pose2d();
-	private double mt2Timestamp = 0.0;
+	private double mt1Timestamp = 0.0;
 	private boolean doRejectUpdate = false;
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;
 		io = new LimelightIO(config.Name);
-
-
 		System.out.println("Initialized limelight with name, " + config.Name);
 	}
 
@@ -31,24 +28,32 @@ public class VisionSubsystem extends SubsystemBase {
 	public void periodic() {
 		io.updateInputs(inputs);
 		Logger.processInputs(config.Name, inputs);
-		LimelightHelpers.SetRobotOrientation(
-				config.Name, drive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-		LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.Name);
 
-		if (Math.abs(imu.getAngularVelocity()) > 720) {
-			doRejectUpdate = true;
-			System.out.println("Rejected update: Too fast");
+		// As it turns out, mt1 works a lot better than mt2 for u 
+
+		LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(config.Name);
+
+		if (mt1.tagCount >= 1 && mt1.rawFiducials.length == 1) {
+			if(mt1.rawFiducials[0].ambiguity > 0.7){
+				doRejectUpdate = true;
+				System.out.println("Rejected update: Target too ambiguous");
+			}
+			if(mt1.rawFiducials[0].distToCamera > 3){
+				doRejectUpdate = true;
+				System.out.println("Rejected update: Target too far");
+			}
 		}
 		if (!hasTarget()) {
 			doRejectUpdate = true;
 			System.out.println("Rejected update: No targets");
 		}
 		if (!doRejectUpdate) {
-			robotToField = mt2.pose;
-			mt2Timestamp = mt2.timestampSeconds;
-			drive.addLimelightMeasurement(robotToField, mt2Timestamp);
+			robotToField = mt1.pose;
+			mt1Timestamp = mt1.timestampSeconds;
+			drive.addLimelightMeasurement(robotToField, mt1Timestamp);
 			System.out.println("Sent measurement");
 		}
+		Logger.recordOutput("/Odom/limelight_pose", this.robotToField);
 	}
 
 	public boolean hasTarget() {

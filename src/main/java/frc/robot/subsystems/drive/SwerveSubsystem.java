@@ -227,6 +227,7 @@ public class SwerveSubsystem extends SubsystemBase {
 	}
 	
 	public void addLimelightMeasurement(Pose2d est, double timeStamp) {
+		pose_est.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
 		pose_est.addVisionMeasurement(est, timeStamp);
 	}
 }

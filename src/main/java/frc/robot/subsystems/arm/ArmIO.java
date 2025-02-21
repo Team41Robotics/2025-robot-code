@@ -7,21 +7,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public interface ArmIO{
 
 
-        public static void setWristVoltage(double voltage) {};
+        public default void setWristVoltage(double voltage) {};
 
-        public static void setShoulderVoltage(double leftVoltage, double rightVoltage){}
+        public default void setExtensionVoltage(double voltage) {};
 
-        public static void setTargetExtension(double target) {};
+        public default void setShoulderVoltage(double voltage){}
 
-        public static void setTargetShoulderAngle(Rotation2d target) {};
-
-        public static void setTargetWristAngle(Rotation2d target) {};
-
-        public static void updateInputs(ArmInputs inputs){}
+        public default void updateInputs(ArmIOInputs inputs) {};
         
 
         @AutoLog
-        public static class ArmInputs{
+        public static class ArmIOInputs{
 
                 public Rotation2d shoulderRotation = new Rotation2d(); 
                 public double shoulderPivotVoltage = 0.0;
@@ -38,8 +34,8 @@ public interface ArmIO{
                 public double[] wristPivotCurrent = new double[] {}; // amps
                 public double wristAngVel = 0.0; // rad / s
 
-                public boolean shoulderTooFast;
-
+                public boolean bottomSwitchOn = false;
+                public boolean topSwitchOn = false;
         }
 
 }

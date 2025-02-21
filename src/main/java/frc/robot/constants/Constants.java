@@ -3,6 +3,7 @@ package frc.robot.constants;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -32,6 +33,8 @@ public final class Constants {
 	public static final double DRIVER_TURN_KP = 1.;
 
 	public static final double CAMERA_HEIGHT = Units.inchesToMeters(13.5);
+	public static final double MAX_ARM_EXTEND = 1; // WIP
+	public static final double TELESCOPE_PULLEY_RADIUS = 1; // WIP
 
 	public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG = new PPHolonomicDriveController(
 			new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants

@@ -39,7 +39,6 @@ public class IMU {
 	 * Returns angular velocity in degrees per second
 	 * @return The angular velocity in degrees per second
 	 */
-
 	public double getAngularVelocity() {
 		return imu.getRate();
 	}

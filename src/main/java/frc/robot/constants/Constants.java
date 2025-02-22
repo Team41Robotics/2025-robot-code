@@ -26,6 +26,20 @@ public final class Constants {
 		public static final double L3_TURN_RATIO = 1 / 12.8;
 	}
 
+		
+	public static final class ArmConstants{
+		// TODO: SET ARM CAN IDS
+
+		public static final int SHOULDER_1 = -1;
+		public static final int SHOULDER_2 = -1;
+		public static final int SHOULDER_3 = -1;
+		public static final int SHOULDER_4 = -1;
+
+		public static final int TELESCOPE_1 = -1;
+		public static final int TELESCOPE_2 = -1;
+		
+	}
+
 	public static final double MODULE_DRIVE_KP = 0.05;
 	public static final double MODULE_DRIVE_KF = 0.23;
 	public static final double MODULE_TURN_KP = 3;

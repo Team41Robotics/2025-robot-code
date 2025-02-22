@@ -1,15 +1,14 @@
 package frc.robot.subsystems.drive;
 
+import static frc.robot.constants.Constants.MODULE_TURN_KP;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_WHEEL_RAD;
 import static java.lang.Math.PI;
-
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import static frc.robot.constants.Constants.MODULE_TURN_KP;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_WHEEL_RAD;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Represents a swerve module on a robot's drive system.

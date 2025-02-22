@@ -1,12 +1,7 @@
 package frc.robot;
 
-import java.util.Set;
-
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,16 +13,18 @@ import frc.robot.constants.LimelightConfiguration;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
+import java.util.Set;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
 	public static Robot robot;
 	public static SwerveSubsystem drive = new SwerveSubsystem();
 	public static IMU imu = new IMU();
-	
+
 	public static LimelightConfiguration config = new LimelightConfiguration();
-	//public static LimelightConfiguration config2 = new LimelightConfiguration();
+	// public static LimelightConfiguration config2 = new LimelightConfiguration();
 	public static VisionSubsystem limelight1 = new VisionSubsystem();
-	//public static VisionSubsystem limelight2 = new VisionSubsystem();
+	// public static VisionSubsystem limelight2 = new VisionSubsystem();
 
 	public static CommandJoystick left_js = new CommandJoystick(4);
 	public static CommandJoystick right_js = new CommandJoystick(3);
@@ -37,21 +34,20 @@ public class RobotContainer {
 
 	public static void initSubsystems() {
 
-		config
-		.withHeightOffset(Units.inchesToMeters(8.375))
-		.withLengthOffset(Units.inchesToMeters(13.75))
-		.withWidthOffset(Units.inchesToMeters(.25));
+		config.withHeightOffset(Units.inchesToMeters(8.375))
+				.withLengthOffset(Units.inchesToMeters(13.75))
+				.withWidthOffset(Units.inchesToMeters(.25));
 
-		//config = config.setName("limelight2")
-		//.withHeightOffset(Units.inchesToMeters(8.375))
-		//.withLengthOffset(Units.inchesToMeters(14))
-		//.withWidthOffset(Units.inchesToMeters(4.75));
+		// config = config.setName("limelight2")
+		// .withHeightOffset(Units.inchesToMeters(8.375))
+		// .withLengthOffset(Units.inchesToMeters(14))
+		// .withWidthOffset(Units.inchesToMeters(4.75));
 
 		drive.setDefaultCommand(new DefaultDrive(() -> left_js.getY(), () -> left_js.getX(), () -> -right_js.getX()));
 		drive.init(new Pose2d());
 
 		limelight1.init(config);
-		//limelight2.init(config2);
+		// limelight2.init(config2);
 
 		Pathfinding.setPathfinder(new LocalADStarAK());
 		autoChooser = new LoggedDashboardChooser<>("Auto Routine", AutoBuilder.buildAutoChooser());

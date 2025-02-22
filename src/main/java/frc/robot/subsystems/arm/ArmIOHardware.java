@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,6 +19,7 @@ import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_4;
 import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_1;
 import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_2;
+import static frc.robot.constants.Constants.ArmConstants.WRIST;
 import static frc.robot.constants.Constants.MAX_ARM_EXTEND;
 import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 
@@ -26,6 +28,11 @@ public class ArmIOHardware implements ArmIO {
 	private static double SHOULDER_ANGLE_CONST = (9 / 1); // Gear ratio 
         private static double SHOULDER_MAX_VELOCITY = Units.radiansPerSecondToRotationsPerMinute((Math.PI*1.75)*SHOULDER_ANGLE_CONST)/60; // Rotations per second 
         private static double SHOULDER_MAX_ACCELERATION = Units.radiansPerSecondToRotationsPerMinute(Math.PI) / 60; // Rotations per second^2
+
+        private static double EXTENSION_GEAR_RATIO; // TODO: figure out what these are from 'thew
+        private static double EXTENSION_MAX_VELOCITY;
+        private static double EXETNSION_MAX_ACCELERATION;
+
 	private final DigitalInput bottomSwitch;
 	private final DigitalInput topSwitch;
 
@@ -72,14 +79,17 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator t1Configurator = telescope1.getConfigurator();
 		TalonFXConfigurator t2Configurator = telescope2.getConfigurator();
 
-		wrist = new SparkMax(0, null);
+		wrist = new SparkMax(WRIST, MotorType.kBrushless);
 
 		TalonFXConfiguration shoulderConfig = new TalonFXConfiguration();
 		shoulderConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 		shoulderConfig.CurrentLimits.SupplyCurrentLimit = 25;
-		shoulderConfig.Slot0.kP = 0.0;
+		shoulderConfig.Slot0.kS = 0.25;
+                shoulderConfig.Slot0.kV = 0.12;
+                shoulderConfig.Slot0.kA = 0.01;
+		shoulderConfig.Slot0.kP = 4.8; 
 		shoulderConfig.Slot0.kI = 0.0;
-		shoulderConfig.Slot0.kD = 0.0;
+		shoulderConfig.Slot0.kD = 0.1;
                 shoulderConfig.MotionMagic.MotionMagicCruiseVelocity = SHOULDER_MAX_VELOCITY * SHOULDER_ANGLE_CONST; 
                 shoulderConfig.MotionMagic.MotionMagicAcceleration = SHOULDER_MAX_ACCELERATION * SHOULDER_ANGLE_CONST;
 
@@ -92,7 +102,7 @@ public class ArmIOHardware implements ArmIO {
 		shoulder3.setControl(new Follower(shoulder1.getDeviceID(), false));
 		shoulder4.setControl(new Follower(shoulder1.getDeviceID(), false));
 
-		shoulder1.setNeutralMode(NeutralModeValue.Brake);
+		shoulder1.setNeutralMode(NeutralModeValue.Brake); 
 		shoulder2.setNeutralMode(NeutralModeValue.Brake);
 		shoulder3.setNeutralMode(NeutralModeValue.Brake);
 		shoulder4.setNeutralMode(NeutralModeValue.Brake);
@@ -103,7 +113,7 @@ public class ArmIOHardware implements ArmIO {
                 telescopeConfig.Slot0.kS = 0.25;
                 telescopeConfig.Slot0.kV = 0.12;
                 telescopeConfig.Slot0.kA = 0.01;
-		telescopeConfig.Slot0.kP = 4.8; // TODO: Figure these out 
+		telescopeConfig.Slot0.kP = 4.8; 
 		telescopeConfig.Slot0.kI = 0.0;
 		telescopeConfig.Slot0.kD = 0.1;
 
@@ -142,7 +152,7 @@ public class ArmIOHardware implements ArmIO {
 
 		inputs.bottomSwitchOn = bottomSwitch.get();
 
-		inputs.topSwitchOn = topSwitch.get();
+		inputs.topSwitchOn = topSwitch.get();               
 
 		// TOOD: Add inputs for wrist
 
@@ -168,7 +178,11 @@ public class ArmIOHardware implements ArmIO {
         @Override
 	public void setToTargetExtension(double extension) {
                 MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
-                shoulder1.setControl(m_request.withVelocity(0));
-        }
+                shoulder1.setControl(m_request.withVelocity(extension)); // This needs some kind of coefficient but idk what to do ._.
+        }                                                               // For now, dont run this 
+
+
+
+
 }
         

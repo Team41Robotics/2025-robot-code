@@ -35,22 +35,22 @@ public class VisionSubsystem extends SubsystemBase {
 		if (mt1.tagCount >= 1 && mt1.rawFiducials.length == 1) {
 			if (mt1.rawFiducials[0].ambiguity > 0.7) {
 				doRejectUpdate = true;
-				System.out.println("Rejected update: Target too ambiguous");
+				// System.out.println("Rejected update: Target too ambiguous");
 			}
 			if (mt1.rawFiducials[0].distToCamera > 3) {
 				doRejectUpdate = true;
-				System.out.println("Rejected update: Target too far");
+				// System.out.println("Rejected update: Target too far");
 			}
 		}
 		if (!hasTarget()) {
 			doRejectUpdate = true;
-			System.out.println("Rejected update: No targets");
+			// System.out.println("Rejected update: No targets");
 		}
 		if (!doRejectUpdate) {
 			robotToField = mt1.pose;
 			mt1Timestamp = mt1.timestampSeconds;
 			drive.addLimelightMeasurement(robotToField, mt1Timestamp);
-			System.out.println("Sent measurement");
+			// System.out.println("Sent measurement");
 		}
 		Logger.recordOutput("/Odom/limelight_pose", this.robotToField);
 	}

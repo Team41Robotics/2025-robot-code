@@ -1,25 +1,32 @@
 package frc.robot;
 
+import java.util.Set;
+
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.drive.AlignToReef;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.LimelightConfiguration;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
-import java.util.Set;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
 	public static Robot robot;
 	public static SwerveSubsystem drive = new SwerveSubsystem();
 	public static IMU imu = new IMU();
+	public static ArmSubsystem arm = new ArmSubsystem();
 
 	public static LimelightConfiguration config = new LimelightConfiguration();
 	// public static LimelightConfiguration config2 = new LimelightConfiguration();
@@ -62,6 +69,7 @@ public class RobotContainer {
 	private static void configureBindings() {
 		// right_js.button(4).onTrue(new AlignToReef(21));
 		right_js.button(4).onTrue(new DeferredCommand(() -> autoChooser.get(), Set.of(drive)));
+		left_js.button(4).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(Math.PI/4))));
 	}
 
 	public static Command getAutonomousCommand() {

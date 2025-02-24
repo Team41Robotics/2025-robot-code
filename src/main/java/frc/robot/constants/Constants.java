@@ -31,10 +31,10 @@ public final class Constants {
 	public static final class ArmConstants{
 		// TODO: SET ARM CAN IDS
 
-		public static final int SHOULDER_1 = -1;
-		public static final int SHOULDER_2 = -1;
-		public static final int SHOULDER_3 = -1;
-		public static final int SHOULDER_4 = -1;
+		public static final int SHOULDER_1 = 22;
+		public static final int SHOULDER_2 = 21;
+		public static final int SHOULDER_3 = 20;
+		public static final int SHOULDER_4 = 19;
 
 		public static final int TELESCOPE_1 = -1;
 		public static final int TELESCOPE_2 = -1;

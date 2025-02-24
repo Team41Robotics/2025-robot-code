@@ -15,9 +15,9 @@ public class ArmSubsystem extends SubsystemBase {
 	private ArmIOHardware io;
 	private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
-	private Optional<Rotation2d> shoulderTargetRotation;
-	private Optional<Rotation2d> wristTargetRotation;
-        private Optional<Double> targetExtension;
+	private Optional<Rotation2d> shoulderTargetRotation = Optional.empty();
+	private Optional<Rotation2d> wristTargetRotation = Optional.empty();
+        private Optional<Double> targetExtension = Optional.empty();
 
 	public ArmSubsystem() {
 		io = new ArmIOHardware();
@@ -29,7 +29,7 @@ public class ArmSubsystem extends SubsystemBase {
 		io.updateInputs(inputs);
 
                 if(!shoulderTargetRotation.isEmpty()){
-                        io.setToShoulderTargetRotation(clampTargetAngle(this.shoulderTargetRotation.get()));
+                        io.setToShoulderTargetRotation(shoulderTargetRotation.get());
                 }
                 if(!targetExtension.isEmpty()){
                         io.setToTargetExtension(this.targetExtension.get());
@@ -37,6 +37,8 @@ public class ArmSubsystem extends SubsystemBase {
 
                 Logger.recordOutput("/Arm/Current Rotation", getShoulderAngle().getRadians());
                 Logger.recordOutput("Arm/Current Extension", getExtension());
+                Logger.recordOutput("Arm/Shoulder Voltage", inputs.shoulderPivotVoltage);
+                if(!shoulderTargetRotation.isEmpty()) Logger.recordOutput("Arm/Target Rotation", this.shoulderTargetRotation.get().getRadians());
 
 	}
 

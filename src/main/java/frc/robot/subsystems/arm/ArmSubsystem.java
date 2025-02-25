@@ -35,7 +35,7 @@ public class ArmSubsystem extends SubsystemBase {
                         }
                 }
                 if(!targetExtension.isEmpty()){
-                        io.setToTargetExtension(clampTargetExtension(this.targetExtension.get()));
+                        io.setToTargetExtension(this.getExtension(), clampTargetExtension(this.targetExtension.get()));
                         if(Math.abs(getExtension() - this.targetExtension.get()) < 0.01){
                                 targetExtension = Optional.empty();
                         }
@@ -45,6 +45,8 @@ public class ArmSubsystem extends SubsystemBase {
                 Logger.recordOutput("Arm/Current Extension", getExtension());
                 Logger.recordOutput("Arm/Shoulder Voltage", inputs.shoulderPivotVoltage);
                 Logger.recordOutput("Arm/Shoulder Velocity", inputs.shoulderAngVel);
+                Logger.recordOutput("Arm/Current Extension", getExtension());
+                if(!targetExtension.isEmpty()) Logger.recordOutput("Arm/Target Extension", this.targetExtension.get());
                 if(!shoulderTargetRotation.isEmpty()) Logger.recordOutput("Arm/Target Rotation", this.shoulderTargetRotation.get().getRadians());
 
 	}
@@ -55,7 +57,6 @@ public class ArmSubsystem extends SubsystemBase {
         }
 
         public void setShoulderTargetRotation(Rotation2d rotation){
-                Rotation2d adjusted_rotation = new Rotation2d(rotation.getRadians() * 8);
                 this.shoulderTargetRotation = Optional.of(rotation);
         }
 

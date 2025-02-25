@@ -18,19 +18,21 @@ import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_4;
 import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_1;
 import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_2;
+import static frc.robot.constants.Constants.SHOULDER_GEAR_RATIO;
+import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
 import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 
 public class ArmIOHardware implements ArmIO {
 
-	private static double SHOULDER_VELOCITY_RATIO = (54/18) * (54/18) * (72/9); // Full Gear ratio 
+	private static double ROTATION_GEAR_RATIO = 1/SHOULDER_GEAR_RATIO;
 	private static double SHOULDER_ENCODER_RATIO = 8; // Encoder sprocket ratoi
-        private static double SHOULDER_MAX_VELOCITY = Units.radiansPerSecondToRotationsPerMinute((Math.PI*1.75)*SHOULDER_VELOCITY_RATIO)/60; // Rotations per second 
-        private static double SHOULDER_MAX_ACCELERATION = Units.radiansPerSecondToRotationsPerMinute(Math.PI) / 60; // Rotations per second^2
+       // private static double SHOULDER_MAX_VELOCITY = Units.radiansPerSecondToRotationsPerMinute((Math.PI*1.75)*ROTATION_GEAR_RATIO)/60; // Rotations per second 
+       // private static double SHOULDER_MAX_ACCELERATION = Units.radiansPerSecondToRotationsPerMinute(Math.PI) / 60; // Rotations per second^2
 
-        private static double EXTENSION_GEAR_RATIO; // TODO: figure out what these are from 'thew
-	private static double EXTENSION_SPROCKET_RADIUS;
-        private static double EXTENSION_MAX_VELOCITY;
-        private static double EXETNSION_MAX_ACCELERATION;
+        private static double EXTENSION_GEAR_RATIO = 1 / TELESCOPE_GEAR_RATIO; // TODO: figure out what these are from 'thew
+	private static double EXTENSION_SPROCKET_RADIUS = Units.inchesToMeters(1.273);
+       // private static double EXTENSION_MAX_VELOCITY = 1;
+       // private static double EXETNSION_MAX_ACCELERATION = 1;
 
 	// private final DigitalInput bottomSwitch;
 	// private final DigitalInput topSwitch;
@@ -76,7 +78,7 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator s3Configurator = shoulder3.getConfigurator();
 		TalonFXConfigurator s4Configurator = shoulder4.getConfigurator();
 
-		shoulderPID = new PIDController(0.2,0,0);
+		shoulderPID = new PIDController(0.5,0,0);
 
 		telescope1 = new TalonFX(TELESCOPE_1);
 		telescope2 = new TalonFX(TELESCOPE_2);
@@ -84,7 +86,7 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator t1Configurator = telescope1.getConfigurator();
 		TalonFXConfigurator t2Configurator = telescope2.getConfigurator();
 
-		telescopePID = new PIDController(0,0,0);
+		telescopePID = new PIDController(1,0,0);
 		//wrist = new SparkMax(WRIST, MotorType.kBrushless);
 
 		wristPID = new PIDController(0, 0, 0);
@@ -123,24 +125,24 @@ public class ArmIOHardware implements ArmIO {
 		telescope2.setPosition(0);
 
 		// shoulderEncoder = new CANcoder(0);
-
+		extension = 0;
 	}
 
 	@Override
 	public void updateInputs(ArmIOInputs inputs) {
 		inputs.shoulderRotation =
-				new Rotation2d(shoulder1.getPosition().getValueAsDouble() * SHOULDER_VELOCITY_RATIO *2*PI);
+				new Rotation2d(Units.rotationsToRadians(shoulder1.getPosition().getValueAsDouble()) * ROTATION_GEAR_RATIO);
 
 		inputs.shoulderPivotVoltage = shoulder1.getMotorVoltage().getValueAsDouble();
 
 		inputs.shoulderPivotCurrentAmps =
 				new double[] {shoulder1.getStatorCurrent().getValueAsDouble()};
 
-		inputs.shoulderAngVel = shoulder1.getVelocity().getValueAsDouble() * SHOULDER_ENCODER_RATIO;
+		inputs.shoulderAngVel = Units.rotationsPerMinuteToRadiansPerSecond(shoulder1.getVelocity().getValueAsDouble()*60) * SHOULDER_ENCODER_RATIO;
 
-		inputs.telescopePosition = extension + telescope1.getVelocity().getValueAsDouble() * TELESCOPE_PULLEY_RADIUS;
+		inputs.telescopePosition = extension + Units.rotationsToRadians(telescope1.getPosition().getValueAsDouble()) * EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS;
 
-		inputs.telescopeVelocity = telescope1.getVelocity().getValueAsDouble() * TELESCOPE_PULLEY_RADIUS;
+		inputs.telescopeVelocity = Units.rotationsPerMinuteToRadiansPerSecond(telescope1.getVelocity().getValueAsDouble()*60) * TELESCOPE_PULLEY_RADIUS * EXTENSION_GEAR_RATIO * 2 * PI;
 
 		inputs.telescopeVoltage = telescope1.getDutyCycle().getValueAsDouble()
 				* telescope1.getSupplyVoltage().getValueAsDouble();
@@ -174,9 +176,9 @@ public class ArmIOHardware implements ArmIO {
 	}
 
         @Override
-	public void setToTargetExtension(double extension) {
-		double out = telescopePID.calculate(extension);
-		MathUtil.clamp(out, -1, 1);
+	public void setToTargetExtension(double current, double extension) {
+		double out = telescopePID.calculate(current, current+((extension)/(TELESCOPE_PULLEY_RADIUS * EXTENSION_GEAR_RATIO)));
+		MathUtil.clamp(out, -2, 2);
 		setExtensionVoltage(out);
         }                                                             	
 

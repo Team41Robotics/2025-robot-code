@@ -70,6 +70,9 @@ public class RobotContainer {
 		right_js.button(4).onTrue(new DeferredCommand(() -> autoChooser.get(), Set.of(drive)));
 		left_js.button(4).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(Math.PI/4))));
 		left_js.button(3).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(0))));
+		left_js.button(2).onTrue(new InstantCommand(() -> arm.setTargetExtension(0.3)));
+		left_js.button(1).onTrue(new InstantCommand(() -> arm.setTargetExtension(0)));
+
 
 	}
 

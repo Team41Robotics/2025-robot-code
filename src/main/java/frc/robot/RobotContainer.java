@@ -29,9 +29,9 @@ public class RobotContainer {
 	public static ArmSubsystem arm = new ArmSubsystem();
 
 	public static LimelightConfiguration config = new LimelightConfiguration();
-	// public static LimelightConfiguration config2 = new LimelightConfiguration();
+	//public static LimelightConfiguration config2 = new LimelightConfiguration();
 	public static VisionSubsystem limelight1 = new VisionSubsystem();
-	// public static VisionSubsystem limelight2 = new VisionSubsystem();
+	//public static VisionSubsystem limelight2 = new VisionSubsystem();
 
 	public static CommandJoystick left_js = new CommandJoystick(4);
 	public static CommandJoystick right_js = new CommandJoystick(3);
@@ -45,7 +45,7 @@ public class RobotContainer {
 				.withLengthOffset(Units.inchesToMeters(13.75))
 				.withWidthOffset(Units.inchesToMeters(.25));
 		//arm.zero();
-		// config = config.setName("limelight2")
+		// config2.setName("limelight2")
 		// .withHeightOffset(Units.inchesToMeters(8.375))
 		// .withLengthOffset(Units.inchesToMeters(14))
 		// .withWidthOffset(Units.inchesToMeters(4.75));
@@ -67,9 +67,10 @@ public class RobotContainer {
 	}
 
 	private static void configureBindings() {
-		// right_js.button(4).onTrue(new AlignToReef(21));
 		right_js.button(4).onTrue(new DeferredCommand(() -> autoChooser.get(), Set.of(drive)));
 		left_js.button(4).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(Math.PI/4))));
+		left_js.button(3).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(0))));
+
 	}
 
 	public static Command getAutonomousCommand() {

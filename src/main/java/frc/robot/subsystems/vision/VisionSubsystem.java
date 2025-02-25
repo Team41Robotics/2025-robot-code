@@ -37,7 +37,7 @@ public class VisionSubsystem extends SubsystemBase {
 				doRejectUpdate = true;
 				// System.out.println("Rejected update: Target too ambiguous");
 			}
-			if (mt1.rawFiducials[0].distToCamera > 3) {
+			if (mt1.rawFiducials[0].distToCamera > 3) { // TODO
 				doRejectUpdate = true;
 				// System.out.println("Rejected update: Target too far");
 			}
@@ -52,7 +52,7 @@ public class VisionSubsystem extends SubsystemBase {
 			drive.addLimelightMeasurement(robotToField, mt1Timestamp);
 			// System.out.println("Sent measurement");
 		}
-		Logger.recordOutput("/Odom/limelight_pose", this.robotToField);
+		Logger.recordOutput("/Odom/limelight_pose/"+config.Name, this.robotToField);
 	}
 
 	public boolean hasTarget() {

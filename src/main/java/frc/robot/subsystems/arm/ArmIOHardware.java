@@ -1,10 +1,11 @@
 package frc.robot.subsystems.arm;
 
+import static java.lang.Math.PI;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicExpoDutyCycle;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -27,6 +28,7 @@ public class ArmIOHardware implements ArmIO {
         private static double SHOULDER_MAX_ACCELERATION = Units.radiansPerSecondToRotationsPerMinute(Math.PI) / 60; // Rotations per second^2
 
         private static double EXTENSION_GEAR_RATIO; // TODO: figure out what these are from 'thew
+	private static double EXTENSION_SPROCKET_RADIUS;
         private static double EXTENSION_MAX_VELOCITY;
         private static double EXETNSION_MAX_ACCELERATION;
 
@@ -81,14 +83,14 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfiguration shoulderConfig = new TalonFXConfiguration();
 		shoulderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 		shoulderConfig.CurrentLimits.StatorCurrentLimit = 60;
-		shoulderConfig.Slot0.kS = 0.0;
-                shoulderConfig.Slot0.kV = 0.0;
-                shoulderConfig.Slot0.kA = 0.0;
-		shoulderConfig.Slot0.kP = 0.8; 
+		shoulderConfig.Slot0.kS = 0.25;
+                shoulderConfig.Slot0.kV = 0.12;
+                shoulderConfig.Slot0.kA = 0.01;
+		shoulderConfig.Slot0.kP = 2.0; 
 		shoulderConfig.Slot0.kI = 0.0;
 		shoulderConfig.Slot0.kD = 0.0;
-                shoulderConfig.MotionMagic.MotionMagicCruiseVelocity = SHOULDER_MAX_VELOCITY/20; 
-                shoulderConfig.MotionMagic.MotionMagicAcceleration = SHOULDER_MAX_ACCELERATION/20;
+                shoulderConfig.MotionMagic.MotionMagicCruiseVelocity = SHOULDER_MAX_VELOCITY/10;
+                shoulderConfig.MotionMagic.MotionMagicAcceleration = SHOULDER_MAX_ACCELERATION/10;
 
 		s1Configurator.apply(shoulderConfig);
 		s2Configurator.apply(shoulderConfig);
@@ -99,6 +101,8 @@ public class ArmIOHardware implements ArmIO {
 		shoulder2.setControl(new Follower(SHOULDER_1, false)); 
 		shoulder3.setControl(new Follower(SHOULDER_1, true));
 		shoulder4.setControl(new Follower(SHOULDER_1, true));
+
+		shoulder1.setPosition(0);
 
 		shoulder1.setNeutralMode(NeutralModeValue.Brake); 
 		shoulder2.setNeutralMode(NeutralModeValue.Brake);
@@ -130,7 +134,7 @@ public class ArmIOHardware implements ArmIO {
 	@Override
 	public void updateInputs(ArmIOInputs inputs) {
 		inputs.shoulderRotation =
-				new Rotation2d(shoulderEncoder.getAbsolutePosition().getValueAsDouble() * SHOULDER_ENCODER_RATIO);
+				new Rotation2d(shoulderEncoder.getAbsolutePosition().getValueAsDouble() * SHOULDER_ENCODER_RATIO *2*PI);
 
 		inputs.shoulderPivotVoltage = shoulder1.getMotorVoltage().getValueAsDouble();
 
@@ -169,16 +173,15 @@ public class ArmIOHardware implements ArmIO {
 
         @Override
         public void setToShoulderTargetRotation(Rotation2d target) {
-
-                MotionMagicExpoDutyCycle m_request = new MotionMagicExpoDutyCycle(0);
+                MotionMagicVoltage m_request = new MotionMagicVoltage(0);
                 shoulder1.setControl(m_request.withPosition((target.getRadians()*SHOULDER_ENCODER_RATIO) / (2*Math.PI)));
 	}
 
         @Override
 	public void setToTargetExtension(double extension) {
-                MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
-                shoulder1.setControl(m_request.withVelocity(extension)); // This needs some kind of coefficient but idk what to do ._.
-        }                                                               // For now, dont run this 
+                MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+                telescope1.setControl(m_request.withPosition(extension/(EXTENSION_SPROCKET_RADIUS * EXTENSION_GEAR_RATIO)));
+        }                                                               
 
 
 

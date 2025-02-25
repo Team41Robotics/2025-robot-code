@@ -1,17 +1,17 @@
 package frc.robot.subsystems.drive;
 
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.imu;
-import static frc.robot.constants.Constants.PATH_FOLLOWER_CONFIG;
-import static frc.robot.constants.Constants.ROBOT_CONFIG;
-import static frc.robot.constants.Constants.RobotConstants.ROBOT_LENGTH;
-import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
+import java.io.IOException;
+import java.util.Optional;
+
+import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FileVersionException;
 import com.pathplanner.lib.util.PathPlannerLogging;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,13 +24,15 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.imu;
+import static frc.robot.constants.Constants.PATH_FOLLOWER_CONFIG;
+import static frc.robot.constants.Constants.ROBOT_CONFIG;
+import static frc.robot.constants.Constants.RobotConstants.ROBOT_LENGTH;
+import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
 import frc.robot.constants.SwerveModuleConfiguration;
 import frc.robot.util.Util;
-import java.io.IOException;
-import java.util.Optional;
-import org.json.simple.parser.ParseException;
-import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
 
 public class SwerveSubsystem extends SubsystemBase {
 	public SwerveModule[] modules = new SwerveModule[] {
@@ -61,7 +63,7 @@ public class SwerveSubsystem extends SubsystemBase {
 				getPositions(),
 				init_pose,
 				VecBuilder.fill(0.1, 0.1, 0.1),
-				VecBuilder.fill(0.5, 0.5, 0.3));
+				VecBuilder.fill(0.5, 0.5, 0.3)); // TODO
 
 		AutoBuilder.configure(
 				this::getPose,
@@ -225,7 +227,7 @@ public class SwerveSubsystem extends SubsystemBase {
 	}
 
 	public void addLimelightMeasurement(Pose2d est, double timeStamp) {
-		pose_est.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+		// pose_est.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
 		pose_est.addVisionMeasurement(est, timeStamp);
 	}
 }

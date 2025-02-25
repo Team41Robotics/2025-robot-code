@@ -5,11 +5,11 @@ import static java.lang.Math.PI;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
@@ -45,7 +45,11 @@ public class ArmIOHardware implements ArmIO {
 
        // private final SparkMax wrist;
 
-	private final CANcoder shoulderEncoder;
+	// private final CANcoder shoulderEncoder;
+
+	private final PIDController shoulderPID;
+	private final PIDController telescopePID;
+	private final PIDController wristPID;
 
 	// private final SparkFlex wrist;
 	private double extension;
@@ -72,25 +76,22 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator s3Configurator = shoulder3.getConfigurator();
 		TalonFXConfigurator s4Configurator = shoulder4.getConfigurator();
 
+		shoulderPID = new PIDController(0.2,0,0);
+
 		telescope1 = new TalonFX(TELESCOPE_1);
 		telescope2 = new TalonFX(TELESCOPE_2);
 
 		TalonFXConfigurator t1Configurator = telescope1.getConfigurator();
 		TalonFXConfigurator t2Configurator = telescope2.getConfigurator();
 
+		telescopePID = new PIDController(0,0,0);
 		//wrist = new SparkMax(WRIST, MotorType.kBrushless);
+
+		wristPID = new PIDController(0, 0, 0);
 
 		TalonFXConfiguration shoulderConfig = new TalonFXConfiguration();
 		shoulderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 		shoulderConfig.CurrentLimits.StatorCurrentLimit = 60;
-		shoulderConfig.Slot0.kS = 0.25;
-                shoulderConfig.Slot0.kV = 0.12;
-                shoulderConfig.Slot0.kA = 0.01;
-		shoulderConfig.Slot0.kP = 2.0; 
-		shoulderConfig.Slot0.kI = 0.0;
-		shoulderConfig.Slot0.kD = 0.0;
-                shoulderConfig.MotionMagic.MotionMagicCruiseVelocity = SHOULDER_MAX_VELOCITY/10;
-                shoulderConfig.MotionMagic.MotionMagicAcceleration = SHOULDER_MAX_ACCELERATION/10;
 
 		s1Configurator.apply(shoulderConfig);
 		s2Configurator.apply(shoulderConfig);
@@ -112,12 +113,6 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfiguration telescopeConfig = new TalonFXConfiguration();
 		telescopeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 		telescopeConfig.CurrentLimits.StatorCurrentLimit = 30;
-                telescopeConfig.Slot0.kS = 0.25;
-                telescopeConfig.Slot0.kV = 0.12;
-                telescopeConfig.Slot0.kA = 0.01;
-		telescopeConfig.Slot0.kP = 4.8; 
-		telescopeConfig.Slot0.kI = 0.0;
-		telescopeConfig.Slot0.kD = 0.1;
 
 		t1Configurator.apply(telescopeConfig);
 		t2Configurator.apply(telescopeConfig);
@@ -127,21 +122,21 @@ public class ArmIOHardware implements ArmIO {
 		telescope1.setPosition(0);
 		telescope2.setPosition(0);
 
-		shoulderEncoder = new CANcoder(0);
+		// shoulderEncoder = new CANcoder(0);
 
 	}
 
 	@Override
 	public void updateInputs(ArmIOInputs inputs) {
 		inputs.shoulderRotation =
-				new Rotation2d(shoulderEncoder.getAbsolutePosition().getValueAsDouble() * SHOULDER_ENCODER_RATIO *2*PI);
+				new Rotation2d(shoulder1.getPosition().getValueAsDouble() * SHOULDER_VELOCITY_RATIO *2*PI);
 
 		inputs.shoulderPivotVoltage = shoulder1.getMotorVoltage().getValueAsDouble();
 
 		inputs.shoulderPivotCurrentAmps =
 				new double[] {shoulder1.getStatorCurrent().getValueAsDouble()};
 
-		inputs.shoulderAngVel = shoulderEncoder.getVelocity().getValueAsDouble() * SHOULDER_ENCODER_RATIO;
+		inputs.shoulderAngVel = shoulder1.getVelocity().getValueAsDouble() * SHOULDER_ENCODER_RATIO;
 
 		inputs.telescopePosition = extension + telescope1.getVelocity().getValueAsDouble() * TELESCOPE_PULLEY_RADIUS;
 
@@ -172,17 +167,18 @@ public class ArmIOHardware implements ArmIO {
 	}
 
         @Override
-        public void setToShoulderTargetRotation(Rotation2d target) {
-                MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-                shoulder1.setControl(m_request.withPosition((target.getRadians()*SHOULDER_ENCODER_RATIO) / (2*Math.PI)));
+        public void setToShoulderTargetRotation(Rotation2d current, Rotation2d target) {
+		double out = shoulderPID.calculate(current.getRadians(), target.getRadians());
+		MathUtil.clamp(out, -1,1);
+		setShoulderVoltage(out);
 	}
 
         @Override
 	public void setToTargetExtension(double extension) {
-                MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-                telescope1.setControl(m_request.withPosition(extension/(EXTENSION_SPROCKET_RADIUS * EXTENSION_GEAR_RATIO)));
-        }                                                               
-
+		double out = telescopePID.calculate(extension);
+		MathUtil.clamp(out, -1, 1);
+		setExtensionVoltage(out);
+        }                                                             	
 
 
 

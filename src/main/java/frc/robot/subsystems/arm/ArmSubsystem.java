@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
 		io.updateInputs(inputs);
 
                 if(!shoulderTargetRotation.isEmpty()){
-                        io.setToShoulderTargetRotation(clampTargetAngle(shoulderTargetRotation.get()));
+                        io.setToShoulderTargetRotation(getShoulderAngle(), shoulderTargetRotation.get());
                         if(Math.abs(getShoulderAngle().minus(shoulderTargetRotation.get()).getRadians()) < 0.1){
                                 System.out.println("REACHED TARGET ROTATION");
                                 shoulderTargetRotation = Optional.empty();
@@ -55,6 +55,7 @@ public class ArmSubsystem extends SubsystemBase {
         }
 
         public void setShoulderTargetRotation(Rotation2d rotation){
+                Rotation2d adjusted_rotation = new Rotation2d(rotation.getRadians() * 8);
                 this.shoulderTargetRotation = Optional.of(rotation);
         }
 
@@ -62,13 +63,6 @@ public class ArmSubsystem extends SubsystemBase {
                 this.targetExtension = Optional.of(length);
         }
 
-	public double getExtension() {
-		return inputs.telescopePosition;
-	}
-
-        public Rotation2d getShoulderAngle(){
-                return inputs.shoulderRotation;
-        }
 
         public Rotation2d clampTargetAngle(Rotation2d target){
                 target = new Rotation2d(MathUtil.clamp(target.getRadians(), 0, Math.PI/2));
@@ -79,5 +73,11 @@ public class ArmSubsystem extends SubsystemBase {
                 return MathUtil.clamp(extension, MIN_EXTENSION, MAX_EXTENSION);
         }
 
+        public double getExtension() {
+		return inputs.telescopePosition;
+	}
 
+        public Rotation2d getShoulderAngle(){
+                return inputs.shoulderRotation;
+        }
 }

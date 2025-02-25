@@ -10,7 +10,7 @@ public interface ArmIO {
 	;
 	public default void setExtensionVoltage(double voltage) {}
 	;
-	public default void setToShoulderTargetRotation(Rotation2d target) {};
+	public default void setToShoulderTargetRotation(Rotation2d current, Rotation2d target) {};
 
 	public default void setToTargetExtension(double extension) {};
 

@@ -45,9 +45,6 @@ public class ArmIOHardware implements ArmIO {
        // private final SparkMax wrist;
 
 	private final CANcoder shoulderEncoder;
-
-	private final PIDController shoulderPID;
-	private final PIDController telescopePID;
 	private final PIDController wristPID;
 
 	// private final SparkFlex wrist;
@@ -76,15 +73,12 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator s3Configurator = shoulder3.getConfigurator();
 		TalonFXConfigurator s4Configurator = shoulder4.getConfigurator();
 
-		shoulderPID = new PIDController(4,0,0);
 
 		telescope1 = new TalonFX(TELESCOPE_1);
 		telescope2 = new TalonFX(TELESCOPE_2);
 
 		TalonFXConfigurator t1Configurator = telescope1.getConfigurator();
 		TalonFXConfigurator t2Configurator = telescope2.getConfigurator();
-
-		telescopePID = new PIDController(1,0,0);
 		//wrist = new SparkMax(WRIST, MotorType.kBrushless);
 
 		wristPID = new PIDController(0, 0, 0);
@@ -124,6 +118,9 @@ public class ArmIOHardware implements ArmIO {
 
 		shoulderEncoder = new CANcoder(26);
 		extension = 0;
+
+
+
 	}
 
 	@Override
@@ -167,15 +164,13 @@ public class ArmIOHardware implements ArmIO {
 	}
 
         @Override
-        public void setToShoulderTargetRotation(Rotation2d current, Rotation2d target) {
-		double out = shoulderPID.calculate(current.getRadians(), target.getRadians());
-		setShoulderVoltage(MathUtil.clamp(out, -2,2));
+        public void setShoulderVoltageClamped(double voltage) {
+		setShoulderVoltage(MathUtil.clamp(voltage, -4, 4));
 	}
 
         @Override
-	public void setToTargetExtension(double current, double extension) {
-		double out = telescopePID.calculate(current, current+((extension)/(TELESCOPE_PULLEY_RADIUS * EXTENSION_GEAR_RATIO)));
-		setExtensionVoltage(MathUtil.clamp(out, -1, 1));
+	public void setExtensionVoltageClamped(double voltage) {
+		setExtensionVoltage(MathUtil.clamp(voltage, -1, 1));
         }                                                             	
 
 

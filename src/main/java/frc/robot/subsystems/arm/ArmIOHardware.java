@@ -80,7 +80,7 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator s3Configurator = shoulder3.getConfigurator();
 		TalonFXConfigurator s4Configurator = shoulder4.getConfigurator();
 
-		shoulderPID = new PIDController(3,0,0);
+		shoulderPID = new PIDController(4,0,0);
 
 		telescope1 = new TalonFX(TELESCOPE_1);
 		telescope2 = new TalonFX(TELESCOPE_2);

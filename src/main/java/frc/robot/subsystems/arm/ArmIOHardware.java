@@ -5,6 +5,7 @@ import static java.lang.Math.PI;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -25,11 +26,11 @@ import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 public class ArmIOHardware implements ArmIO {
 
 	private static double ROTATION_GEAR_RATIO = 1/SHOULDER_GEAR_RATIO;
-	private static double SHOULDER_ENCODER_RATIO = 8; // Encoder sprocket ratoi
+	private static double SHOULDER_ENCODER_RATIO = 8; 
        // private static double SHOULDER_MAX_VELOCITY = Units.radiansPerSecondToRotationsPerMinute((Math.PI*1.75)*ROTATION_GEAR_RATIO)/60; // Rotations per second 
        // private static double SHOULDER_MAX_ACCELERATION = Units.radiansPerSecondToRotationsPerMinute(Math.PI) / 60; // Rotations per second^2
 
-        private static double EXTENSION_GEAR_RATIO = 1 / TELESCOPE_GEAR_RATIO; // TODO: figure out what these are from 'thew
+        private static double EXTENSION_GEAR_RATIO = 1 / TELESCOPE_GEAR_RATIO; 
 	private static double EXTENSION_SPROCKET_RADIUS = Units.inchesToMeters(1.273);
        // private static double EXTENSION_MAX_VELOCITY = 1;
        // private static double EXETNSION_MAX_ACCELERATION = 1;
@@ -47,7 +48,7 @@ public class ArmIOHardware implements ArmIO {
 
        // private final SparkMax wrist;
 
-	// private final CANcoder shoulderEncoder;
+	private final CANcoder shoulderEncoder;
 
 	private final PIDController shoulderPID;
 	private final PIDController telescopePID;
@@ -55,6 +56,7 @@ public class ArmIOHardware implements ArmIO {
 
 	// private final SparkFlex wrist;
 	private double extension;
+	private double init_angle;
 
 	public ArmIOHardware() {
 
@@ -78,7 +80,7 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator s3Configurator = shoulder3.getConfigurator();
 		TalonFXConfigurator s4Configurator = shoulder4.getConfigurator();
 
-		shoulderPID = new PIDController(0.5,0,0);
+		shoulderPID = new PIDController(3,0,0);
 
 		telescope1 = new TalonFX(TELESCOPE_1);
 		telescope2 = new TalonFX(TELESCOPE_2);
@@ -124,14 +126,14 @@ public class ArmIOHardware implements ArmIO {
 		telescope1.setPosition(0);
 		telescope2.setPosition(0);
 
-		// shoulderEncoder = new CANcoder(0);
+		shoulderEncoder = new CANcoder(26);
 		extension = 0;
 	}
 
 	@Override
 	public void updateInputs(ArmIOInputs inputs) {
 		inputs.shoulderRotation =
-				new Rotation2d(Units.rotationsToRadians(shoulder1.getPosition().getValueAsDouble()) * ROTATION_GEAR_RATIO);
+				new Rotation2d(Units.rotationsToRadians(shoulderEncoder.getAbsolutePosition().getValueAsDouble()));
 
 		inputs.shoulderPivotVoltage = shoulder1.getMotorVoltage().getValueAsDouble();
 
@@ -160,7 +162,7 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setShoulderVoltage(double voltage) {
-		shoulder1.setVoltage(voltage); // Gotta love motor following :D
+		shoulder1.setVoltage(-voltage); // Gotta love motor following :D
 	}
 
 	@Override
@@ -171,15 +173,14 @@ public class ArmIOHardware implements ArmIO {
         @Override
         public void setToShoulderTargetRotation(Rotation2d current, Rotation2d target) {
 		double out = shoulderPID.calculate(current.getRadians(), target.getRadians());
-		MathUtil.clamp(out, -1,1);
-		setShoulderVoltage(out);
+		//System.out.println(shoulderPID.getError());
+		setShoulderVoltage(MathUtil.clamp(out, -2,2));
 	}
 
         @Override
 	public void setToTargetExtension(double current, double extension) {
 		double out = telescopePID.calculate(current, current+((extension)/(TELESCOPE_PULLEY_RADIUS * EXTENSION_GEAR_RATIO)));
-		MathUtil.clamp(out, -2, 2);
-		setExtensionVoltage(out);
+		setExtensionVoltage(MathUtil.clamp(out, -1, 1));
         }                                                             	
 
 

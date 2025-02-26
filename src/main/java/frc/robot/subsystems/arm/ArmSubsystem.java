@@ -29,16 +29,11 @@ public class ArmSubsystem extends SubsystemBase {
 
                 if(!shoulderTargetRotation.isEmpty()){
                         io.setToShoulderTargetRotation(getShoulderAngle(), shoulderTargetRotation.get());
-                        if(Math.abs(getShoulderAngle().minus(shoulderTargetRotation.get()).getRadians()) < 0.1){
-                                System.out.println("REACHED TARGET ROTATION");
-                                shoulderTargetRotation = Optional.empty();
-                        }
+                        
                 }
                 if(!targetExtension.isEmpty()){
                         io.setToTargetExtension(this.getExtension(), clampTargetExtension(this.targetExtension.get()));
-                        if(Math.abs(getExtension() - this.targetExtension.get()) < 0.01){
-                                targetExtension = Optional.empty();
-                        }
+                        
                 }
 
                 Logger.recordOutput("/Arm/Current Rotation", getShoulderAngle().getRadians());

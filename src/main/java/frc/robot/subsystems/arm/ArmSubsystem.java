@@ -33,7 +33,6 @@ public class ArmSubsystem extends SubsystemBase {
                 }
                 if(!targetExtension.isEmpty()){
                         io.setToTargetExtension(this.getExtension(), clampTargetExtension(this.targetExtension.get()));
-                        
                 }
 
                 Logger.recordOutput("/Arm/Current Rotation", getShoulderAngle().getRadians());

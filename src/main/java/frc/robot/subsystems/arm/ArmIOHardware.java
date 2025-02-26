@@ -27,13 +27,9 @@ public class ArmIOHardware implements ArmIO {
 
 	private static double ROTATION_GEAR_RATIO = 1/SHOULDER_GEAR_RATIO;
 	private static double SHOULDER_ENCODER_RATIO = 8; 
-       // private static double SHOULDER_MAX_VELOCITY = Units.radiansPerSecondToRotationsPerMinute((Math.PI*1.75)*ROTATION_GEAR_RATIO)/60; // Rotations per second 
-       // private static double SHOULDER_MAX_ACCELERATION = Units.radiansPerSecondToRotationsPerMinute(Math.PI) / 60; // Rotations per second^2
 
-        private static double EXTENSION_GEAR_RATIO = 1 / TELESCOPE_GEAR_RATIO; 
+    private static double EXTENSION_GEAR_RATIO = 1 / TELESCOPE_GEAR_RATIO; 
 	private static double EXTENSION_SPROCKET_RADIUS = Units.inchesToMeters(1.273);
-       // private static double EXTENSION_MAX_VELOCITY = 1;
-       // private static double EXETNSION_MAX_ACCELERATION = 1;
 
 	// private final DigitalInput bottomSwitch;
 	// private final DigitalInput topSwitch;
@@ -162,7 +158,7 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setShoulderVoltage(double voltage) {
-		shoulder1.setVoltage(-voltage); // Gotta love motor following :D
+		shoulder1.setVoltage(-voltage); // Negative since motor directions and encoder directions are opposite and this is an easier fix
 	}
 
 	@Override
@@ -173,7 +169,6 @@ public class ArmIOHardware implements ArmIO {
         @Override
         public void setToShoulderTargetRotation(Rotation2d current, Rotation2d target) {
 		double out = shoulderPID.calculate(current.getRadians(), target.getRadians());
-		//System.out.println(shoulderPID.getError());
 		setShoulderVoltage(MathUtil.clamp(out, -2,2));
 	}
 

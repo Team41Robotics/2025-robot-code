@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.drive.AlignToReef;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.LimelightConfiguration;
@@ -73,10 +72,6 @@ public class RobotContainer {
 		left_js.button(3).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(0.174))));
 		//left_js.button(2).onTrue(new InstantCommand(() -> arm.setTargetExtension(0.3)));
 		//left_js.button(1).onTrue(new InstantCommand(() -> arm.setTargetExtension(0)));
-
-		right_js.button(1).whileTrue(arm.sysIDQuasistatic(Direction.kReverse));
-		left_js.button(1).whileTrue(arm.sysIdDynamic(Direction.kReverse));
-		
 
 
 	}

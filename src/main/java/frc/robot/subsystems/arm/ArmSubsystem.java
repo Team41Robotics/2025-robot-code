@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
+import static frc.robot.util.Util.rampVoltage;
 import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
 import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 
@@ -30,50 +31,35 @@ public class ArmSubsystem extends SubsystemBase {
         private Optional<Double> targetExtension = Optional.empty();
         private final PIDController shoulderPID;
         private final PIDController telescopePID;
-
-        private final SysIdRoutine routine;        
+        private double shoulder_previous_voltage;
+        private double extension_previous_voltage;
 
 
 	public ArmSubsystem() {
 		io = new ArmIOHardware();
                 shoulderPID = new PIDController(4,0,0);
 		telescopePID = new PIDController(1,0,0);
-                routine = new SysIdRoutine(
-                       new SysIdRoutine.Config(null, Voltage.ofBaseUnits(4, Volts), null), 
-                       new SysIdRoutine.Mechanism(
-                        (voltage) -> {
-                                if(getShoulderAngle().getRadians() < 0.174  || getShoulderAngle().getRadians() > Math.PI/2)
-                                        io.setShoulderVoltage(0);
-                                else
-                                        io.setShoulderVoltageClamped(voltage.baseUnitMagnitude());
-                        },
-                         log -> {
-                                log.motor("Shoulder Motor")
-                                .voltage(Volts.mutable(0).mut_replace(inputs.shoulderPivotVoltage, Volts))
-                                .angularPosition(Radians.mutable(0).mut_replace(inputs.shoulderRotation.getRadians(), Radians))
-                                .angularVelocity(RadiansPerSecond.mutable(0).mut_replace(inputs.shoulderAngVel, RadiansPerSecond));
-                        },
-                          this,
-                           "Arm")       
-                );
+                shoulder_previous_voltage = 0.0;
+
 	}
 
 	public void periodic() {
 		io.updateInputs(inputs);
-
-                if(false) {
-                        if(!shoulderTargetRotation.isEmpty()){
-                                shoulderTargetRotation = Optional.of(clampShoulderTargetAngle(shoulderTargetRotation.get()));
-                                double out = shoulderPID.calculate(getShoulderAngle().getRadians(), shoulderTargetRotation.get().getRadians());
-                                io.setShoulderVoltageClamped(out);
-                                
-                        }
-                        if(!targetExtension.isEmpty()){
-                                targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
-                                double out = telescopePID.calculate(getExtension(), getExtension()+((targetExtension.get())/(TELESCOPE_PULLEY_RADIUS * (1/TELESCOPE_GEAR_RATIO))));
-                                io.setExtensionVoltageClamped(out);
+                
+                if(!shoulderTargetRotation.isEmpty()){
+                        shoulderTargetRotation = Optional.of(clampShoulderTargetAngle(shoulderTargetRotation.get()));
+                        double out = shoulderPID.calculate(getShoulderAngle().getRadians(), shoulderTargetRotation.get().getRadians());
+                        io.setShoulderVoltageClamped(rampVoltage(out, shoulder_previous_voltage));
+                        shoulder_previous_voltage = out;
+                        if(shoulderPID.atSetpoint()){
+                                shoulder_previous_voltage = 0.;
                         }
                 }
+                if(!targetExtension.isEmpty()){
+                        targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
+                        double out = telescopePID.calculate(getExtension(), getExtension()+((targetExtension.get())/(TELESCOPE_PULLEY_RADIUS * (1/TELESCOPE_GEAR_RATIO))));                                io.setExtensionVoltageClamped(out);
+                }
+                
 
                 updateLogging();
 
@@ -122,12 +108,4 @@ public class ArmSubsystem extends SubsystemBase {
                 return inputs.shoulderRotation;
         }
 
-        public Command sysIDQuasistatic(SysIdRoutine.Direction direction){
-                return routine.quasistatic(direction);
-        }
-
-        public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-                return routine.dynamic(direction);
-        }
-              
 }

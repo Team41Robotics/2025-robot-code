@@ -14,6 +14,9 @@ public interface ArmIO {
 
 	public default void setExtensionVoltageClamped(double voltage) {};
 
+	public default void setWristVoltageClamped(double voltage) {};
+
+
 	public default void setShoulderVoltage(double voltage) {};
 
 	public default void updateInputs(ArmIOInputs inputs) {}
@@ -36,8 +39,5 @@ public interface ArmIO {
 		public double wristPivotVoltage = 0.0;
 		public double[] wristPivotCurrent = new double[] {}; // amps
 		public double wristAngVel = 0.0; // rad / s
-
-		public boolean bottomSwitchOn = false;
-		public boolean topSwitchOn = false;
 	}
 }

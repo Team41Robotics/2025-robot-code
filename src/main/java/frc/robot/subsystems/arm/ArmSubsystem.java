@@ -7,19 +7,13 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
-import static frc.robot.util.Util.rampVoltage;
 import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
 import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
+import static frc.robot.util.Util.rampVoltage;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -29,17 +23,24 @@ public class ArmSubsystem extends SubsystemBase {
 	private Optional<Rotation2d> shoulderTargetRotation = Optional.empty();
 	private Optional<Rotation2d> wristTargetRotation = Optional.empty();
         private Optional<Double> targetExtension = Optional.empty();
+
         private final PIDController shoulderPID;
         private final PIDController telescopePID;
+        private final PIDController wristPID;
+
         private double shoulder_previous_voltage;
         private double extension_previous_voltage;
+        private double wrist_previous_voltage;
 
 
 	public ArmSubsystem() {
 		io = new ArmIOHardware();
                 shoulderPID = new PIDController(4,0,0);
 		telescopePID = new PIDController(1,0,0);
+                wristPID = new PIDController(0, 0, 0);
                 shoulder_previous_voltage = 0.0;
+                extension_previous_voltage = 0.0;
+                wrist_previous_voltage = 0.0;
 
 	}
 
@@ -57,7 +58,20 @@ public class ArmSubsystem extends SubsystemBase {
                 }
                 if(!targetExtension.isEmpty()){
                         targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
-                        double out = telescopePID.calculate(getExtension(), getExtension()+((targetExtension.get())/(TELESCOPE_PULLEY_RADIUS * (1/TELESCOPE_GEAR_RATIO))));                                io.setExtensionVoltageClamped(out);
+                        double out = telescopePID.calculate(getExtension(), getExtension()+((targetExtension.get())/(TELESCOPE_PULLEY_RADIUS * (1/TELESCOPE_GEAR_RATIO)))); 
+                        io.setExtensionVoltageClamped(rampVoltage(out, extension_previous_voltage));
+                        extension_previous_voltage = out;
+                        if(telescopePID.atSetpoint()){
+                                extension_previous_voltage = 0.;
+                        }
+                }
+                if(!wristTargetRotation.isEmpty()){
+                        double out = wristPID.calculate(inputs.wristRotation.getRadians(),wristTargetRotation.get().getRadians()); 
+                        io.setExtensionVoltageClamped(rampVoltage(out, wrist_previous_voltage));
+                        wrist_previous_voltage = out;
+                        if(wristPID.atSetpoint()){
+                                wrist_previous_voltage = 0.;
+                        }
                 }
                 
 
@@ -72,9 +86,11 @@ public class ArmSubsystem extends SubsystemBase {
                 Logger.recordOutput("Arm/Shoulder Voltage", inputs.shoulderPivotVoltage);
                 Logger.recordOutput("Arm/Shoulder Velocity", inputs.shoulderAngVel);
                 Logger.recordOutput("Arm/Current Extension", getExtension());
+                Logger.recordOutput("Arm/Extension Velocity", inputs.telescopeVelocity);
+                Logger.recordOutput("Arm/Extension Voltage", inputs.telescopeVoltage);
                 if(!targetExtension.isEmpty()) Logger.recordOutput("Arm/Target Extension", this.targetExtension.get());
                 if(!shoulderTargetRotation.isEmpty()) Logger.recordOutput("Arm/Target Rotation", this.shoulderTargetRotation.get().getRadians());
-
+                
         }
         
         public void zero(){
@@ -88,6 +104,10 @@ public class ArmSubsystem extends SubsystemBase {
 
         public void setTargetExtension(double length){
                 this.targetExtension = Optional.of(length);
+        }
+
+        public void setWristTargetRotation(Rotation2d rotation){
+                this.wristTargetRotation = Optional.of(rotation);
         }
 
 

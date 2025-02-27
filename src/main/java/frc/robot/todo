@@ -1,6 +1,3 @@
 * aligntoreef: make it go to the position instead of tag, get preset positions, + controls
 
 * vision: test + tune covs
-
-* arm: make sure ratios are right
-* encoder-motor alignment

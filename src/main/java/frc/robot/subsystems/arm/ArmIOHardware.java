@@ -1,24 +1,28 @@
 package frc.robot.subsystems.arm;
 
-import static java.lang.Math.PI;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_2;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_4;
 import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_1;
 import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_2;
+import static frc.robot.constants.Constants.ArmConstants.WRIST;
 import static frc.robot.constants.Constants.SHOULDER_GEAR_RATIO;
 import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
 import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
@@ -31,7 +35,7 @@ public class ArmIOHardware implements ArmIO {
     private static double EXTENSION_GEAR_RATIO = 1 / TELESCOPE_GEAR_RATIO; 
 	private static double EXTENSION_SPROCKET_RADIUS = Units.inchesToMeters(1.273);
 
-	// private final DigitalInput bottomSwitch;
+	private final DigitalInput bottomSwitch;
 	// private final DigitalInput topSwitch;
 
 	private final TalonFX shoulder1;
@@ -42,26 +46,18 @@ public class ArmIOHardware implements ArmIO {
 	private final TalonFX telescope1;
 	private final TalonFX telescope2;
 
-       // private final SparkMax wrist;
+       private final SparkMax wrist;
 
 	private final CANcoder shoulderEncoder;
+	private final CANcoder wristEncoder;
 	private final PIDController wristPID;
 
-	// private final SparkFlex wrist;
 	private double extension;
 	private double init_angle;
 
 	public ArmIOHardware() {
 
-		//bottomSwitch = new DigitalInput(0);
-		//topSwitch = new DigitalInput(0);
-
-		// if (bottomSwitch.get()) {
-			//extension = 0;
-		// }
-		// if (topSwitch.get()) {
-			//extension = MAX_ARM_EXTEND;
-		// }
+		bottomSwitch = new DigitalInput(0);
 
 		shoulder1 = new TalonFX(SHOULDER_1);
 		shoulder2 = new TalonFX(SHOULDER_2);
@@ -73,15 +69,11 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator s3Configurator = shoulder3.getConfigurator();
 		TalonFXConfigurator s4Configurator = shoulder4.getConfigurator();
 
-
 		telescope1 = new TalonFX(TELESCOPE_1);
 		telescope2 = new TalonFX(TELESCOPE_2);
 
 		TalonFXConfigurator t1Configurator = telescope1.getConfigurator();
 		TalonFXConfigurator t2Configurator = telescope2.getConfigurator();
-		//wrist = new SparkMax(WRIST, MotorType.kBrushless);
-
-		wristPID = new PIDController(0, 0, 0);
 
 		TalonFXConfiguration shoulderConfig = new TalonFXConfiguration();
 		shoulderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -119,8 +111,16 @@ public class ArmIOHardware implements ArmIO {
 		shoulderEncoder = new CANcoder(26);
 		extension = 0;
 
-
-
+		
+		wrist = new SparkMax(WRIST, MotorType.kBrushless);
+		wristEncoder = new CANcoder(WRIST);
+		wristPID = new PIDController(0, 0, 0);
+		
+		SparkMaxConfig wristConfig = new SparkMaxConfig();
+		wristConfig
+			.smartCurrentLimit(30)
+			.idleMode(IdleMode.kBrake);
+		
 	}
 
 	@Override
@@ -134,22 +134,25 @@ public class ArmIOHardware implements ArmIO {
 				new double[] {shoulder1.getStatorCurrent().getValueAsDouble()};
 
 		inputs.shoulderAngVel = Units.rotationsPerMinuteToRadiansPerSecond(shoulder1.getVelocity().getValueAsDouble()*60) * SHOULDER_ENCODER_RATIO;
+		
+		if(bottomSwitch.get()){
+			inputs.telescopePosition = 0;
+		}else{
+			inputs.telescopePosition = extension + Units.rotationsToRadians(telescope1.getPosition().getValueAsDouble()) * EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS;
+		}
 
-		inputs.telescopePosition = extension + Units.rotationsToRadians(telescope1.getPosition().getValueAsDouble()) * EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS;
-
-		inputs.telescopeVelocity = Units.rotationsPerMinuteToRadiansPerSecond(telescope1.getVelocity().getValueAsDouble()*60) * TELESCOPE_PULLEY_RADIUS * EXTENSION_GEAR_RATIO * 2 * PI;
+		inputs.telescopeVelocity = Units.rotationsPerMinuteToRadiansPerSecond(telescope1.getVelocity().getValueAsDouble()*60) * TELESCOPE_PULLEY_RADIUS * EXTENSION_GEAR_RATIO;
 
 		inputs.telescopeVoltage = telescope1.getDutyCycle().getValueAsDouble()
 				* telescope1.getSupplyVoltage().getValueAsDouble();
 
 		inputs.telescopeCurrent = new double[] {telescope1.getStatorCurrent().getValueAsDouble()};
 
-		// inputs.bottomSwitchOn = bottomSwitch.get();
-
 		// inputs.topSwitchOn = topSwitch.get();               
 
 		// TOOD: Add inputs for wrist
-
+		inputs.wristRotation = new Rotation2d(Units.rotationsToRadians(wristEncoder.getAbsolutePosition().getValueAsDouble()));
+		inputs.wristPivotVoltage = wrist.getAppliedOutput();
 	}
 
 
@@ -163,6 +166,11 @@ public class ArmIOHardware implements ArmIO {
 		telescope1.setVoltage(voltage);
 	}
 
+	@Override
+	public void setWristVoltage(double voltage) {
+		wrist.setVoltage(voltage);
+	}
+
         @Override
         public void setShoulderVoltageClamped(double voltage) {
 		setShoulderVoltage(MathUtil.clamp(voltage, -4, 4));
@@ -171,9 +179,12 @@ public class ArmIOHardware implements ArmIO {
         @Override
 	public void setExtensionVoltageClamped(double voltage) {
 		setExtensionVoltage(MathUtil.clamp(voltage, -1, 1));
-        }                                                             	
+        }
 
-
-
+	@Override
+	public void setWristVoltageClamped(double voltage){
+		setWristVoltage(MathUtil.clamp(voltage, -1, 1));
+	}
+	
 }
         

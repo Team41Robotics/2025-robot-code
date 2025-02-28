@@ -5,49 +5,93 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
+import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
+import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
+import static frc.robot.util.Util.rampVoltage;
 
 public class ArmSubsystem extends SubsystemBase {
 
-	private ArmIOHardware io;
+	private final ArmIOHardware io;
 	private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
 	private Optional<Rotation2d> shoulderTargetRotation = Optional.empty();
 	private Optional<Rotation2d> wristTargetRotation = Optional.empty();
         private Optional<Double> targetExtension = Optional.empty();
 
+        private final PIDController shoulderPID;
+        private final PIDController telescopePID;
+        private final PIDController wristPID;
+
+        private double shoulder_previous_voltage;
+        private double extension_previous_voltage;
+        private double wrist_previous_voltage;
+
+
 	public ArmSubsystem() {
 		io = new ArmIOHardware();
+                shoulderPID = new PIDController(4,0,0);
+		telescopePID = new PIDController(1,0,0);
+                wristPID = new PIDController(0, 0, 0);
+                shoulder_previous_voltage = 0.0;
+                extension_previous_voltage = 0.0;
+                wrist_previous_voltage = 0.0;
+
 	}
 
 	public void periodic() {
 		io.updateInputs(inputs);
-
+                
                 if(!shoulderTargetRotation.isEmpty()){
-                        io.setToShoulderTargetRotation(getShoulderAngle(), shoulderTargetRotation.get());
-                        if(Math.abs(getShoulderAngle().minus(shoulderTargetRotation.get()).getRadians()) < 0.1){
-                                System.out.println("REACHED TARGET ROTATION");
-                                shoulderTargetRotation = Optional.empty();
+                        shoulderTargetRotation = Optional.of(clampShoulderTargetAngle(shoulderTargetRotation.get()));
+                        double out = shoulderPID.calculate(getShoulderAngle().getRadians(), shoulderTargetRotation.get().getRadians());
+                        io.setShoulderVoltageClamped(rampVoltage(out, shoulder_previous_voltage));
+                        shoulder_previous_voltage = out;
+                        if(shoulderPID.atSetpoint()){
+                                shoulder_previous_voltage = 0.;
                         }
                 }
                 if(!targetExtension.isEmpty()){
-                        io.setToTargetExtension(clampTargetExtension(this.targetExtension.get()));
-                        if(Math.abs(getExtension() - this.targetExtension.get()) < 0.01){
-                                targetExtension = Optional.empty();
+                        targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
+                        double out = telescopePID.calculate(getExtension(), getExtension()+((targetExtension.get())/(TELESCOPE_PULLEY_RADIUS * (1/TELESCOPE_GEAR_RATIO)))); 
+                        io.setExtensionVoltageClamped(rampVoltage(out, extension_previous_voltage));
+                        extension_previous_voltage = out;
+                        if(telescopePID.atSetpoint()){
+                                extension_previous_voltage = 0.;
                         }
                 }
+                if(!wristTargetRotation.isEmpty()){
+                        double out = wristPID.calculate(inputs.wristRotation.getRadians(),wristTargetRotation.get().getRadians()); 
+                        io.setExtensionVoltageClamped(rampVoltage(out, wrist_previous_voltage));
+                        wrist_previous_voltage = out;
+                        if(wristPID.atSetpoint()){
+                                wrist_previous_voltage = 0.;
+                        }
+                }
+                
 
+                updateLogging();
+
+	}
+
+        public void updateLogging(){
+                Logger.processInputs("Arm", inputs);
                 Logger.recordOutput("/Arm/Current Rotation", getShoulderAngle().getRadians());
                 Logger.recordOutput("Arm/Current Extension", getExtension());
                 Logger.recordOutput("Arm/Shoulder Voltage", inputs.shoulderPivotVoltage);
                 Logger.recordOutput("Arm/Shoulder Velocity", inputs.shoulderAngVel);
+                Logger.recordOutput("Arm/Current Extension", getExtension());
+                Logger.recordOutput("Arm/Extension Velocity", inputs.telescopeVelocity);
+                Logger.recordOutput("Arm/Extension Voltage", inputs.telescopeVoltage);
+                if(!targetExtension.isEmpty()) Logger.recordOutput("Arm/Target Extension", this.targetExtension.get());
                 if(!shoulderTargetRotation.isEmpty()) Logger.recordOutput("Arm/Target Rotation", this.shoulderTargetRotation.get().getRadians());
-
-	}
+                
+        }
         
         public void zero(){
                 setShoulderTargetRotation(MIN_ROTATION);
@@ -55,7 +99,6 @@ public class ArmSubsystem extends SubsystemBase {
         }
 
         public void setShoulderTargetRotation(Rotation2d rotation){
-                Rotation2d adjusted_rotation = new Rotation2d(rotation.getRadians() * 8);
                 this.shoulderTargetRotation = Optional.of(rotation);
         }
 
@@ -63,8 +106,12 @@ public class ArmSubsystem extends SubsystemBase {
                 this.targetExtension = Optional.of(length);
         }
 
+        public void setWristTargetRotation(Rotation2d rotation){
+                this.wristTargetRotation = Optional.of(rotation);
+        }
 
-        public Rotation2d clampTargetAngle(Rotation2d target){
+
+        public Rotation2d clampShoulderTargetAngle(Rotation2d target){
                 target = new Rotation2d(MathUtil.clamp(target.getRadians(), 0, Math.PI/2));
                 return target;
         }
@@ -80,4 +127,5 @@ public class ArmSubsystem extends SubsystemBase {
         public Rotation2d getShoulderAngle(){
                 return inputs.shoulderRotation;
         }
+
 }

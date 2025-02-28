@@ -1,38 +1,41 @@
 package frc.robot.subsystems.arm;
 
-import static java.lang.Math.PI;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_2;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_4;
 import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_1;
 import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_2;
+import static frc.robot.constants.Constants.ArmConstants.WRIST;
+import static frc.robot.constants.Constants.SHOULDER_GEAR_RATIO;
+import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
 import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 
 public class ArmIOHardware implements ArmIO {
 
-	private static double SHOULDER_VELOCITY_RATIO = (54/18) * (54/18) * (72/9); // Full Gear ratio 
-	private static double SHOULDER_ENCODER_RATIO = 8; // Encoder sprocket ratoi
-        private static double SHOULDER_MAX_VELOCITY = Units.radiansPerSecondToRotationsPerMinute((Math.PI*1.75)*SHOULDER_VELOCITY_RATIO)/60; // Rotations per second 
-        private static double SHOULDER_MAX_ACCELERATION = Units.radiansPerSecondToRotationsPerMinute(Math.PI) / 60; // Rotations per second^2
+	private static double ROTATION_GEAR_RATIO = 1/SHOULDER_GEAR_RATIO;
+	private static double SHOULDER_ENCODER_RATIO = 8; 
 
-        private static double EXTENSION_GEAR_RATIO; // TODO: figure out what these are from 'thew
-	private static double EXTENSION_SPROCKET_RADIUS;
-        private static double EXTENSION_MAX_VELOCITY;
-        private static double EXETNSION_MAX_ACCELERATION;
+    private static double EXTENSION_GEAR_RATIO = 1 / TELESCOPE_GEAR_RATIO; 
+	private static double EXTENSION_SPROCKET_RADIUS = Units.inchesToMeters(1.273);
 
-	// private final DigitalInput bottomSwitch;
+	private final DigitalInput bottomSwitch;
 	// private final DigitalInput topSwitch;
 
 	private final TalonFX shoulder1;
@@ -43,28 +46,18 @@ public class ArmIOHardware implements ArmIO {
 	private final TalonFX telescope1;
 	private final TalonFX telescope2;
 
-       // private final SparkMax wrist;
+       private final SparkMax wrist;
 
-	// private final CANcoder shoulderEncoder;
-
-	private final PIDController shoulderPID;
-	private final PIDController telescopePID;
+	private final CANcoder shoulderEncoder;
+	private final CANcoder wristEncoder;
 	private final PIDController wristPID;
 
-	// private final SparkFlex wrist;
 	private double extension;
+	private double init_angle;
 
 	public ArmIOHardware() {
 
-		//bottomSwitch = new DigitalInput(0);
-		//topSwitch = new DigitalInput(0);
-
-		// if (bottomSwitch.get()) {
-			//extension = 0;
-		// }
-		// if (topSwitch.get()) {
-			//extension = MAX_ARM_EXTEND;
-		// }
+		bottomSwitch = new DigitalInput(0);
 
 		shoulder1 = new TalonFX(SHOULDER_1);
 		shoulder2 = new TalonFX(SHOULDER_2);
@@ -76,18 +69,11 @@ public class ArmIOHardware implements ArmIO {
 		TalonFXConfigurator s3Configurator = shoulder3.getConfigurator();
 		TalonFXConfigurator s4Configurator = shoulder4.getConfigurator();
 
-		shoulderPID = new PIDController(0.2,0,0);
-
 		telescope1 = new TalonFX(TELESCOPE_1);
 		telescope2 = new TalonFX(TELESCOPE_2);
 
 		TalonFXConfigurator t1Configurator = telescope1.getConfigurator();
 		TalonFXConfigurator t2Configurator = telescope2.getConfigurator();
-
-		telescopePID = new PIDController(0,0,0);
-		//wrist = new SparkMax(WRIST, MotorType.kBrushless);
-
-		wristPID = new PIDController(0, 0, 0);
 
 		TalonFXConfiguration shoulderConfig = new TalonFXConfiguration();
 		shoulderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -122,43 +108,57 @@ public class ArmIOHardware implements ArmIO {
 		telescope1.setPosition(0);
 		telescope2.setPosition(0);
 
-		// shoulderEncoder = new CANcoder(0);
+		shoulderEncoder = new CANcoder(26);
+		extension = 0;
 
+		
+		wrist = new SparkMax(WRIST, MotorType.kBrushless);
+		wristEncoder = new CANcoder(WRIST);
+		wristPID = new PIDController(0, 0, 0);
+		
+		SparkMaxConfig wristConfig = new SparkMaxConfig();
+		wristConfig
+			.smartCurrentLimit(30)
+			.idleMode(IdleMode.kBrake);
+		
 	}
 
 	@Override
 	public void updateInputs(ArmIOInputs inputs) {
 		inputs.shoulderRotation =
-				new Rotation2d(shoulder1.getPosition().getValueAsDouble() * SHOULDER_VELOCITY_RATIO *2*PI);
+				new Rotation2d(Units.rotationsToRadians(shoulderEncoder.getAbsolutePosition().getValueAsDouble()));
 
 		inputs.shoulderPivotVoltage = shoulder1.getMotorVoltage().getValueAsDouble();
 
 		inputs.shoulderPivotCurrentAmps =
 				new double[] {shoulder1.getStatorCurrent().getValueAsDouble()};
 
-		inputs.shoulderAngVel = shoulder1.getVelocity().getValueAsDouble() * SHOULDER_ENCODER_RATIO;
+		inputs.shoulderAngVel = Units.rotationsPerMinuteToRadiansPerSecond(shoulder1.getVelocity().getValueAsDouble()*60) * SHOULDER_ENCODER_RATIO;
+		
+		if(bottomSwitch.get()){
+			inputs.telescopePosition = 0;
+		}else{
+			inputs.telescopePosition = extension + Units.rotationsToRadians(telescope1.getPosition().getValueAsDouble()) * EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS;
+		}
 
-		inputs.telescopePosition = extension + telescope1.getVelocity().getValueAsDouble() * TELESCOPE_PULLEY_RADIUS;
-
-		inputs.telescopeVelocity = telescope1.getVelocity().getValueAsDouble() * TELESCOPE_PULLEY_RADIUS;
+		inputs.telescopeVelocity = Units.rotationsPerMinuteToRadiansPerSecond(telescope1.getVelocity().getValueAsDouble()*60) * TELESCOPE_PULLEY_RADIUS * EXTENSION_GEAR_RATIO;
 
 		inputs.telescopeVoltage = telescope1.getDutyCycle().getValueAsDouble()
 				* telescope1.getSupplyVoltage().getValueAsDouble();
 
 		inputs.telescopeCurrent = new double[] {telescope1.getStatorCurrent().getValueAsDouble()};
 
-		// inputs.bottomSwitchOn = bottomSwitch.get();
-
 		// inputs.topSwitchOn = topSwitch.get();               
 
 		// TOOD: Add inputs for wrist
-
+		inputs.wristRotation = new Rotation2d(Units.rotationsToRadians(wristEncoder.getAbsolutePosition().getValueAsDouble()));
+		inputs.wristPivotVoltage = wrist.getAppliedOutput();
 	}
 
 
 	@Override
 	public void setShoulderVoltage(double voltage) {
-		shoulder1.setVoltage(voltage); // Gotta love motor following :D
+		shoulder1.setVoltage(-voltage); // Negative since motor directions and encoder directions are opposite and this is an easier fix
 	}
 
 	@Override
@@ -166,21 +166,25 @@ public class ArmIOHardware implements ArmIO {
 		telescope1.setVoltage(voltage);
 	}
 
-        @Override
-        public void setToShoulderTargetRotation(Rotation2d current, Rotation2d target) {
-		double out = shoulderPID.calculate(current.getRadians(), target.getRadians());
-		MathUtil.clamp(out, -1,1);
-		setShoulderVoltage(out);
+	@Override
+	public void setWristVoltage(double voltage) {
+		wrist.setVoltage(voltage);
 	}
 
         @Override
-	public void setToTargetExtension(double extension) {
-		double out = telescopePID.calculate(extension);
-		MathUtil.clamp(out, -1, 1);
-		setExtensionVoltage(out);
-        }                                                             	
+        public void setShoulderVoltageClamped(double voltage) {
+		setShoulderVoltage(MathUtil.clamp(voltage, -4, 4));
+	}
 
+        @Override
+	public void setExtensionVoltageClamped(double voltage) {
+		setExtensionVoltage(MathUtil.clamp(voltage, -1, 1));
+        }
 
-
+	@Override
+	public void setWristVoltageClamped(double voltage){
+		setWristVoltage(MathUtil.clamp(voltage, -1, 1));
+	}
+	
 }
         

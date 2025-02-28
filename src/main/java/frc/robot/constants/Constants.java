@@ -36,8 +36,8 @@ public final class Constants {
 		public static final int SHOULDER_3 = 20;
 		public static final int SHOULDER_4 = 19;
 
-		public static final int TELESCOPE_1 = -1;
-		public static final int TELESCOPE_2 = -1;
+		public static final int TELESCOPE_1 = 23;
+		public static final int TELESCOPE_2 = 24;
 
 		public static final int WRIST = -1;
 
@@ -57,7 +57,10 @@ public final class Constants {
 
 	public static final double CAMERA_HEIGHT = Units.inchesToMeters(13.5);
 	public static final double MAX_ARM_EXTEND = 1; // WIP
-	public static final double TELESCOPE_PULLEY_RADIUS = 1; // WIP
+	public static final double TELESCOPE_PULLEY_RADIUS = Units.inchesToMeters(1.273); // WIP
+	public static final double TELESCOPE_GEAR_RATIO = 5;
+	public static final double SHOULDER_GEAR_RATIO = (54/18) * (54/18) * (72/9); // Full Gear ratio	 
+
 
 	public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG = new PPHolonomicDriveController(
 			new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants

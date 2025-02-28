@@ -1,17 +1,11 @@
 package frc.robot.util;
 
-import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
-import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
-import static frc.robot.constants.Constants.RobotConstants.SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
-import static frc.robot.constants.Constants.RobotConstants.TURBO_ANGULAR_SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.TURBO_SPEED_MULT;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.exp;
 import static java.lang.Math.signum;
 import static java.lang.Math.sin;
+import java.util.Optional;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -24,7 +18,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import java.util.Optional;
+import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
+import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
+import static frc.robot.constants.Constants.RobotConstants.SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
+import static frc.robot.constants.Constants.RobotConstants.TURBO_ANGULAR_SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.TURBO_SPEED_MULT;
 
 public class Util {
 	// tuned value for sigmoid, higher values make the curve steeper, this is what thomas likes. Use desmos to preview
@@ -122,4 +122,13 @@ public class Util {
 				new Rotation2d(0)); // 0.06 is offset for stuff in front of the camera
 		return returnable.transformBy(currentToTarget);
 	}
+
+	public static double rampVoltage(double curr, double prev){
+		if(Math.abs(curr - prev) > 0.1){
+			return MathUtil.clamp(curr, prev-.1, prev+.1);
+		}else{
+			return curr;
+		}
+	}
+
 }

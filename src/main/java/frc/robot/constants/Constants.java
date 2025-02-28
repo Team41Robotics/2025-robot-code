@@ -3,7 +3,6 @@ package frc.robot.constants;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -27,8 +26,7 @@ public final class Constants {
 		public static final double L3_TURN_RATIO = 1 / 12.8;
 	}
 
-		
-	public static final class ArmConstants{
+	public static final class ArmConstants {
 		// TODO: SET ARM CAN IDS
 
 		public static final int SHOULDER_1 = 22;
@@ -46,7 +44,6 @@ public final class Constants {
 
 		public static final Rotation2d MIN_ROTATION = new Rotation2d();
 		public static final Rotation2d MAX_ROTATION = new Rotation2d();
-		
 	}
 
 	public static final double MODULE_DRIVE_KP = 0.05;
@@ -59,8 +56,7 @@ public final class Constants {
 	public static final double MAX_ARM_EXTEND = 1; // WIP
 	public static final double TELESCOPE_PULLEY_RADIUS = Units.inchesToMeters(1.273); // WIP
 	public static final double TELESCOPE_GEAR_RATIO = 5;
-	public static final double SHOULDER_GEAR_RATIO = (54/18) * (54/18) * (72/9); // Full Gear ratio	 
-
+	public static final double SHOULDER_GEAR_RATIO = (54 / 18) * (54 / 18) * (72 / 9); // Full Gear ratio
 
 	public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG = new PPHolonomicDriveController(
 			new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants

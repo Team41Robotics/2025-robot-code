@@ -1,7 +1,7 @@
 package frc.robot.subsystems.algae;
 
 import com.revrobotics.spark.SparkMax;
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class AlgaeIOSparkMax implements AlgaeIO{

@@ -1,23 +1,27 @@
 package frc.robot.subsystems.arm;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
 
 	public default void setWristVoltage(double voltage) {}
 	;
+
 	public default void setExtensionVoltage(double voltage) {}
 	;
-	public default void setShoulderVoltageClamped(double voltage) {};
 
-	public default void setExtensionVoltageClamped(double voltage) {};
+	public default void setShoulderVoltageClamped(double voltage) {}
+	;
 
-	public default void setWristVoltageClamped(double voltage) {};
+	public default void setExtensionVoltageClamped(double voltage) {}
+	;
 
+	public default void setWristVoltageClamped(double voltage) {}
+	;
 
-	public default void setShoulderVoltage(double voltage) {};
+	public default void setShoulderVoltage(double voltage) {}
+	;
 
 	public default void updateInputs(ArmIOInputs inputs) {}
 	;

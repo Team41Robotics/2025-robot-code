@@ -124,8 +124,8 @@ public class Util {
 	}
 
 	public static double rampVoltage(double curr, double prev){
-		if(Math.abs(curr - prev) > 0.1){
-			return MathUtil.clamp(curr, prev-.1, prev+.1);
+		if(Math.abs(curr - prev) > 0.2){
+			return MathUtil.clamp(curr, prev-.2, prev+.2);
 		}else{
 			return curr;
 		}

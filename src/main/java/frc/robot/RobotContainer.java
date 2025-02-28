@@ -1,5 +1,8 @@
 package frc.robot;
 
+import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
+
 import java.util.Set;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -8,7 +11,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
@@ -62,16 +64,17 @@ public class RobotContainer {
 		autoChooser.addOption("Goto Tag 20", new AlignToReef(20));
 		autoChooser.addOption("Goto Tag 21", new AlignToReef(21));
 		autoChooser.addOption("Goto Tag 22", new AlignToReef(22));
-
+		
 		configureBindings();
 	}
 
 	private static void configureBindings() {
 		right_js.button(4).onTrue(new DeferredCommand(() -> autoChooser.get(), Set.of(drive)));
-		left_js.button(4).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(Math.PI/2))));
-		left_js.button(3).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(0.174))));
-		//left_js.button(2).onTrue(new InstantCommand(() -> arm.setTargetExtension(0.3)));
-		//left_js.button(1).onTrue(new InstantCommand(() -> arm.setTargetExtension(0)));
+		//left_js.button(4).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(Math.PI/2))));
+		//left_js.button(3).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(0.174))));
+		ds.button(12).onTrue(new InstantCommand(() -> arm.setTargetExtension(MAX_EXTENSION)));
+		ds.button(11).onTrue(new InstantCommand(() -> arm.setTargetExtension(MIN_EXTENSION)));
+
 
 
 	}

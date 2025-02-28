@@ -50,7 +50,6 @@ public class ArmIOHardware implements ArmIO {
 
 	private final CANcoder shoulderEncoder;
 	private final CANcoder wristEncoder;
-	private final PIDController wristPID;
 
 	private double extension;
 	private double init_angle;
@@ -97,8 +96,8 @@ public class ArmIOHardware implements ArmIO {
 		shoulder4.setNeutralMode(NeutralModeValue.Brake);
 
 		TalonFXConfiguration telescopeConfig = new TalonFXConfiguration();
-		telescopeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-		telescopeConfig.CurrentLimits.StatorCurrentLimit = 30;
+		telescopeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+		telescopeConfig.CurrentLimits.StatorCurrentLimit = 45;
 
 		t1Configurator.apply(telescopeConfig);
 		t2Configurator.apply(telescopeConfig);
@@ -114,7 +113,6 @@ public class ArmIOHardware implements ArmIO {
 		
 		wrist = new SparkMax(WRIST, MotorType.kBrushless);
 		wristEncoder = new CANcoder(WRIST);
-		wristPID = new PIDController(0, 0, 0);
 		
 		SparkMaxConfig wristConfig = new SparkMaxConfig();
 		wristConfig
@@ -135,11 +133,9 @@ public class ArmIOHardware implements ArmIO {
 
 		inputs.shoulderAngVel = Units.rotationsPerMinuteToRadiansPerSecond(shoulder1.getVelocity().getValueAsDouble()*60) * SHOULDER_ENCODER_RATIO;
 		
-		if(bottomSwitch.get()){
-			inputs.telescopePosition = 0;
-		}else{
-			inputs.telescopePosition = extension + Units.rotationsToRadians(telescope1.getPosition().getValueAsDouble()) * EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS;
-		}
+		
+		inputs.telescopePosition = extension + (Units.rotationsToRadians(telescope1.getPosition().getValueAsDouble()) * EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS);
+		
 
 		inputs.telescopeVelocity = Units.rotationsPerMinuteToRadiansPerSecond(telescope1.getVelocity().getValueAsDouble()*60) * TELESCOPE_PULLEY_RADIUS * EXTENSION_GEAR_RATIO;
 
@@ -178,7 +174,7 @@ public class ArmIOHardware implements ArmIO {
 
         @Override
 	public void setExtensionVoltageClamped(double voltage) {
-		setExtensionVoltage(MathUtil.clamp(voltage, -1, 1));
+		setExtensionVoltage(MathUtil.clamp(voltage, -5, 5));
         }
 
 	@Override

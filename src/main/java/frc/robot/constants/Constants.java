@@ -39,9 +39,9 @@ public final class Constants {
 		public static final int TELESCOPE_1 = 23;
 		public static final int TELESCOPE_2 = 24;
 
-		public static final int WRIST = -1;
+		public static final int WRIST = 40;
 
-		public static final double MAX_EXTENSION = 0.95;
+		public static final double MAX_EXTENSION = Units.inchesToMeters(35);
 		public static final double MIN_EXTENSION = 0;
 
 		public static final Rotation2d MIN_ROTATION = new Rotation2d();

@@ -8,15 +8,21 @@ public class AlgaeIOSparkMax implements AlgaeIO{
         
         private final DutyCycleEncoder pivotEncoder;
         private final CANSparkMax algaeMotor;
-        private final PIDController m_PID;
+        private final double offset; //still need to tune 
 
         public AlgaeIOSparkMax {
                 pivotEncoder = new DutyCycleEncoder(1);
                 algaeMotor = new CANSparkMax(0, null);
-                m_PID = new PIDController(0,0,0)
         }
         @Override 
         public void updateInputs(AlgaeIOInputs inputs){
-                
-        }       
+                inputs.algaeRotation = MathUtil.angleModulus(pivotEncoder.get() * 2 * Math.PI - offset);
+                inputs.algaePivotVoltage = algaeMotor.getBusVoltage();
+                inputs.algaeAngVel = algaeMotor.getEncoder().getVelocity() * 2 * Math.PI / 60.0;
+                inputs.algaePivotCurrent = new double[]{algaeMotor.getOutputCurrent()};
+        }
+        @Override
+        public void setAlgaeVoltage(double voltage){
+                algaeMotor.setVoltage(MathUtil.clamp(voltage, -4, 4));
+        }
 }

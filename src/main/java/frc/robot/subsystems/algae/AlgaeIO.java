@@ -6,8 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 public interface AlgaeIO {
 
-        public default void setToAlgaeTargetRotation(Rotation2d target) {};
-
 	public default void setAlgaeVoltage(double voltage) {};
 
 	public default void updateInputs(AlgaeIOInputs inputs) {}

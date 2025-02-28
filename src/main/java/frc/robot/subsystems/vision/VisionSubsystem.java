@@ -52,7 +52,7 @@ public class VisionSubsystem extends SubsystemBase {
 			drive.addLimelightMeasurement(robotToField, mt1Timestamp);
 			// System.out.println("Sent measurement");
 		}
-		Logger.recordOutput("/Odom/limelight_pose/"+config.Name, this.robotToField);
+		Logger.recordOutput("/Odom/limelight_pose/" + config.Name, this.robotToField);
 	}
 
 	public boolean hasTarget() {

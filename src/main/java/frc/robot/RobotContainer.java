@@ -3,26 +3,23 @@ package frc.robot;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 
-import java.util.Set;
-
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.commands.drive.AlignToReef;
+import frc.robot.commands.drive.AlignToStation;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.LimelightConfiguration;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
+import java.util.Set;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
 	public static Robot robot;
@@ -31,9 +28,9 @@ public class RobotContainer {
 	public static ArmSubsystem arm = new ArmSubsystem();
 
 	public static LimelightConfiguration config = new LimelightConfiguration();
-	//public static LimelightConfiguration config2 = new LimelightConfiguration();
+	// public static LimelightConfiguration config2 = new LimelightConfiguration();
 	public static VisionSubsystem limelight1 = new VisionSubsystem();
-	//public static VisionSubsystem limelight2 = new VisionSubsystem();
+	// public static VisionSubsystem limelight2 = new VisionSubsystem();
 
 	public static CommandJoystick left_js = new CommandJoystick(4);
 	public static CommandJoystick right_js = new CommandJoystick(3);
@@ -46,7 +43,7 @@ public class RobotContainer {
 		config.withHeightOffset(Units.inchesToMeters(8.375))
 				.withLengthOffset(Units.inchesToMeters(13.75))
 				.withWidthOffset(Units.inchesToMeters(.25));
-		//arm.zero();
+		// arm.zero();
 		// config2.setName("limelight2")
 		// .withHeightOffset(Units.inchesToMeters(8.375))
 		// .withLengthOffset(Units.inchesToMeters(14))
@@ -61,22 +58,20 @@ public class RobotContainer {
 		Pathfinding.setPathfinder(new LocalADStarAK());
 		autoChooser = new LoggedDashboardChooser<>("Auto Routine", AutoBuilder.buildAutoChooser());
 
-		autoChooser.addOption("Goto Tag 20", new AlignToReef(20));
-		autoChooser.addOption("Goto Tag 21", new AlignToReef(21));
-		autoChooser.addOption("Goto Tag 22", new AlignToReef(22));
-		
+		autoChooser.addOption("Goto Tag 13", new AlignToStation(13));
+		autoChooser.addOption("Goto Tag 12", new AlignToStation(12));
+		autoChooser.addOption("Goto Tag 2", new AlignToStation(2));
+		autoChooser.addOption("Goto Tag 1", new AlignToStation(1));
+
 		configureBindings();
 	}
 
 	private static void configureBindings() {
 		right_js.button(4).onTrue(new DeferredCommand(() -> autoChooser.get(), Set.of(drive)));
-		//left_js.button(4).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(Math.PI/2))));
-		//left_js.button(3).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(0.174))));
+		// left_js.button(4).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(Math.PI/2))));
+		// left_js.button(3).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(0.174))));
 		ds.button(12).onTrue(new InstantCommand(() -> arm.setTargetExtension(MAX_EXTENSION)));
 		ds.button(11).onTrue(new InstantCommand(() -> arm.setTargetExtension(MIN_EXTENSION)));
-
-
-
 	}
 
 	public static Command getAutonomousCommand() {

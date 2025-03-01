@@ -1,28 +1,57 @@
 package frc.robot.subsystems.algae;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.math.controller.PIDController;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
-public class AlgaeIOSparkMax implements AlgaeIO{
-        
-        private final DutyCycleEncoder pivotEncoder;
-        private final CANSparkMax algaeMotor;
-        private final double offset; //still need to tune 
+public class AlgaeIOSparkMax implements AlgaeIO {
 
-        public AlgaeIOSparkMax {
-                pivotEncoder = new DutyCycleEncoder(1);
-                algaeMotor = new CANSparkMax(0, null);
-        }
+	private final DutyCycleEncoder pivotEncoder;
+	private final TalonFX intakeMotor;
+	private final SparkMax pivotMotor;
+	private double offset = 1.69; 
+
+	public AlgaeIOSparkMax() {
+		pivotEncoder = new DutyCycleEncoder(1);
+		intakeMotor = new TalonFX(27);
+		pivotMotor = new SparkMax(41, MotorType.kBrushless);
+		SparkMaxConfig config = new SparkMaxConfig();
+		config.idleMode(IdleMode.kBrake)
+			.smartCurrentLimit(60);
+		pivotMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+	}	
+
+	@Override
+	public void updateInputs(AlgaeIOInputs inputs) {
+		inputs.algaeRotation = new Rotation2d(MathUtil.angleModulus(pivotEncoder.get() * (2 * Math.PI) - offset));
+		inputs.algaeRotationAbsolute = new Rotation2d(pivotEncoder.get() * 2 * Math.PI);
+		inputs.algaePivotVoltage = pivotMotor.getAppliedOutput();
+		inputs.algaeAngVel = pivotMotor.getEncoder().getVelocity() * 2 * Math.PI / 60.0;
+		inputs.algaePivotCurrent = new double[] {pivotMotor.getOutputCurrent()};
+
+                inputs.intakeSpeed = Units.rotationsPerMinuteToRadiansPerSecond(intakeMotor.getVelocity().getValueAsDouble())/60;
+                inputs.intakeVoltage = intakeMotor.getMotorVoltage().getValueAsDouble();
+                inputs.intakeCurrent = new double[] {intakeMotor.getStatorCurrent().getValueAsDouble()};
+
+	}
+
+	@Override
+	public void setAlgaeVoltage(double voltage) {
+		pivotMotor.setVoltage(-MathUtil.clamp(voltage, -4, 4));
+	}
+
         @Override 
-        public void updateInputs(AlgaeIOInputs inputs){
-                inputs.algaeRotation = MathUtil.angleModulus(pivotEncoder.get() * 2 * Math.PI - offset);
-                inputs.algaePivotVoltage = algaeMotor.getBusVoltage();
-                inputs.algaeAngVel = algaeMotor.getEncoder().getVelocity() * 2 * Math.PI / 60.0;
-                inputs.algaePivotCurrent = new double[]{algaeMotor.getOutputCurrent()};
-        }
-        @Override
-        public void setAlgaeVoltage(double voltage){
-                algaeMotor.setVoltage(MathUtil.clamp(voltage, -4, 4));
+        public void setIntakeVoltage(double voltage){
+                intakeMotor.setVoltage(MathUtil.clamp(voltage, -4, 4));
         }
 }

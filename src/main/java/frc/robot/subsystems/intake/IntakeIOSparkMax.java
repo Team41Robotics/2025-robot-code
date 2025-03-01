@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -15,7 +16,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 	public IntakeIOSparkMax() {
 		m_PID = new PIDController(0, 0, 0); // TODO
 		m_motor = new SparkMax(0, MotorType.kBrushless);
-		beamBreak = new DigitalInput(0);
+		beamBreak = new DigitalInput(7);
 	}
 
 	@Override

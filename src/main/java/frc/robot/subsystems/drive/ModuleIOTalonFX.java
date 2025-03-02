@@ -1,11 +1,5 @@
 package frc.robot.subsystems.drive;
 
-import static frc.robot.constants.Constants.MODULE_DRIVE_KF;
-import static frc.robot.constants.Constants.MODULE_DRIVE_KP;
-import static frc.robot.constants.Constants.MODULE_TURN_KP;
-import static frc.robot.constants.Constants.RobotConstants.L3_DRIVE_RATIO;
-import static frc.robot.constants.Constants.RobotConstants.L3_TURN_RATIO;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_WHEEL_RAD;
 import static java.lang.Math.PI;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -14,9 +8,15 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import static frc.robot.constants.Constants.MODULE_DRIVE_KF;
+import static frc.robot.constants.Constants.MODULE_DRIVE_KP;
+import static frc.robot.constants.Constants.MODULE_TURN_KP;
+import static frc.robot.constants.Constants.RobotConstants.L3_DRIVE_RATIO;
+import static frc.robot.constants.Constants.RobotConstants.L3_TURN_RATIO;
 import frc.robot.constants.SwerveModuleConfiguration;
 
 /**
@@ -66,7 +66,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 		driveConfig.Slot0.kV = MODULE_DRIVE_KF; // Drive FeedForwards
 
 		driveConfig.Feedback.SensorToMechanismRatio =
-				Units.rotationsPerMinuteToRadiansPerSecond(1) / (DRIVE_GEAR_RATIO * SWERVE_WHEEL_RAD);
+				// Units.rotationsPerMinuteToRadiansPerSecond(1) / (DRIVE_GEAR_RATIO * SWERVE_WHEEL_RAD);
+				DRIVE_GEAR_RATIO;	
 
 		driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 		driveConfig.CurrentLimits.withStatorCurrentLimit(120);
@@ -78,7 +79,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 				isTurnMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
 
 		turnConfig.Feedback.SensorToMechanismRatio =
-				Units.rotationsPerMinuteToRadiansPerSecond(1) / (DRIVE_GEAR_RATIO * SWERVE_WHEEL_RAD);
+				// Units.rotationsPerMinuteToRadiansPerSecond(1) / (TURN_GEAR_RATIO * SWERVE_WHEEL_RAD);
+				TURN_GEAR_RATIO;
 
 		turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 		turnConfig.CurrentLimits.withStatorCurrentLimit(80);

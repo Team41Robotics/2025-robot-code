@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.Set;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -7,6 +9,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.arm.Retract;
@@ -75,7 +78,7 @@ public class RobotContainer {
 	}
 
 	private static void configureBindings() {
-		// right_js.button(4).onTrue(new DeferredCommand(() -> autoChooser.get(), Set.of(drive)));
+		right_js.button(4).onTrue(new DeferredCommand(() -> autoChooser.get(), Set.of(drive)));
 		// ds.button(12).onTrue(new InstantCommand(() -> arm.setTargetExtension(MAX_EXTENSION)));
 		 ds.button(11).onTrue(new Retract(ArmConfiguration.HUMAN_PLAYER));			
 		 ds.button(12).onTrue(new SetToScore(ArmConfiguration.L4));

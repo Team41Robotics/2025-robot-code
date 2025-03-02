@@ -1,16 +1,17 @@
 package frc.robot.subsystems.arm;
 
-import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
-import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
-import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
-import static frc.robot.util.Util.rampVoltage;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
+import static frc.robot.util.Util.rampVoltage;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -26,19 +27,21 @@ public class ArmSubsystem extends SubsystemBase {
 	private final PIDController wristPID;
 
 	private double shoulder_previous_voltage;
-	private double extension_previous_voltage;
+	//private double extension_previous_voltage;
 	private double wrist_previous_voltage;
 
 	public ArmSubsystem() {
 		io = new ArmIOHardware();
-		shoulderPID = new PIDController(4, 0, 0);
-		telescopePID = new PIDController(6, 1, 0);
-		wristPID = new PIDController(0, 0, 0);
+		shoulderPID = new PIDController(3, 0, 0);
+		telescopePID = new PIDController(6.5, 1.25, 0);
+		telescopePID.setTolerance(0.1);
+		wristPID = new PIDController(2, 0, 0.15);
 		shoulder_previous_voltage = 0.0;
-		extension_previous_voltage = 0.0;
+		//extension_previous_voltage = 0.0;
 		wrist_previous_voltage = 0.0;
 	}
 
+	@Override
 	public void periodic() {
 		io.updateInputs(inputs);
 
@@ -57,15 +60,9 @@ public class ArmSubsystem extends SubsystemBase {
 			targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
 			double out = telescopePID.calculate(getExtension(), targetExtension.get());
 			io.setExtensionVoltageClamped(out);
-
-			//   io.setExtensionVoltageClamped(rampVoltage(out, extension_previous_voltage));
-			//  extension_previous_voltage = out;
-			if (telescopePID.atSetpoint()) {
-				//         extension_previous_voltage = 0.;
-				System.out.println("REACHED TARGET SETPOINT");
-			}
-		}
+		}	
 		if (!wristTargetRotation.isEmpty()) {
+			wristTargetRotation = Optional.of(clampWristTargetAngle(wristTargetRotation.get()));
 			double out = wristPID.calculate(
 					inputs.wristRotation.getRadians(), wristTargetRotation.get().getRadians());
 			io.setWristVoltageClamped(rampVoltage(out, wrist_previous_voltage));
@@ -88,10 +85,13 @@ public class ArmSubsystem extends SubsystemBase {
 		Logger.recordOutput("Arm/Extension Velocity", inputs.telescopeVelocity);
 		Logger.recordOutput("Arm/Extension Voltage", inputs.telescopeVoltage);
 		Logger.recordOutput("Arm/Extension Current", inputs.telescopeCurrent);
+		Logger.recordOutput("Arm/Current Wrist Rotation", inputs.wristRotation.getRadians());
+		Logger.recordOutput("Arm/Wrist Voltage", inputs.wristPivotVoltage);
 		if (!targetExtension.isEmpty()) Logger.recordOutput("Arm/Target Extension", this.targetExtension.get());
 		if (!shoulderTargetRotation.isEmpty())
 			Logger.recordOutput(
 					"Arm/Target Rotation", this.shoulderTargetRotation.get().getRadians());
+		if(!wristTargetRotation.isEmpty()) Logger.recordOutput("Arm/Target Wrist Rotation", this.wristTargetRotation.get().getRadians());
 	}
 
 	public void zero() {
@@ -108,16 +108,23 @@ public class ArmSubsystem extends SubsystemBase {
 	}
 
 	public void setWristTargetRotation(Rotation2d rotation) {
+		System.out.println("UPDATED TARGET");
 		this.wristTargetRotation = Optional.of(rotation);
 	}
 
 	public Rotation2d clampShoulderTargetAngle(Rotation2d target) {
-		target = new Rotation2d(MathUtil.clamp(target.getRadians(), 0, Math.PI / 2));
+		target = new Rotation2d(MathUtil.clamp(target.getRadians(), 0.175, Math.PI / 2));
 		return target;
 	}
 
+	
 	public double clampTargetExtension(double extension) {
 		return MathUtil.clamp(extension, MIN_EXTENSION, MAX_EXTENSION);
+	}
+
+	public Rotation2d clampWristTargetAngle(Rotation2d target){
+		target = new Rotation2d(MathUtil.clamp(target.getRadians(),Math.PI/4,3*Math.PI/2 ));
+		return target;
 	}
 
 	public double getExtension() {

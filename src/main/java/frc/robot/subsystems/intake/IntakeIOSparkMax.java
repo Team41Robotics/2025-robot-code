@@ -14,9 +14,9 @@ public class IntakeIOSparkMax implements IntakeIO {
 	private final DigitalInput beamBreak;
 
 	public IntakeIOSparkMax() {
-		m_PID = new PIDController(0, 0, 0); // TODO
-		m_motor = new SparkMax(0, MotorType.kBrushless);
-		beamBreak = new DigitalInput(7);
+		m_PID = new PIDController(1, 0, 0); // TODO
+		m_motor = new SparkMax(41, MotorType.kBrushless);
+		beamBreak = new DigitalInput(4);
 	}
 
 	@Override
@@ -24,13 +24,12 @@ public class IntakeIOSparkMax implements IntakeIO {
 		inputs.velocity = m_motor.get();
 		inputs.voltage = m_motor.getBusVoltage();
 		inputs.current = new double[] {m_motor.getOutputCurrent()};
-		inputs.beamBreakIsActive = beamBreak.get();
+		inputs.beamBreakIsDisabled = beamBreak.get();
 	}
 
 	@Override
 	public void setVelocity(double velocity) {
-		double out = m_PID.calculate(velocity);
-		setVoltage(out);
+		m_motor.set(velocity);
 	}
 
 	@Override

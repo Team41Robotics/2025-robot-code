@@ -6,17 +6,19 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.commands.arm.Retract;
+import frc.robot.commands.arm.SetToScore;
 import frc.robot.commands.drive.AlignToStation;
 import frc.robot.commands.drive.DefaultDrive;
+import frc.robot.constants.ArmConfiguration;
 import frc.robot.constants.LimelightConfiguration;
-import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
 
@@ -24,8 +26,9 @@ public class RobotContainer {
 	public static Robot robot;
 	public static SwerveSubsystem drive = new SwerveSubsystem();
 	public static IMU imu = new IMU();
-	public static AlgaeSubsystem algae = new AlgaeSubsystem();
+	//public static AlgaeSubsystem algae = new AlgaeSubsystem();
 	public static ArmSubsystem arm = new ArmSubsystem();
+	public static IntakeSubsystem intake = new IntakeSubsystem();
 
 	public static LimelightConfiguration config = new LimelightConfiguration();
 	// public static LimelightConfiguration config2 = new LimelightConfiguration();
@@ -68,14 +71,14 @@ public class RobotContainer {
 
 	private static void configureBindings() {
 		// right_js.button(4).onTrue(new DeferredCommand(() -> autoChooser.get(), Set.of(drive)));
-		// left_js.button(4).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(Math.PI/2))));
-		// left_js.button(3).onTrue(new InstantCommand(() -> arm.setShoulderTargetRotation(new Rotation2d(0.174))));
 		// ds.button(12).onTrue(new InstantCommand(() -> arm.setTargetExtension(MAX_EXTENSION)));
+		 ds.button(11).onTrue(new Retract(ArmConfiguration.HUMAN_PLAYER));			
+		 ds.button(12).onTrue(new SetToScore(ArmConfiguration.L4));
 		// ds.button(11).onTrue(new InstantCommand(() -> arm.setTargetExtension(MIN_EXTENSION)));
-		ds.button(12).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(new Rotation2d(0))));
-		ds.button(11).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(new Rotation2d(1.47))));
-		right_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(true)));
-		left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)));
+		// ds.button(12).onTrue(new InstantCommand(() -> arm.setTargetExtension(MAX_EXTENSION)));
+		// ds.button(11).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(new Rotation2d(1.47))));
+		right_js.button(1).whileTrue(new InstantCommand(() -> intake.runMotor(0.05, true)).until(() -> !intake.getBeamBreak())); // INTAKE
+		left_js.button(1).whileTrue(new InstantCommand(() -> intake.runMotor(0.75, false)).until(() -> intake.getBeamBreak()));
 	}
 
 	public static Command getAutonomousCommand() {

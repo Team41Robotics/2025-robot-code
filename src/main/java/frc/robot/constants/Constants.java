@@ -3,6 +3,7 @@ package frc.robot.constants;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -37,13 +38,16 @@ public final class Constants {
 		public static final int TELESCOPE_1 = 23;
 		public static final int TELESCOPE_2 = 24;
 
-		public static final int WRIST = 40;
+		public static final int WRIST = 0;
 
 		public static final double MAX_EXTENSION = Units.inchesToMeters(35);
 		public static final double MIN_EXTENSION = 0;
 
-		public static final Rotation2d MIN_ROTATION = new Rotation2d();
-		public static final Rotation2d MAX_ROTATION = new Rotation2d();
+		public static final Rotation2d MIN_ROTATION = new Rotation2d(0.175); // SHOULDER
+		public static final Rotation2d MAX_ROTATION = new Rotation2d(Math.PI/2 - .3);
+
+
+
 	}
 
 	public static final double MODULE_DRIVE_KP = 0.05;

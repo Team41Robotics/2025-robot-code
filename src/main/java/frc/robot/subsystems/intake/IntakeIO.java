@@ -20,7 +20,7 @@ public interface IntakeIO {
 	public static class IntakeIOInputs {
 		public double velocity = 0.0;
 		public double voltage = 0.0;
-		public boolean beamBreakIsActive = false;
+		public boolean beamBreakIsDisabled = false;
 		public double[] current = {};
 	}
 }

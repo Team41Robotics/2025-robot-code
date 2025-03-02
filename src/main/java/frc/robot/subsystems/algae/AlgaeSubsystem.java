@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -18,8 +19,8 @@ public class AlgaeSubsystem extends SubsystemBase {
 
 	public AlgaeSubsystem() {
 		io = new AlgaeIOSparkMax();
-		targetRotation = Optional.of(new Rotation2d(0));
-		m_PID = new PIDController(1.4, 0, 1); // todo
+		targetRotation = Optional.of(new Rotation2d(Math.PI/4));
+		m_PID = new PIDController(2, 0, 1); // todo
 	}
 
 	@Override

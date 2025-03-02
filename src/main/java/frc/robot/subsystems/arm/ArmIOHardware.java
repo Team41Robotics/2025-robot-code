@@ -18,6 +18,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -46,7 +47,7 @@ public class ArmIOHardware implements ArmIO {
 	private final TalonFX telescope1;
 	private final TalonFX telescope2;
 
-	private final SparkMax wrist;
+	private final SparkFlex wrist;
 
 	private final CANcoder shoulderEncoder;
 	private final Canandmag wristEncoder;
@@ -97,7 +98,7 @@ public class ArmIOHardware implements ArmIO {
 
 		TalonFXConfiguration telescopeConfig = new TalonFXConfiguration();
 		telescopeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-		telescopeConfig.CurrentLimits.StatorCurrentLimit = 45;
+		telescopeConfig.CurrentLimits.StatorCurrentLimit = 40;
 
 		t1Configurator.apply(telescopeConfig);
 		t2Configurator.apply(telescopeConfig);
@@ -110,9 +111,10 @@ public class ArmIOHardware implements ArmIO {
 		shoulderEncoder = new CANcoder(26);
 		extension = 0;
 
-		wrist = new SparkMax(WRIST, MotorType.kBrushless);
+		wrist = new SparkFlex(39, MotorType.kBrushless);
 		wristEncoder = new Canandmag(WRIST);
 
+		
 		SparkMaxConfig wristConfig = new SparkMaxConfig();
 		wristConfig.smartCurrentLimit(30).idleMode(IdleMode.kBrake);
 	}
@@ -149,14 +151,14 @@ public class ArmIOHardware implements ArmIO {
 		// inputs.topSwitchOn = topSwitch.get();
 
 		// TOOD: Add inputs for wrist
-		inputs.wristRotation = new Rotation2d(Units.rotationsToRadians(wristEncoder.getPosition()));
+		inputs.wristRotation = Rotation2d.fromRotations(wristEncoder.getAbsPosition());
 		inputs.wristPivotVoltage = wrist.getAppliedOutput();
+
 	}
 
 	@Override
 	public void setShoulderVoltage(double voltage) {
-		shoulder1.setVoltage(
-				-voltage); // Negative since motor directions and encoder directions are opposite and this is an easier
+		shoulder1.setVoltage(-voltage); // Negative since motor directions and encoder directions are opposite and this is an easier
 		// fix
 	}
 
@@ -167,7 +169,7 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setWristVoltage(double voltage) {
-		wrist.setVoltage(voltage);
+		wrist.setVoltage(-voltage);
 	}
 
 	@Override
@@ -177,11 +179,11 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setExtensionVoltageClamped(double voltage) {
-		setExtensionVoltage(MathUtil.clamp(voltage, -5, 5));
+		setExtensionVoltage(MathUtil.clamp(voltage, -6, 6));
 	}
 
 	@Override
 	public void setWristVoltageClamped(double voltage) {
-		setWristVoltage(MathUtil.clamp(voltage, -1, 1));
+		setWristVoltage(MathUtil.clamp(voltage, -1.5, 1.5));
 	}
 }

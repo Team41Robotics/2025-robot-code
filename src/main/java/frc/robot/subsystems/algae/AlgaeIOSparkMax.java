@@ -23,7 +23,7 @@ public class AlgaeIOSparkMax implements AlgaeIO {
 	public AlgaeIOSparkMax() {
 		pivotEncoder = new DutyCycleEncoder(1);
 		intakeMotor = new TalonFX(27);
-		pivotMotor = new SparkMax(41, MotorType.kBrushless);
+		pivotMotor = new SparkMax(42, MotorType.kBrushless);
 		SparkMaxConfig config = new SparkMaxConfig();
 		config.idleMode(IdleMode.kBrake)
 			.smartCurrentLimit(60);
@@ -47,7 +47,7 @@ public class AlgaeIOSparkMax implements AlgaeIO {
 
 	@Override
 	public void setAlgaeVoltage(double voltage) {
-		pivotMotor.setVoltage(-MathUtil.clamp(voltage, -4, 4));
+		pivotMotor.setVoltage(-MathUtil.clamp(voltage, -3, 3));
 	}
 
         @Override 

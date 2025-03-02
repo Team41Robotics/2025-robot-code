@@ -21,15 +21,19 @@ public class IntakeSubsystem extends SubsystemBase {
 	}
 
 	public void updateLogging(){
-		Logger.recordOutput("/Intake/Beam Break Status", inputs.beamBreakIsDisabled);
+		Logger.recordOutput("/Intake/Beam Break Status", inputs.beamBreakNotTriggered);
 	}
 
-	public void runMotor(double velocity, boolean hawktuah) {
-		io.setVelocity(hawktuah ? velocity : -velocity);
+	public void runMotor(double velocity) {
+		io.setVelocity(velocity);
 	}
 
-	public boolean getBeamBreak(){
-		return inputs.beamBreakIsDisabled;
+	public void stopMotors(){
+		io.setVelocity(0);
+	}
+
+	public boolean isBeamBreakNotTriggered(){
+		return inputs.beamBreakNotTriggered;
 	}
 
 	

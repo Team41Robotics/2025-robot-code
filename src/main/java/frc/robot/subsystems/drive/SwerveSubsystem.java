@@ -1,5 +1,26 @@
 package frc.robot.subsystems.drive;
 
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
+import com.pathplanner.lib.util.PathPlannerLogging;
+
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.RobotContainer.drive;
 import static frc.robot.RobotContainer.imu;
 import static frc.robot.constants.Constants.PATH_FOLLOWER_CONFIG;
@@ -7,30 +28,8 @@ import static frc.robot.constants.Constants.ROBOT_CONFIG;
 import static frc.robot.constants.Constants.RobotConstants.ROBOT_LENGTH;
 import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
 import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.FileVersionException;
-import com.pathplanner.lib.util.PathPlannerLogging;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SwerveModuleConfiguration;
 import frc.robot.util.Util;
-import java.io.IOException;
-import java.util.Optional;
-import org.json.simple.parser.ParseException;
-import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
 
 public class SwerveSubsystem extends SubsystemBase {
 	public SwerveModule[] modules = new SwerveModule[] {
@@ -46,9 +45,6 @@ public class SwerveSubsystem extends SubsystemBase {
 			new Translation2d(-ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2));
 
 	public SwerveDrivePoseEstimator pose_est;
-	public final double POSE_BUFFER_SIZE_SECONDS = 2.;
-	TimeInterpolatableBuffer<Pose2d> pose_buffer = TimeInterpolatableBuffer.createBuffer(POSE_BUFFER_SIZE_SECONDS);
-
 	/**
 	 * Initializes the SwerveSubsystem with the given initial pose.
 	 *
@@ -172,8 +168,6 @@ public class SwerveSubsystem extends SubsystemBase {
 		Logger.recordOutput("/Swerve/module_speeds", states);
 	}
 
-	private Optional<EstimatedRobotPose> est_pos;
-
 	/**
 	 * Updates the state of the SwerveSubsystem periodically.
 	 * This method is called repeatedly to perform necessary updates and calculations.
@@ -225,7 +219,6 @@ public class SwerveSubsystem extends SubsystemBase {
 	}
 
 	public void addLimelightMeasurement(Pose2d est, double timeStamp) {
-		// pose_est.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
 		pose_est.addVisionMeasurement(est, timeStamp);
 	}
 }

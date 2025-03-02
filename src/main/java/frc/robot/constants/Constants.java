@@ -16,13 +16,13 @@ public final class Constants {
 		public static final double SWERVE_MAXSPEED = 4.42;
 		public static final double ANGULAR_MAX_SPEED = SWERVE_MAXSPEED / (Math.hypot(ROBOT_LENGTH, ROBOT_WIDTH) / 2);
 
-		public static final double SPEED_MULT = 0.5;
-		public static final double TURBO_SPEED_MULT = 1;
+		public static final double SPEED_MULT = 1;
+		public static final double TURBO_SPEED_MULT = 0.2;
 
 		public static final double ANGULAR_SPEED_MULT = 0.75;
-		public static final double TURBO_ANGULAR_SPEED_MULT = 1;
+		public static final double TURBO_ANGULAR_SPEED_MULT = 0.3;
 
-		public static final double SWERVE_WHEEL_RAD = 2 * 2.54 / 100;
+		public static final double SWERVE_WHEEL_RAD = Units.inchesToMeters(2);
 		public static final double L3_DRIVE_RATIO = 1 / 6.12; // input RPM * gearing = output RPM
 		public static final double L3_TURN_RATIO = 1 / 12.8;
 	}

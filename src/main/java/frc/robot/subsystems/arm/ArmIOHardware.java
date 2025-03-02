@@ -184,6 +184,6 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setWristVoltageClamped(double voltage) {
-		setWristVoltage(MathUtil.clamp(voltage, -1.5, 1.5));
+		setWristVoltage(MathUtil.clamp(voltage, -2, 2));
 	}
 }

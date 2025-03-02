@@ -68,6 +68,7 @@ public class ArmSubsystem extends SubsystemBase {
 			io.setWristVoltageClamped(rampVoltage(out, wrist_previous_voltage));
 			wrist_previous_voltage = out;
 			if (wristPID.atSetpoint()) {
+				
 				wrist_previous_voltage = 0.;
 			}
 		}

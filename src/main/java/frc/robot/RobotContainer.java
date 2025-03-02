@@ -39,6 +39,8 @@ public class RobotContainer {
 	public static CommandJoystick right_js = new CommandJoystick(3);
 	public static CommandJoystick ds = new CommandJoystick(2);
 
+	public static ArmConfiguration armState;
+
 	public static LoggedDashboardChooser<Command> autoChooser;
 
 	public static void initSubsystems() {

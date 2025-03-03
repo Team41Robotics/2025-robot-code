@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
@@ -115,12 +114,25 @@ public class Util {
 		return Optional.of(fieldLayout.getTagPose(id).get().toPose2d());
 	}
 
-	public static Pose2d getAdjustedPose(Pose2d target) {
+	public static Pose2d getAdjustedPose(Pose2d target, boolean isRight) {
+
+		double extensionLength = 0.0; // TODO
+		double endEffectorOffset = 0.0;
 
 		Pose2d returnable = target;
 		Transform2d currentToTarget = new Transform2d(
-				new Translation2d((ROBOT_WIDTH / 2) + Units.inchesToMeters(3 + 4.5), 0),
-				new Rotation2d(0)); // 0.06 is offset for stuff in front of the camera
+				new Translation2d((ROBOT_WIDTH / 2) + extensionLength, endEffectorOffset),
+				new Rotation2d(0)); 
+		return returnable.transformBy(currentToTarget);
+	}
+
+	public static Pose2d getAdjustedPoseHumanPlayer(Pose2d target) {
+
+		// Need to add stuff for spacing 
+		Pose2d returnable = target;
+		Transform2d currentToTarget = new Transform2d(
+				new Translation2d((ROBOT_WIDTH / 2), 0),
+				new Rotation2d(0));
 		return returnable.transformBy(currentToTarget);
 	}
 

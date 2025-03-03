@@ -1,16 +1,17 @@
 package frc.robot.commands.drive;
 
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.util.Util.convertAngle;
-import static frc.robot.util.Util.getAdjustedPose;
-import static frc.robot.util.Util.getAprilTagPose;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.util.Util.convertAngle;
+import static frc.robot.util.Util.getAdjustedPoseHumanPlayer;
+import static frc.robot.util.Util.getAprilTagPose;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class AlignToStation extends Command {
@@ -48,7 +49,7 @@ public class AlignToStation extends Command {
 			target_pose = stored_pose;
 		}
 
-		adj_pose = getAdjustedPose(target_pose.get());
+		adj_pose = getAdjustedPoseHumanPlayer(target_pose.get());
 	}
 
 	@Override
@@ -81,7 +82,6 @@ public class AlignToStation extends Command {
 	public boolean isFinished() {
 
 		if (target_pose.isEmpty()) {
-			System.out.println("NO TARGET, REPOSITION AND TRY AGAIN");
 			return true;
 		}
 
@@ -96,8 +96,6 @@ public class AlignToStation extends Command {
 			System.out.println("Aligned");
 			return true;
 		}
-
-		System.out.println("Still working on it " + " Angular Dist: " + angle_offset);
 		return false;
 	}
 

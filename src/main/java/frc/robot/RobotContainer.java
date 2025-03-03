@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -45,7 +46,8 @@ public class RobotContainer {
 	public static boolean L4 = false;
 
 	public static LoggedDashboardChooser<Command> autoChooser;
-
+	public static LoggedDashboardChooser<Command> reefChooser;
+ 
 	public static void initSubsystems() {
 
 		config.		setName("limelight-front")
@@ -68,11 +70,38 @@ public class RobotContainer {
 
 		Pathfinding.setPathfinder(new LocalADStarAK());
 		autoChooser = new LoggedDashboardChooser<>("Auto Routine", AutoBuilder.buildAutoChooser());
+		reefChooser = new LoggedDashboardChooser<>("Target on Reef", new SendableChooser<>());
 
 		autoChooser.addOption("Goto Tag 13", new AlignToStation(13));
 		autoChooser.addOption("Goto Tag 12", new AlignToStation(12));
 		autoChooser.addOption("Goto Tag 2", new AlignToStation(2));
 		autoChooser.addOption("Goto Tag 1", new AlignToStation(1));
+		
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		reefChooser.addOption();
+		
+		
+
 
 		configureBindings();
 	}

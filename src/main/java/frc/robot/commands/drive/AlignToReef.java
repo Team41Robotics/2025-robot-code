@@ -1,16 +1,17 @@
 package frc.robot.commands.drive;
 
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.util.Util.convertAngle;
-import static frc.robot.util.Util.getAdjustedPose;
-import static frc.robot.util.Util.getAprilTagPose;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.util.Util.convertAngle;
+import static frc.robot.util.Util.getAdjustedPose;
+import static frc.robot.util.Util.getAprilTagPose;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class AlignToReef extends Command {
@@ -24,10 +25,10 @@ public class AlignToReef extends Command {
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();
 	private int target_id;
+	private boolean left; // Are we aiming for left side or not 
+	private Pose2d adj_pose; // Target robot pose generated from apriltag 
 
-	private Pose2d adj_pose;
-
-	public AlignToReef(int target_id) {
+	public AlignToReef(int target_id, boolean left) {
 		addRequirements(drive);
 		wPID.enableContinuousInput(0, 2 * Math.PI);
 		this.target_id = target_id;
@@ -35,20 +36,17 @@ public class AlignToReef extends Command {
 
 	@Override
 	public void initialize() {
-		// target_pose = photon.getAprilTagPose();
-		// target_pose = photon.getAprilTagPose(20);
 		target_pose = getAprilTagPose(target_id);
 		if (target_pose.isEmpty()
 				&& stored_pose
-						.isEmpty()) { // For reliability, if not receiving new pose from PhotonVision, use previously
+					.isEmpty()) { // For reliability, if not receiving new pose from PhotonVision, use previously
 			// saved pose if any as reference
 			return;
 		} else if (target_pose.isEmpty() && !stored_pose.isEmpty()) {
-			// System.out.println(drive.getPose().getTranslation().getDistance(stored_pose.get().getTranslation()));
 			target_pose = stored_pose;
 		}
 
-		adj_pose = getAdjustedPose(target_pose.get());
+		adj_pose = getAdjustedPose(target_pose.get(), left);
 	}
 
 	@Override

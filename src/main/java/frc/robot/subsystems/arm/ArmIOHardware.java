@@ -101,7 +101,7 @@ public class ArmIOHardware implements ArmIO {
 
 		TalonFXConfiguration telescopeConfig = new TalonFXConfiguration();
 		telescopeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-		telescopeConfig.CurrentLimits.StatorCurrentLimit = 90;
+		telescopeConfig.CurrentLimits.StatorCurrentLimit = 100;
 
 		t1Configurator.apply(telescopeConfig);
 		t2Configurator.apply(telescopeConfig);
@@ -184,7 +184,7 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setExtensionVoltageClamped(double voltage) {
-		setExtensionVoltage(MathUtil.clamp(voltage, -6, 6));
+		setExtensionVoltage(MathUtil.clamp(voltage, -6.5, 6.5));
 	}
 
 	@Override

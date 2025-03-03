@@ -13,7 +13,7 @@ public enum ArmConfiguration {
 	L2(Rotation2d.fromRadians(1.621), MIN_EXTENSION, 4.3, "L2"),
 	L3(Rotation2d.fromRadians(1.4577), Units.inchesToMeters(18), 4.3, "L3"),
 	L4(Rotation2d.fromRadians(1.25), MAX_EXTENSION, 1.35, "L4"),
-	HUMAN_PLAYER(Rotation2d.fromDegrees(50), MIN_EXTENSION, 3.65, "HP"),
+	HUMAN_PLAYER(Rotation2d.fromRadians(.82404), MIN_EXTENSION, 3.75, "HP"),
 	CLIMB(Rotation2d.fromDegrees(68), Units.inchesToMeters(22), 0, "CLIMB");
 	public Rotation2d SHOULDER_ROTATION;
 	public double WRIST_ROTATION;

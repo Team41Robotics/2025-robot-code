@@ -80,7 +80,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 		turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 		turnConfig.CurrentLimits.withStatorCurrentLimit(80);
 		// turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-		// turnConfig.CurrentLimits.withSupplyCurrentLimit(20);
+		// turnConfig.CurrentLimits.withSupplyCurrentLimit(20); // Only needed when brownouts become an issue
 
 		turnConfigurator.apply(turnConfig);
 

@@ -119,6 +119,8 @@ public class Util {
 		double extensionLength = 0.0; // TODO
 		double endEffectorOffset = 0.0;
 
+		if(isRight) endEffectorOffset *= -1;
+
 		Pose2d returnable = target;
 		Transform2d currentToTarget = new Transform2d(
 				new Translation2d((ROBOT_WIDTH / 2) + extensionLength, endEffectorOffset),
@@ -129,9 +131,10 @@ public class Util {
 	public static Pose2d getAdjustedPoseHumanPlayer(Pose2d target) {
 
 		// Need to add stuff for spacing 
+		double extension = 0.; // TODO (In meters)
 		Pose2d returnable = target;
 		Transform2d currentToTarget = new Transform2d(
-				new Translation2d((ROBOT_WIDTH / 2), 0),
+				new Translation2d((ROBOT_WIDTH / 2) + extension, 0),
 				new Rotation2d(0));
 		return returnable.transformBy(currentToTarget);
 	}

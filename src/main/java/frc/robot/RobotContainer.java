@@ -77,6 +77,7 @@ public class RobotContainer {
 		autoChooser.addOption("Goto Tag 2", new AlignToStation(2));
 		autoChooser.addOption("Goto Tag 1", new AlignToStation(1));
 		
+		/*reefChooser.addOption();
 		reefChooser.addOption();
 		reefChooser.addOption();
 		reefChooser.addOption();
@@ -97,8 +98,7 @@ public class RobotContainer {
 		reefChooser.addOption();
 		reefChooser.addOption();
 		reefChooser.addOption();
-		reefChooser.addOption();
-		reefChooser.addOption();
+		reefChooser.addOption();*/
 		
 		
 
@@ -111,9 +111,9 @@ public class RobotContainer {
 		// ds.button(12).onTrue(new InstantCommand(() -> arm.setTargetExtension(MAX_EXTENSION)));
 		 ds.button(11).onTrue(new Retract(ArmConfiguration.HUMAN_PLAYER));			
 		 ds.button(12).onTrue(new SetToScore(ArmConfiguration.L4));
-		 ds.button(9).onTrue(new Retract(ArmConfiguration.L2));			
+		 ds.button(9).onTrue(new SetToScore(ArmConfiguration.L2));			
 		 ds.button(10).onTrue(new SetToScore(ArmConfiguration.L3));
-		 ds.button(8).onTrue(new Retract(ArmConfiguration.L1));			
+		 ds.button(8).onTrue(new SetToScore(ArmConfiguration.L1));			
 		 ds.button(7).onTrue(new SetToScore(ArmConfiguration.NEUTRAL));
 		 
 		// ds.button(11).onTrue(new InstantCommand(() -> arm.setTargetExtension(MIN_EXTENSION)));

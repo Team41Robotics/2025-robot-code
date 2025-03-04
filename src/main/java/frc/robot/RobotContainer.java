@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.arm.Retract;
 import frc.robot.commands.arm.ScoreCoral;
@@ -119,7 +118,7 @@ public class RobotContainer {
 		// ds.button(11).onTrue(new InstantCommand(() -> arm.setTargetExtension(MIN_EXTENSION)));
 		// ds.button(12).onTrue(new InstantCommand(() -> arm.setTargetExtension(MAX_EXTENSION)));
 		// ds.button(11).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(new Rotation2d(1.47))));
-		right_js.button(1).whileTrue(new InstantCommand(() -> intake.runMotor(0.10)).until(() -> !intake.isBeamBreakNotTriggered()).andThen(new InstantCommand(() -> intake.stopMotors()))); // INTAKE
+		right_js.button(1).whileTrue(intake.runIntake(0.1)); // INTAKE
 		left_js.button(1).onTrue(new ScoreCoral());
 	}
 

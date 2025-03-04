@@ -18,9 +18,9 @@ public class AlignToStation extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(1.25, 0, 0);
-	private PIDController yPID = new PIDController(1.25, 0, 0);
-	private PIDController wPID = new PIDController(1.5, 0., 0.4);
+	private PIDController xPID = new PIDController(0.2, 0, 0);
+	private PIDController yPID = new PIDController(0.2, 0, 0);
+	private PIDController wPID = new PIDController(0.2, 0., 0.);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();
@@ -63,7 +63,7 @@ public class AlignToStation extends Command {
 		double adj_Y = adj_pose.getY();
 
 		double curr_rot = current_pose.getRotation().getRadians();
-		double target_rot = target_pose.get().getRotation().getRadians();
+		double target_rot = adj_pose.getRotation().getRadians();
 
 		Logger.recordOutput("/Odom/adjusted pose", adj_pose);
 		Logger.recordOutput("/Odom/adjusted_pose/x", adj_X);
@@ -92,7 +92,7 @@ public class AlignToStation extends Command {
 		double angle_offset = Math.abs(convertAngle(current_pose.getRotation().getRadians())
 				- convertAngle(adj_pose.getRotation().getRadians())); // Angular difference
 
-		if (dX < 0.04 && dY < 0.04 && angle_offset <= (4 * Math.PI) / 360) {
+		if (dX < 0.1 && dY < 0.1 && angle_offset <= (4 * Math.PI) / 360) {
 			System.out.println("Aligned");
 			return true;
 		}

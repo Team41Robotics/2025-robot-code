@@ -18,9 +18,9 @@ public class AlignToReef extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(1.25, 0, 0);
-	private PIDController yPID = new PIDController(1.25, 0, 0);
-	private PIDController wPID = new PIDController(1.5, 0., 0.4);
+	private PIDController xPID = new PIDController(0.2, 0, 0);
+	private PIDController yPID = new PIDController(0.2, 0, 0);
+	private PIDController wPID = new PIDController(0.1, 0., 0);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();
@@ -67,8 +67,8 @@ public class AlignToReef extends Command {
 		Logger.recordOutput("/Odom/adjusted_pose/y", adj_Y);
 		Logger.recordOutput("/Odom/adjusted_pose/w", adj_pose.getRotation().getRadians());
 
-		double xVel = xPID.calculate(curr_X, adj_X);
-		double yVel = xPID.calculate(curr_Y, adj_Y);
+		double xVel = -xPID.calculate(curr_X, adj_X);
+		double yVel = -xPID.calculate(curr_Y, adj_Y);
 		double wVel = xPID.calculate(curr_rot, target_rot);
 
 		drive.drive(ChassisSpeeds.fromFieldRelativeSpeeds(

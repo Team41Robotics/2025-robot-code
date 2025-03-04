@@ -24,7 +24,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 		inputs.velocity = m_motor.get();
 		inputs.voltage = m_motor.getBusVoltage();
 		inputs.current = new double[] {m_motor.getOutputCurrent()};
-		inputs.beamBreakNotTriggered = beamBreak.get();
+		inputs.beamBreakStatus = beamBreak.get();
 	}
 
 	@Override

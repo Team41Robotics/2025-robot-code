@@ -83,11 +83,15 @@ public class Util {
 
 		double speed_mult = turbo ? TURBO_SPEED_MULT : SPEED_MULT;
 		double angular_mult = turbo ? TURBO_ANGULAR_SPEED_MULT : ANGULAR_SPEED_MULT;
-		ChassisSpeeds ret = ChassisSpeeds.fromFieldRelativeSpeeds(
-				cos(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
-				sin(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
-				MathUtil.applyDeadband(w, 0.1) * ANGULAR_MAX_SPEED * angular_mult,
-				rot);
+		// ChassisSpeeds ret = ChassisSpeeds.fromFieldRelativeSpeeds(
+		// 		cos(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
+		// 		sin(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
+		// 		MathUtil.applyDeadband(w, 0.1) * ANGULAR_MAX_SPEED * angular_mult,
+		// 		rot);
+		ChassisSpeeds ret = new ChassisSpeeds(
+			cos(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
+			sin(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
+			MathUtil.applyDeadband(w, 0.1) * ANGULAR_MAX_SPEED * angular_mult);
 		return ret;
 	}
 
@@ -131,11 +135,12 @@ public class Util {
 	public static Pose2d getAdjustedPoseHumanPlayer(Pose2d target) {
 
 		// Need to add stuff for spacing 
-		double extension = 0.; // TODO (In meters)
+		double extension = 0.12; // TODO (In meters)
+		double effectorOffset = 0.17;
 		Pose2d returnable = target;
 		Transform2d currentToTarget = new Transform2d(
-				new Translation2d((ROBOT_WIDTH / 2) + extension, 0),
-				new Rotation2d(0));
+				new Translation2d((ROBOT_WIDTH / 2) + extension, -effectorOffset),
+				new Rotation2d(Math.PI));
 		return returnable.transformBy(currentToTarget);
 	}
 

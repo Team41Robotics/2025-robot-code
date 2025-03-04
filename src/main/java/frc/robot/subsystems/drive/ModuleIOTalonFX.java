@@ -65,8 +65,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 		driveConfig.Slot0.kP = MODULE_DRIVE_KP; // Drive kP
 		driveConfig.Slot0.kV = MODULE_DRIVE_KF; // Drive FeedForwards
 
-		driveConfig.Feedback.SensorToMechanismRatio =
-			DRIVE_GEAR_RATIO;	
+		//driveConfig.Feedback.SensorToMechanismRatio =
+		//	DRIVE_GEAR_RATIO;	
 
 		driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 		driveConfig.CurrentLimits.withStatorCurrentLimit(120);
@@ -90,16 +90,16 @@ public class ModuleIOTalonFX implements ModuleIO {
 
 	@Override
 	public void updateInputs(ModuleIOInputs inputs) {
-		inputs.drivePositionRad = driveTalonFX.getPosition().getValueAsDouble() * 2 * PI / DRIVE_GEAR_RATIO;
+		inputs.drivePositionRad = -driveTalonFX.getPosition().getValueAsDouble() * 2 * PI / DRIVE_GEAR_RATIO;
 
-		inputs.driveVelocityMetersPerSec = driveTalonFX.getVelocity().getValueAsDouble() * 2 * PI / DRIVE_GEAR_RATIO * SWERVE_WHEEL_RAD;
+		inputs.driveVelocityMetersPerSec = -driveTalonFX.getVelocity().getValueAsDouble() * 2 * PI / DRIVE_GEAR_RATIO * SWERVE_WHEEL_RAD;
 
-		inputs.driveAppliedVolts = driveTalonFX.getDutyCycle().getValueAsDouble()
+		inputs.driveAppliedVolts = -driveTalonFX.getDutyCycle().getValueAsDouble()
 				* driveTalonFX.getSupplyVoltage().getValueAsDouble();
 
 		inputs.driveCurrentAmps = new double[] {driveTalonFX.getStatorCurrent().getValueAsDouble()};
 
-		inputs.turnAbsolutePosition = Rotation2d.fromRadians(
+		inputs.turnAbsolutePosition = Rotation2d.fromRotations(
 				turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble());
 
 		inputs.turnAbsolutePositionRad = inputs.turnAbsolutePosition.getRadians();
@@ -118,12 +118,12 @@ public class ModuleIOTalonFX implements ModuleIO {
 
 	@Override
 	public void setDriveVoltage(double volts) {
-		driveTalonFX.setVoltage(volts);
+		driveTalonFX.setVoltage(-volts);
 	}
 
 	@Override
 	public void setDriveVelocity(double mps) {
-		driveTalonFX.set(mps);
+		driveTalonFX.set(-mps);
 	}
 
 	@Override

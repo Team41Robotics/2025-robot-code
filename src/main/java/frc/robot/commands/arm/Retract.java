@@ -10,10 +10,10 @@ public class Retract extends SequentialCommandGroup {
 	public Retract(ArmConfiguration _config) {
 
 		super(
+				new InstantCommand(() -> arm.setWristTargetRotation(_config.WRIST_ROTATION)),
                                 new InstantCommand(() -> arm.setTargetExtension(_config.EXTENSION)),
                                 new WaitCommand(0.75),
-				new InstantCommand(() -> arm.setShoulderTargetRotation(_config.SHOULDER_ROTATION)),
-				new InstantCommand(() -> arm.setWristTargetRotation(_config.WRIST_ROTATION)));
+				new InstantCommand(() -> arm.setShoulderTargetRotation(_config.SHOULDER_ROTATION)));
 		addRequirements(arm);
 	}
 }

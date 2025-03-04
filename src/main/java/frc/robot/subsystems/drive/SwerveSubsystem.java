@@ -57,7 +57,7 @@ public class SwerveSubsystem extends SubsystemBase {
 				getPositions(),
 				init_pose,
 				VecBuilder.fill(0.1, 0.1, 0.1),
-				VecBuilder.fill(0.5, 0.5, 0.3)); // TODO
+				VecBuilder.fill(0.5, 0.5, 0.9)); // TODO
 
 		AutoBuilder.configure(
 				this::getPose,
@@ -155,6 +155,7 @@ public class SwerveSubsystem extends SubsystemBase {
 		Logger.recordOutput("/Odom/y", pose_est.getEstimatedPosition().getY());
 		Logger.recordOutput(
 				"/Odom/rot_raw", pose_est.getEstimatedPosition().getRotation().getRadians());
+		Logger.recordOutput("/Odom/IMU_yaw", imu.yaw());
 
 		double[] states = new double[8];
 		for (int i = 0; i < 4; i++) states[i * 2 + 1] = modules[i].getTargetState().speedMetersPerSecond;

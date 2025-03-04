@@ -14,36 +14,34 @@ public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
 	private Pose2d robotToField = new Pose2d();
 	private double mt1Timestamp = 0.0;
-	private boolean doRejectUpdate = false;
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;
-		System.out.println("Initialized limelight with name, " + config.Name);
 	}
 
 	@Override
 	public void periodic() {
 		LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(config.Name);
 
-		if (mt1.tagCount >= 1 && mt1.rawFiducials.length == 1) {
-			if (mt1.rawFiducials[0].ambiguity > 80.) {
-				doRejectUpdate = true;
-				System.out.println("Rejected update: Target too ambiguous");
+		boolean doRejectUpdate = false;
+		if(mt1!=null) {
+			if (mt1.tagCount == 1) {
+				if (mt1.rawFiducials[0].ambiguity > 80.) {
+					doRejectUpdate = true;
+				}
+				// if (mt1.rawFiducials[0].distToCamera > 3) { // TODO
+				// 	doRejectUpdate = true;
+				// 	System.out.println(config.Name + "Rejected update: Target too far " + mt1.rawFiducials[0].distToCamera);
+				// }
 			}
-			if (mt1.rawFiducials[0].distToCamera > 3) { // TODO
+			if (mt1.tagCount == 0) {
 				doRejectUpdate = true;
-				System.out.println("Rejected update: Target too far");
 			}
-		}
-		if (mt1.tagCount == 0) {
-			doRejectUpdate = true;
-			//System.out.println(config.Name + " Rejected update: No targets");
-		}
-		if (!doRejectUpdate) {
-			robotToField = mt1.pose;
-			mt1Timestamp = mt1.timestampSeconds;
-			drive.addLimelightMeasurement(robotToField, mt1Timestamp);
-			System.out.println("Sent measurement");
+			if (!doRejectUpdate) {
+				robotToField = mt1.pose;
+				mt1Timestamp = mt1.timestampSeconds;
+				drive.addLimelightMeasurement(robotToField, mt1Timestamp);
+			}
 		}
 		Logger.recordOutput("/Odom/limelight_pose/" + config.Name, this.robotToField);
 	}

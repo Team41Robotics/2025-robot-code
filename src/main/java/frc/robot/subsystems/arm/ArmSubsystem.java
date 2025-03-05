@@ -33,7 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
 
 	public ArmSubsystem() {
 		io = new ArmIOHardware();
-		shoulderPID = new PIDController(3, 0, 0);
+		shoulderPID = new PIDController(4.5, 0, 0.);
 		telescopePID = new PIDController(13, 4, 0);
 		telescopePID.setTolerance(0.1);
 		wristPID = new PIDController(2, 0, 0.15);
@@ -134,6 +134,10 @@ public class ArmSubsystem extends SubsystemBase {
 
 	public Rotation2d getShoulderAngle() {
 		return inputs.shoulderRotation;
+	}
+
+	public double getWristAngle(){
+		return inputs.wristRotation;
 	}
 
 	public boolean shoulderAtSetpoint() {

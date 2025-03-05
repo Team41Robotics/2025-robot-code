@@ -57,7 +57,7 @@ public class SwerveSubsystem extends SubsystemBase {
 				getPositions(),
 				init_pose,
 				VecBuilder.fill(0.1, 0.1, 0.1),
-				VecBuilder.fill(0.5, 0.5, 0.9)); // TODO
+				VecBuilder.fill(0.75, 0.75, 0.9)); // TODO
 
 		AutoBuilder.configure(
 				this::getPose,

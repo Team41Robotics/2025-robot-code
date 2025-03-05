@@ -16,9 +16,9 @@ public class ScoreCoral extends Command{
                         return;
                 }
                 if(L4){
-                        intake.runMotor(-0.6);
+                        intake.runMotor(-0.7);
                 }else{
-                        intake.runMotor(0.6);
+                        intake.runMotor(0.7);
                 }
         }
 

@@ -40,7 +40,7 @@ public final class Constants {
 
 		public static final int WRIST = 0;
 
-		public static final double MAX_EXTENSION = Units.inchesToMeters(35);
+		public static final double MAX_EXTENSION = 0.88;
 		public static final double MIN_EXTENSION = 0;
 
 		public static final Rotation2d MIN_ROTATION = new Rotation2d(0.175); // SHOULDER

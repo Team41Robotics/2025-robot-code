@@ -7,6 +7,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import static frc.robot.RobotContainer.drive;
 import static frc.robot.util.Util.convertAngle;
@@ -92,7 +93,7 @@ public class AlignToStation extends Command {
 		double angle_offset = Math.abs(convertAngle(current_pose.getRotation().getRadians())
 				- convertAngle(adj_pose.getRotation().getRadians())); // Angular difference
 
-		if (dX < 0.1 && dY < 0.1 && angle_offset <= (4 * Math.PI) / 360) {
+		if (dX < 0.15 && dY < 0.1 && angle_offset <= Units.degreesToRadians(5)) {
 			System.out.println("Aligned");
 			return true;
 		}

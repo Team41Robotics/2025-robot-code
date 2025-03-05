@@ -18,9 +18,9 @@ public class AlignToReef extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(0.2, 0, 0);
-	private PIDController yPID = new PIDController(0.2, 0, 0);
-	private PIDController wPID = new PIDController(0.1, 0., 0);
+	private PIDController xPID = new PIDController(0.3, 0.00, 0);
+	private PIDController yPID = new PIDController(0.4, 0.00, 0);
+	private PIDController wPID = new PIDController(0.5, 0., 0);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();
@@ -66,10 +66,11 @@ public class AlignToReef extends Command {
 		Logger.recordOutput("/Odom/adjusted_pose/x", adj_X);
 		Logger.recordOutput("/Odom/adjusted_pose/y", adj_Y);
 		Logger.recordOutput("/Odom/adjusted_pose/w", adj_pose.getRotation().getRadians());
+		Logger.recordOutput("/Odom/error" , Math.hypot((curr_X - adj_X), (curr_Y - adj_Y)));
 
-		double xVel = -xPID.calculate(curr_X, adj_X);
-		double yVel = -xPID.calculate(curr_Y, adj_Y);
-		double wVel = xPID.calculate(curr_rot, target_rot);
+		double xVel = xPID.calculate(curr_X, adj_X);
+		double yVel = yPID.calculate(curr_Y, adj_Y);
+		double wVel = wPID.calculate(curr_rot, target_rot);
 
 		drive.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
 				xVel, yVel, wVel, drive.getPose().getRotation()));
@@ -90,7 +91,7 @@ public class AlignToReef extends Command {
 		double angle_offset = Math.abs(convertAngle(current_pose.getRotation().getRadians())
 				- convertAngle(adj_pose.getRotation().getRadians())); // Angular difference
 
-		if (dX < 0.04 && dY < 0.04 && angle_offset <= (4 * Math.PI) / 360) {
+		if (dX < 0.05 && dY < 0.05 && angle_offset <= (4 * Math.PI) / 360) {
 			System.out.println("Aligned");
 			return true;
 		}

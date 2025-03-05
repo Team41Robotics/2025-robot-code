@@ -687,7 +687,6 @@ public class LimelightHelpers {
 
 		if (poseArray.length == 0) {
 			// Handle the case where no data is available
-			System.out.println("No data");
 			return null; // or some default PoseEstimate
 		}
 

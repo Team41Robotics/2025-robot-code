@@ -26,13 +26,9 @@ public class VisionSubsystem extends SubsystemBase {
 		boolean doRejectUpdate = false;
 		if(mt1!=null) {
 			if (mt1.tagCount == 1) {
-				if (mt1.rawFiducials[0].ambiguity > 80.) {
+				if (mt1.rawFiducials[0].ambiguity > .50) {
 					doRejectUpdate = true;
 				}
-				// if (mt1.rawFiducials[0].distToCamera > 3) { // TODO
-				// 	doRejectUpdate = true;
-				// 	System.out.println(config.Name + "Rejected update: Target too far " + mt1.rawFiducials[0].distToCamera);
-				// }
 			}
 			if (mt1.tagCount == 0) {
 				doRejectUpdate = true;

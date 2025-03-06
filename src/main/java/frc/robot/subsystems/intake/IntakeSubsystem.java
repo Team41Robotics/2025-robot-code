@@ -13,7 +13,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	public IntakeSubsystem() {
 		io = new IntakeIOSparkMax();
-
 	}
 
 	@Override
@@ -22,15 +21,15 @@ public class IntakeSubsystem extends SubsystemBase {
 		updateLogging();
 	}
 
-	public void updateLogging(){
-		Logger.recordOutput("/Intake/Beam Break Status", inputs.beamBreakStatus);
+	public void updateLogging() {
+		Logger.processInputs("/Intake", inputs);
 	}
 
 	public void runMotor(double velocity) {
 		io.setVelocity(velocity);
 	}
 
-	public void stopMotors(){
+	public void stopMotors() {
 		io.setVelocity(0);
 	}
 
@@ -38,10 +37,7 @@ public class IntakeSubsystem extends SubsystemBase {
 		return new StartEndCommand(() -> this.runMotor(speed), this::stopMotors);
 	}
 
-	public boolean isBeamBreakNotTriggered(){
+	public boolean isBeamBreakNotTriggered() {
 		return inputs.beamBreakStatus;
 	}
-
-	
-
 }

@@ -1,7 +1,5 @@
 package frc.robot.subsystems.arm;
 
-import static java.lang.Math.PI;
-
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_2;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
@@ -12,6 +10,7 @@ import static frc.robot.constants.Constants.ArmConstants.WRIST;
 import static frc.robot.constants.Constants.SHOULDER_GEAR_RATIO;
 import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
 import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
+import static java.lang.Math.PI;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -22,10 +21,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -60,7 +57,7 @@ public class ArmIOHardware implements ArmIO {
 
 	public ArmIOHardware() {
 
-		bottomSwitch = new DigitalInput(0);
+		bottomSwitch = new DigitalInput(9);
 
 		shoulder1 = new TalonFX(SHOULDER_1);
 		shoulder2 = new TalonFX(SHOULDER_2);
@@ -117,7 +114,6 @@ public class ArmIOHardware implements ArmIO {
 		wrist = new SparkFlex(39, MotorType.kBrushless);
 		wristEncoder = new Canandmag(WRIST);
 
-		
 		SparkMaxConfig wristConfig = new SparkMaxConfig();
 		wristConfig.smartCurrentLimit(30).idleMode(IdleMode.kBrake);
 	}
@@ -155,15 +151,15 @@ public class ArmIOHardware implements ArmIO {
 
 		// TOOD: Add inputs for wrist
 		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI + 0.1;
-		inputs.wristRotation = inputs.wristRotation % (2*PI);
+		inputs.wristRotation = inputs.wristRotation % (2 * PI);
 		// inputs.wristRotation = Rotation2d.fromRotations(wristEncoder.getAbsPosition()).plus(new Rotation2d(0.1));
 		inputs.wristPivotVoltage = wrist.getAppliedOutput();
-
 	}
 
 	@Override
 	public void setShoulderVoltage(double voltage) {
-		shoulder1.setVoltage(-voltage); // Negative since motor directions and encoder directions are opposite and this is an easier
+		shoulder1.setVoltage(
+				-voltage); // Negative since motor directions and encoder directions are opposite and this is an easier
 		// fix
 	}
 

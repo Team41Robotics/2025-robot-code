@@ -6,6 +6,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -18,6 +19,7 @@ import frc.robot.commands.drive.AlignToStation;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.ArmConfiguration;
 import frc.robot.constants.LimelightConfiguration;
+import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
@@ -28,7 +30,7 @@ public class RobotContainer {
 	public static Robot robot;
 	public static SwerveSubsystem drive = new SwerveSubsystem();
 	public static IMU imu = new IMU();
-	//public static AlgaeSubsystem algae = new AlgaeSubsystem();
+	public static AlgaeSubsystem algae = new AlgaeSubsystem();
 	public static ArmSubsystem arm = new ArmSubsystem();
 	public static IntakeSubsystem intake = new IntakeSubsystem();
 
@@ -48,21 +50,18 @@ public class RobotContainer {
 	public static LoggedDashboardChooser<Integer> stationChooser;
 	public static LoggedDashboardChooser<Integer> reefChooser;
 
-
- 
 	public static void initSubsystems() {
 
 		config.setName("limelight-front")
-		.withHeightOffset(0.28)
-		.withLengthOffset(0.3)
-		.withWidthOffset(0.15);
+				.withHeightOffset(0.28)
+				.withLengthOffset(0.3)
+				.withWidthOffset(0.15);
 		// arm.zero();
 		config2.setName("limelight-back")
-		.withHeightOffset(0.275)
-		.withLengthOffset(-.025)
-		.withWidthOffset(0.1)
-		.withMountingYaw(Math.PI);
-
+				.withHeightOffset(0.275)
+				.withLengthOffset(-.025)
+				.withWidthOffset(0.1)
+				.withMountingYaw(Math.PI);
 
 		drive.setDefaultCommand(new DefaultDrive(() -> left_js.getY(), () -> left_js.getX(), () -> -right_js.getX()));
 		drive.init(new Pose2d());
@@ -87,26 +86,27 @@ public class RobotContainer {
 		reefChooser.addOption("Side 21", 21);
 		reefChooser.addOption("Side 22", 22);
 
-
 		configureBindings();
 	}
 
 	private static void configureBindings() {
 
-		right_js.button(4).onTrue(new AlignToStation((stationChooser.get()!=null) ? stationChooser.get(): 13));
-		right_js.button(2).onTrue(new AlignToReef((reefChooser.get()!=null) ? reefChooser.get() : 17, target_right));
-		// ds.button(12).onTrue(new InstantCommand(() -> arm.setTargetExtension(MAX_EXTENSION)));
-		 ds.button(1).onTrue(new InstantCommand(() -> target_right = !target_right));
-		 ds.button(11).onTrue(new Retract(ArmConfiguration.HUMAN_PLAYER));			
-		 ds.button(12).onTrue(new SetToScore(ArmConfiguration.L4));
-		 ds.button(9).onTrue(new SetToScore(ArmConfiguration.L2));			
-		 ds.button(10).onTrue(new SetToScore(ArmConfiguration.L3));
-		 ds.button(8).onTrue(new SetToScore(ArmConfiguration.L1));			
-		 ds.button(7).onTrue(new SetToScore(ArmConfiguration.NEUTRAL));
-		 
-		right_js.button(1).onTrue(intake.runIntake(0.2).until(() -> !intake.isBeamBreakNotTriggered())); // INTAKE
-		left_js.button(1).onTrue(new ScoreCoral());
+		right_js.button(4).onTrue(new AlignToStation().until(() -> left_js.button(2).getAsBoolean()));
+		right_js.button(1).onTrue(intake.runIntake(0.15).until(() -> !intake.isBeamBreakNotTriggered())); // INTAKE
+		right_js.button(2).onTrue(new AlignToReef().until(() -> left_js.button(2).getAsBoolean()));
 
+		ds.button(1).onTrue(new InstantCommand(() -> target_right = !target_right));
+
+		ds.button(11).onTrue(new Retract(ArmConfiguration.HUMAN_PLAYER));
+		ds.button(12).onTrue(new SetToScore(ArmConfiguration.L4));
+		ds.button(9).onTrue(new SetToScore(ArmConfiguration.L2));
+		ds.button(10).onTrue(new SetToScore(ArmConfiguration.L3));
+		ds.button(8).onTrue(new SetToScore(ArmConfiguration.L1));
+		ds.button(7).onTrue(new SetToScore(ArmConfiguration.NEUTRAL));
+
+		left_js.button(3).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(	157))));
+		left_js.button(4).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(93.75))));
+		left_js.button(1).onTrue(new ScoreCoral());
 	}
 
 	public static Command getAutonomousCommand() {

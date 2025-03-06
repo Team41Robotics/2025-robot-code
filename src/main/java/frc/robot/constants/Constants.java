@@ -44,10 +44,7 @@ public final class Constants {
 		public static final double MIN_EXTENSION = 0;
 
 		public static final Rotation2d MIN_ROTATION = new Rotation2d(0.175); // SHOULDER
-		public static final Rotation2d MAX_ROTATION = new Rotation2d(Math.PI/2 - .3);
-
-
-
+		public static final Rotation2d MAX_ROTATION = new Rotation2d(Math.PI / 2 - .3);
 	}
 
 	public static final double MODULE_DRIVE_KP = 0.05;

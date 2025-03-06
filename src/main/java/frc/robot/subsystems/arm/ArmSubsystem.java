@@ -28,17 +28,19 @@ public class ArmSubsystem extends SubsystemBase {
 	private final PIDController wristPID;
 
 	private double shoulder_previous_voltage;
-	//private double extension_previous_voltage;
+	// private double extension_previous_voltage;
 	private double wrist_previous_voltage;
 
 	public ArmSubsystem() {
 		io = new ArmIOHardware();
-		shoulderPID = new PIDController(4.5, 0, 0.);
-		telescopePID = new PIDController(13, 4, 0);
+		shoulderPID = new PIDController(7, 1, 0.);
+		shoulderPID.setIZone(0.5);
+		telescopePID = new PIDController(30, 25, 0);
 		telescopePID.setTolerance(0.1);
-		wristPID = new PIDController(2, 0, 0.15);
+		telescopePID.setIZone(0.1);
+		wristPID = new PIDController(3, 0, 0.15);
 		shoulder_previous_voltage = 0.0;
-		//extension_previous_voltage = 0.0;
+		// extension_previous_voltage = 0.0;
 		wrist_previous_voltage = 0.0;
 	}
 
@@ -61,11 +63,10 @@ public class ArmSubsystem extends SubsystemBase {
 			targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
 			double out = telescopePID.calculate(getExtension(), targetExtension.get());
 			io.setExtensionVoltageClamped(out);
-		}	
+		}
 		if (!wristTargetRotation.isEmpty()) {
 			wristTargetRotation = Optional.of(clampWristTargetAngle(wristTargetRotation.get()));
-			double out = wristPID.calculate(
-					inputs.wristRotation, wristTargetRotation.get());
+			double out = wristPID.calculate(inputs.wristRotation, wristTargetRotation.get());
 			io.setWristVoltageClamped(rampVoltage(out, wrist_previous_voltage));
 			wrist_previous_voltage = out;
 			if (wristPID.atSetpoint()) {
@@ -73,22 +74,7 @@ public class ArmSubsystem extends SubsystemBase {
 				wrist_previous_voltage = 0.;
 			}
 		}
-
-		updateLogging();
-	}
-
-	public void updateLogging() {
 		Logger.processInputs("Arm", inputs);
-		Logger.recordOutput("/Arm/Current Rotation", getShoulderAngle().getRadians());
-		Logger.recordOutput("Arm/Current Extension", getExtension());
-		Logger.recordOutput("Arm/Shoulder Voltage", inputs.shoulderPivotVoltage);
-		Logger.recordOutput("Arm/Shoulder Velocity", inputs.shoulderAngVel);
-		Logger.recordOutput("Arm/Current Extension", getExtension());
-		Logger.recordOutput("Arm/Extension Velocity", inputs.telescopeVelocity);
-		Logger.recordOutput("Arm/Extension Voltage", inputs.telescopeVoltage);
-		Logger.recordOutput("Arm/Extension Current", inputs.telescopeCurrent);
-		Logger.recordOutput("Arm/Current Wrist Rotation", inputs.wristRotation);
-		Logger.recordOutput("Arm/Wrist Voltage", inputs.wristPivotVoltage);
 		if (!targetExtension.isEmpty()) Logger.recordOutput("Arm/Target Extension", this.targetExtension.get());
 		if (!shoulderTargetRotation.isEmpty())
 			Logger.recordOutput(
@@ -119,13 +105,12 @@ public class ArmSubsystem extends SubsystemBase {
 		return target;
 	}
 
-	
 	public double clampTargetExtension(double extension) {
 		return MathUtil.clamp(extension, MIN_EXTENSION, MAX_EXTENSION);
 	}
 
-	public double clampWristTargetAngle(double target){
-		return MathUtil.clamp(target, PI/4, 3*PI/2);
+	public double clampWristTargetAngle(double target) {
+		return MathUtil.clamp(target, PI / 4, 3 * PI / 2);
 	}
 
 	public double getExtension() {
@@ -136,7 +121,7 @@ public class ArmSubsystem extends SubsystemBase {
 		return inputs.shoulderRotation;
 	}
 
-	public double getWristAngle(){
+	public double getWristAngle() {
 		return inputs.wristRotation;
 	}
 

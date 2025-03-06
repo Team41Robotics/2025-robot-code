@@ -10,16 +10,15 @@ public enum ArmConfiguration {
 	// TODO
 	NEUTRAL(MIN_ROTATION, MIN_EXTENSION, 4.455, "NEUTRAL"),
 	L1(MIN_ROTATION, MIN_EXTENSION, 0, "L1"),
-	L2(Rotation2d.fromRadians(1.621), MIN_EXTENSION, 4.3, "L2"),
-	L3(Rotation2d.fromRadians(1.4577), Units.inchesToMeters(18), 4.3, "L3"),
-	L4(Rotation2d.fromRadians(1.3), MAX_EXTENSION, 1.15, "L4"),
-	HUMAN_PLAYER(Rotation2d.fromRadians(.82404), MIN_EXTENSION, 3.75, "HP"),
+	L2(Rotation2d.fromRadians(1.615), MIN_EXTENSION, 4.3, "L2"),
+	L3(Rotation2d.fromRadians(1.435), Units.inchesToMeters(18), 4.3, "L3"),
+	L4(Rotation2d.fromRadians(1.2), MAX_EXTENSION, 1.2, "L4"),
+	HUMAN_PLAYER(Rotation2d.fromRadians(.82404), MIN_EXTENSION, 3.63, "HP"),
 	CLIMB(Rotation2d.fromDegrees(68), Units.inchesToMeters(22), 0, "CLIMB");
 	public Rotation2d SHOULDER_ROTATION;
 	public double WRIST_ROTATION;
 	public double EXTENSION;
 	public String NAME;
-
 
 	/**
 	 * Constructs a SwerveModuleConfiguration with the specified parameters.

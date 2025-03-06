@@ -1,5 +1,11 @@
 package frc.robot.subsystems.drive;
 
+import static frc.robot.constants.Constants.MODULE_DRIVE_KF;
+import static frc.robot.constants.Constants.MODULE_DRIVE_KP;
+import static frc.robot.constants.Constants.MODULE_TURN_KP;
+import static frc.robot.constants.Constants.RobotConstants.L3_DRIVE_RATIO;
+import static frc.robot.constants.Constants.RobotConstants.L3_TURN_RATIO;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_WHEEL_RAD;
 import static java.lang.Math.PI;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -8,16 +14,9 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import static frc.robot.constants.Constants.MODULE_DRIVE_KF;
-import static frc.robot.constants.Constants.MODULE_DRIVE_KP;
-import static frc.robot.constants.Constants.MODULE_TURN_KP;
-import static frc.robot.constants.Constants.RobotConstants.L3_DRIVE_RATIO;
-import static frc.robot.constants.Constants.RobotConstants.L3_TURN_RATIO;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_WHEEL_RAD;
 import frc.robot.constants.SwerveModuleConfiguration;
 
 /**
@@ -65,8 +64,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 		driveConfig.Slot0.kP = MODULE_DRIVE_KP; // Drive kP
 		driveConfig.Slot0.kV = MODULE_DRIVE_KF; // Drive FeedForwards
 
-		//driveConfig.Feedback.SensorToMechanismRatio =
-		//	DRIVE_GEAR_RATIO;	
+		// driveConfig.Feedback.SensorToMechanismRatio =
+		//	DRIVE_GEAR_RATIO;
 
 		driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 		driveConfig.CurrentLimits.withStatorCurrentLimit(120);
@@ -92,7 +91,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 	public void updateInputs(ModuleIOInputs inputs) {
 		inputs.drivePositionRad = -driveTalonFX.getPosition().getValueAsDouble() * 2 * PI / DRIVE_GEAR_RATIO;
 
-		inputs.driveVelocityMetersPerSec = -driveTalonFX.getVelocity().getValueAsDouble() * 2 * PI / DRIVE_GEAR_RATIO * SWERVE_WHEEL_RAD;
+		inputs.driveVelocityMetersPerSec =
+				-driveTalonFX.getVelocity().getValueAsDouble() * 2 * PI / DRIVE_GEAR_RATIO * SWERVE_WHEEL_RAD;
 
 		inputs.driveAppliedVolts = -driveTalonFX.getDutyCycle().getValueAsDouble()
 				* driveTalonFX.getSupplyVoltage().getValueAsDouble();
@@ -108,7 +108,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 
 		inputs.turnVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(
 						turnTalonFX.getVelocity().getValueAsDouble())
-						/ TURN_GEAR_RATIO;
+				/ TURN_GEAR_RATIO;
 
 		inputs.turnAppliedVolts = turnTalonFX.getDutyCycle().getValueAsDouble()
 				* turnTalonFX.getSupplyVoltage().getValueAsDouble();

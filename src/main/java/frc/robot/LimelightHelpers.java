@@ -676,10 +676,12 @@ public class LimelightHelpers {
 
 	private static PoseEstimate getBotPoseEstimate(String limelightName, String entryName, boolean isMegaTag2) {
 		DoubleArrayEntry poseEntry = LimelightHelpers.getLimelightDoubleArrayEntry(limelightName, entryName);
+		// System.out.println(limelightName + " / " + entryName + " is " + poseEntry.get().length);
 
 		TimestampedDoubleArray tsValue = poseEntry.getAtomic();
 		double[] poseArray = tsValue.value;
 		long timestamp = tsValue.timestamp;
+		// System.out.println(limelightName + " / " + entryName + " is " + poseArray.length);
 
 		if (poseArray.length == 0) {
 			// Handle the case where no data is available

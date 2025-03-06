@@ -1,15 +1,17 @@
 package frc.robot.subsystems.drive;
 
-import java.io.IOException;
-
-import org.json.simple.parser.ParseException;
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.imu;
+import static frc.robot.constants.Constants.PATH_FOLLOWER_CONFIG;
+import static frc.robot.constants.Constants.ROBOT_CONFIG;
+import static frc.robot.constants.Constants.RobotConstants.ROBOT_LENGTH;
+import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FileVersionException;
 import com.pathplanner.lib.util.PathPlannerLogging;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,15 +23,11 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.imu;
-import static frc.robot.constants.Constants.PATH_FOLLOWER_CONFIG;
-import static frc.robot.constants.Constants.ROBOT_CONFIG;
-import static frc.robot.constants.Constants.RobotConstants.ROBOT_LENGTH;
-import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
 import frc.robot.constants.SwerveModuleConfiguration;
 import frc.robot.util.Util;
+import java.io.IOException;
+import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
 
 public class SwerveSubsystem extends SubsystemBase {
 	public SwerveModule[] modules = new SwerveModule[] {
@@ -57,7 +55,7 @@ public class SwerveSubsystem extends SubsystemBase {
 				getPositions(),
 				init_pose,
 				VecBuilder.fill(0.1, 0.1, 0.1),
-				VecBuilder.fill(0.5, 0.5, 0.3)); // TODO
+				VecBuilder.fill(0.75, 0.75, 0.9)); // TODO
 
 		AutoBuilder.configure(
 				this::getPose,
@@ -155,6 +153,7 @@ public class SwerveSubsystem extends SubsystemBase {
 		Logger.recordOutput("/Odom/y", pose_est.getEstimatedPosition().getY());
 		Logger.recordOutput(
 				"/Odom/rot_raw", pose_est.getEstimatedPosition().getRotation().getRadians());
+		Logger.recordOutput("/Odom/IMU_yaw", imu.yaw());
 
 		double[] states = new double[8];
 		for (int i = 0; i < 4; i++) states[i * 2 + 1] = modules[i].getTargetState().speedMetersPerSecond;

@@ -1,42 +1,49 @@
 package frc.robot.commands.drive;
 
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.util.Util.convertAngle;
-import static frc.robot.util.Util.getAdjustedPose;
-import static frc.robot.util.Util.getAprilTagPose;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.RobotContainer;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.reefChooser;
+import static frc.robot.util.Util.convertAngle;
+import static frc.robot.util.Util.getAdjustedPose;
+import static frc.robot.util.Util.getAprilTagPose;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class AlignToReef extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(1.25, 0, 0);
-	private PIDController yPID = new PIDController(1.25, 0, 0);
-	private PIDController wPID = new PIDController(1.5, 0., 0.4);
+	private PIDController xPID = new PIDController(0.4, 0.0, 0);
+	private PIDController yPID = new PIDController(0.4, 0.00, 0);
+	private PIDController wPID = new PIDController(0.5, 0.05, 0);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();
 	private int target_id;
+	private boolean right; // Are we aiming for right side or not
+	private Pose2d adj_pose; // Target robot pose generated from apriltag
 
-	private Pose2d adj_pose;
-
-	public AlignToReef(int target_id) {
+	public AlignToReef() {
 		addRequirements(drive);
 		wPID.enableContinuousInput(0, 2 * Math.PI);
-		this.target_id = target_id;
 	}
 
 	@Override
-	public void initialize() {
-		// target_pose = photon.getAprilTagPose();
-		// target_pose = photon.getAprilTagPose(20);
+	public void initialize() {}
+
+	@Override
+	public void execute() {
+		if (reefChooser.get() == null) return;
+
+		target_id = reefChooser.get();
+		right = RobotContainer.target_right;
 		target_pose = getAprilTagPose(target_id);
 		if (target_pose.isEmpty()
 				&& stored_pose
@@ -44,16 +51,10 @@ public class AlignToReef extends Command {
 			// saved pose if any as reference
 			return;
 		} else if (target_pose.isEmpty() && !stored_pose.isEmpty()) {
-			// System.out.println(drive.getPose().getTranslation().getDistance(stored_pose.get().getTranslation()));
 			target_pose = stored_pose;
 		}
 
-		adj_pose = getAdjustedPose(target_pose.get());
-	}
-
-	@Override
-	public void execute() {
-
+		adj_pose = getAdjustedPose(target_pose.get(), right);
 		Pose2d current_pose = drive.getPose();
 		double curr_X = current_pose.getX();
 		double curr_Y = current_pose.getY();
@@ -68,10 +69,11 @@ public class AlignToReef extends Command {
 		Logger.recordOutput("/Odom/adjusted_pose/x", adj_X);
 		Logger.recordOutput("/Odom/adjusted_pose/y", adj_Y);
 		Logger.recordOutput("/Odom/adjusted_pose/w", adj_pose.getRotation().getRadians());
+		Logger.recordOutput("/Odom/error", Math.hypot((curr_X - adj_X), (curr_Y - adj_Y)));
 
 		double xVel = xPID.calculate(curr_X, adj_X);
-		double yVel = xPID.calculate(curr_Y, adj_Y);
-		double wVel = xPID.calculate(curr_rot, target_rot);
+		double yVel = yPID.calculate(curr_Y, adj_Y);
+		double wVel = wPID.calculate(curr_rot, target_rot);
 
 		drive.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
 				xVel, yVel, wVel, drive.getPose().getRotation()));
@@ -92,7 +94,7 @@ public class AlignToReef extends Command {
 		double angle_offset = Math.abs(convertAngle(current_pose.getRotation().getRadians())
 				- convertAngle(adj_pose.getRotation().getRadians())); // Angular difference
 
-		if (dX < 0.04 && dY < 0.04 && angle_offset <= (4 * Math.PI) / 360) {
+		if (dX < 0.09 && dY < 0.06 && angle_offset <= (4 * Math.PI) / 360) {
 			System.out.println("Aligned");
 			return true;
 		}

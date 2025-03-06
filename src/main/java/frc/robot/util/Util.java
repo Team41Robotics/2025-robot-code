@@ -1,11 +1,17 @@
 package frc.robot.util;
 
+import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
+import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
+import static frc.robot.constants.Constants.RobotConstants.SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
+import static frc.robot.constants.Constants.RobotConstants.TURBO_ANGULAR_SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.TURBO_SPEED_MULT;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.exp;
 import static java.lang.Math.signum;
 import static java.lang.Math.sin;
-import java.util.Optional;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -15,16 +21,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
-import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
-import static frc.robot.constants.Constants.RobotConstants.SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
-import static frc.robot.constants.Constants.RobotConstants.TURBO_ANGULAR_SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.TURBO_SPEED_MULT;
+import java.util.Optional;
 
 public class Util {
 	// tuned value for sigmoid, higher values make the curve steeper, this is what thomas likes. Use desmos to preview
@@ -89,6 +88,10 @@ public class Util {
 				sin(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
 				MathUtil.applyDeadband(w, 0.1) * ANGULAR_MAX_SPEED * angular_mult,
 				rot);
+		// ChassisSpeeds ret = new ChassisSpeeds(
+		// 	cos(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
+		// 	sin(theta) * mag_curved * SWERVE_MAXSPEED * speed_mult * sign,
+		// 	MathUtil.applyDeadband(w, 0.1) * ANGULAR_MAX_SPEED * angular_mult);
 		return ret;
 	}
 
@@ -115,12 +118,24 @@ public class Util {
 		return Optional.of(fieldLayout.getTagPose(id).get().toPose2d());
 	}
 
-	public static Pose2d getAdjustedPose(Pose2d target) {
+	public static Pose2d getAdjustedPose(Pose2d target, boolean isRight) {
+
+		double endEffectorOffset = isRight ? 0.325 : 0.06;
 
 		Pose2d returnable = target;
-		Transform2d currentToTarget = new Transform2d(
-				new Translation2d((ROBOT_WIDTH / 2) + Units.inchesToMeters(3 + 4.5), 0),
-				new Rotation2d(0)); // 0.06 is offset for stuff in front of the camera
+		Transform2d currentToTarget =
+				new Transform2d(new Translation2d((ROBOT_WIDTH / 2), endEffectorOffset), new Rotation2d(0));
+		return returnable.transformBy(currentToTarget);
+	}
+
+	public static Pose2d getAdjustedPoseHumanPlayer(Pose2d target) {
+
+		// Need to add stuff for spacing
+		// double extension = 0.12; // TODO (In meters)
+		double effectorOffset = -0.2;
+		Pose2d returnable = target;
+		Transform2d currentToTarget =
+				new Transform2d(new Translation2d((ROBOT_WIDTH / 2) + 0.18, effectorOffset), new Rotation2d(Math.PI));
 		return returnable.transformBy(currentToTarget);
 	}
 

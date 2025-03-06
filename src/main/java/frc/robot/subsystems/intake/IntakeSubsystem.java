@@ -1,8 +1,9 @@
 package frc.robot.subsystems.intake;
 
-import org.littletonrobotics.junction.Logger;
-
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -11,7 +12,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	public IntakeSubsystem() {
 		io = new IntakeIOSparkMax();
-
 	}
 
 	@Override
@@ -20,22 +20,23 @@ public class IntakeSubsystem extends SubsystemBase {
 		updateLogging();
 	}
 
-	public void updateLogging(){
-		Logger.recordOutput("/Intake/Beam Break Status", inputs.beamBreakNotTriggered);
+	public void updateLogging() {
+		Logger.processInputs("/Intake", inputs);
 	}
 
 	public void runMotor(double velocity) {
 		io.setVelocity(velocity);
 	}
 
-	public void stopMotors(){
+	public void stopMotors() {
 		io.setVelocity(0);
 	}
 
-	public boolean isBeamBreakNotTriggered(){
-		return inputs.beamBreakNotTriggered;
+	public Command runIntake(double speed) {
+		return new StartEndCommand(() -> this.runMotor(speed), this::stopMotors);
 	}
 
-	
-
+	public boolean isBeamBreakNotTriggered() {
+		return inputs.beamBreakStatus;
+	}
 }

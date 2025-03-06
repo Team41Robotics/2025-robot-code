@@ -96,8 +96,6 @@ public class ArmIOHardware implements ArmIO {
 		shoulder3.setNeutralMode(NeutralModeValue.Brake);
 		shoulder4.setNeutralMode(NeutralModeValue.Brake);
 
-		
-
 		TalonFXConfiguration telescopeConfig = new TalonFXConfiguration();
 		telescopeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 		telescopeConfig.CurrentLimits.StatorCurrentLimit = 100;
@@ -117,8 +115,7 @@ public class ArmIOHardware implements ArmIO {
 		wristEncoder = new Canandmag(WRIST);
 
 		SparkMaxConfig wristConfig = new SparkMaxConfig();
-		wristConfig.smartCurrentLimit(60).idleMode(IdleMode.kBrake);
-		
+		wristConfig.smartCurrentLimit(30).idleMode(IdleMode.kBrake);
 	}
 
 	@Override
@@ -153,12 +150,10 @@ public class ArmIOHardware implements ArmIO {
 		// inputs.topSwitchOn = topSwitch.get();
 
 		// TOOD: Add inputs for wrist
-		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI - 0.58 - 4.91;
-		inputs.wristRotation = inputs.wristRotation % (2 * PI);
-		inputs.wristRotation += 2*PI;
+		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI + 0.05;
 		inputs.wristRotation = inputs.wristRotation % (2 * PI);
 		// inputs.wristRotation = Rotation2d.fromRotations(wristEncoder.getAbsPosition()).plus(new Rotation2d(0.1));
-		inputs.wristPivotVoltage = wrist.getAppliedOutput() * wrist.getBusVoltage();
+		inputs.wristPivotVoltage = wrist.getAppliedOutput();
 	}
 
 	@Override
@@ -190,6 +185,7 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setWristVoltageClamped(double voltage) {
-		setWristVoltage(MathUtil.clamp(voltage, -3, 3));
+		setWristVoltage(MathUtil.clamp(voltage, -2, 2));
 	}
+	
 }

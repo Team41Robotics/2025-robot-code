@@ -14,12 +14,13 @@ public class AlgaeSubsystem extends SubsystemBase {
 	private AlgaeIOInputsAutoLogged inputs = new AlgaeIOInputsAutoLogged();
 
 	private PIDController m_PID;
+	double x = 80; // TODO NEEDS TUNING
 	private Optional<Rotation2d> targetRotation;
 
 	public AlgaeSubsystem() {
 		io = new AlgaeIOSparkMax();
 		targetRotation = Optional.of(new Rotation2d(95 / 180. * PI));
-		m_PID = new PIDController(1, 0, 0); // todo
+		m_PID = new PIDController(2, 0, 0); // todo
 		m_PID.enableContinuousInput(0, Math.PI * 2);
 	}
 
@@ -32,9 +33,13 @@ public class AlgaeSubsystem extends SubsystemBase {
 			Logger.recordOutput("Algae/Output", out);
 			io.setAlgaeVoltage(out);
 		}
+		if(hasAlgae()){
+			stopMotors();
+		}
 		Logger.processInputs("Algae", inputs);
 		Logger.recordOutput("Algae/Target", targetRotation.get());
 		Logger.recordOutput("Algae/Current Rotation", inputs.algaeRotation.getRadians());
+
 	}
 
 	public void setAlgaeRotation(Rotation2d target) {
@@ -47,6 +52,17 @@ public class AlgaeSubsystem extends SubsystemBase {
 	}
 
 	public void runIntake(boolean spit) {
-		io.setIntakeVoltage(spit ? 4.0 : -4.0);
+		io.setIntakeVoltage(spit ? 5.0 : -5.0);
+		
+	}
+
+	public boolean hasAlgae(){
+		System.out.println("Checking for current: " + inputs.intakeCurrent[0]);
+		if(Math.abs(inputs.intakeCurrent[0]) > x) return true;
+		return false;
+	}
+
+	public void stopMotors(){
+		io.setIntakeVelocity(0);
 	}
 }

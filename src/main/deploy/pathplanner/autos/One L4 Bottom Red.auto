@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueTopToReef"
+            "pathName": "RedBottomToReef"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueReefToStation"
+            "pathName": "RedReefToStation"
           }
         },
         {

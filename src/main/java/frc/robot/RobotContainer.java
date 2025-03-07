@@ -116,27 +116,28 @@ public class RobotContainer {
 
 		right_js.button(4)
 				.onTrue(new AlignToStation().until(() -> left_js.button(2).getAsBoolean()));
-		// right_js.button(1).onTrue(intake.runIntake(0.15).until(() -> !intake.isBeamBreakNotTriggered())); // INTAKE
+		right_js.button(1).onTrue(intake.runIntake(0.15).until(() -> !intake.isBeamBreakNotTriggered())); // INTAKE
 		right_js.button(2)
 				.onTrue(new AlignToReef().until(() -> left_js.button(2).getAsBoolean()));
 
 		ds.button(1).onTrue(new InstantCommand(() -> target_right = !target_right));
 
-		// ds.button(11).onTrue(new Retract(ArmConfiguration.HUMAN_PLAYER));
-		// ds.button(12).onTrue(new SetToScore(ArmConfiguration.L4));
-		// ds.button(9).onTrue(new SetToScore(ArmConfiguration.L2));
-		// ds.button(10).onTrue(new SetToScore(ArmConfiguration.L3));
-		// ds.button(8).onTrue(new SetToScore(ArmConfiguration.L1));
-		// ds.button(7).onTrue(new SetToScore(ArmConfiguration.NEUTRAL));
-		// ds.button(6).onTrue(new SetToScore(ArmConfiguration.lowAlgae));
-		// ds.button(3).onTrue(new SetToScore(ArmConfiguration.highAlgae));
+		ds.button(11).onTrue(new Retract(ArmConfiguration.HUMAN_PLAYER));
+		ds.button(12).onTrue(new SetToScore(ArmConfiguration.L4));
+		ds.button(9).onTrue(new SetToScore(ArmConfiguration.L2));
+		ds.button(10).onTrue(new SetToScore(ArmConfiguration.L3));
+		ds.button(8).onTrue(new SetToScore(ArmConfiguration.L1));
+		ds.button(7).onTrue(new SetToScore(ArmConfiguration.NEUTRAL));
+		ds.button(6).onTrue(new SetToScore(ArmConfiguration.lowAlgae));
+		ds.button(3).onTrue(new SetToScore(ArmConfiguration.highAlgae));
+		
 		left_js.button(3).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(150))));
 		left_js.button(4).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(93.75))));
-		left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
+		//left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
 		left_js.button(2).whileTrue(new ScoreAlgae());
 
 
-		// left_js.button(1).onTrue(new ScoreCoral());
+		left_js.button(1).onTrue(new ScoreCoral());
 	}
 
 	public static Command getAutonomousCommand() {

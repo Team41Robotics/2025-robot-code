@@ -67,12 +67,12 @@ public class ArmSubsystem extends SubsystemBase {
 		if (!wristTargetRotation.isEmpty()) {
 			wristTargetRotation = Optional.of(clampWristTargetAngle(wristTargetRotation.get()));
 			double out = wristPID.calculate(inputs.wristRotation, wristTargetRotation.get());
-			io.setWristVoltageClamped(rampVoltage(out, wrist_previous_voltage));
+			io.setWristVoltageClamped(out);
 			wrist_previous_voltage = out;
-			if (wristPID.atSetpoint()) {
+			// if (wristPID.atSetpoint()) {
 
-				wrist_previous_voltage = 0.;
-			}
+			// 	wrist_previous_voltage = 0.;
+			// }
 		}
 		Logger.processInputs("Arm", inputs);
 		if (!targetExtension.isEmpty()) Logger.recordOutput("Arm/Target Extension", this.targetExtension.get());

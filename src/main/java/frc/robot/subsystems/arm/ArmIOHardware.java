@@ -149,10 +149,8 @@ public class ArmIOHardware implements ArmIO {
 
 		// inputs.topSwitchOn = topSwitch.get();
 
-		// TOOD: Add inputs for wrist
 		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI + 0.05;
 		inputs.wristRotation = inputs.wristRotation % (2 * PI);
-		// inputs.wristRotation = Rotation2d.fromRotations(wristEncoder.getAbsPosition()).plus(new Rotation2d(0.1));
 		inputs.wristPivotVoltage = wrist.getAppliedOutput();
 	}
 

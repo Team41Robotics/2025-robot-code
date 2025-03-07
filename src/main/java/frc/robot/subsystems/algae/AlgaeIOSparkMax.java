@@ -63,7 +63,7 @@ public class AlgaeIOSparkMax implements AlgaeIO {
 
 	@Override
 	public void setIntakeVoltage(double voltage) {
-		intakeMotor.setVoltage(MathUtil.clamp(voltage, -4, 4));
+		intakeMotor.setVoltage(MathUtil.clamp(voltage, -5, 5));
 	}
 
 	public void setIntakeVelocity(double velocity){

@@ -57,7 +57,6 @@ public class AlgaeSubsystem extends SubsystemBase {
 	}
 
 	public boolean hasAlgae(){
-		System.out.println("Checking for current: " + inputs.intakeCurrent[0]);
 		if(Math.abs(inputs.intakeCurrent[0]) > x) return true;
 		return false;
 	}

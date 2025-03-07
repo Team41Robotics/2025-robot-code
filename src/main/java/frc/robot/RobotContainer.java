@@ -3,6 +3,7 @@ package frc.robot;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,9 +12,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.commands.algae.ScoreAlgae;
+import frc.robot.commands.arm.Retract;
+import frc.robot.commands.arm.ScoreCoral;
+import frc.robot.commands.arm.SetToScore;
 import frc.robot.commands.drive.AlignToReef;
 import frc.robot.commands.drive.AlignToStation;
 import frc.robot.commands.drive.DefaultDrive;
+import frc.robot.constants.ArmConfiguration;
 import frc.robot.constants.LimelightConfiguration;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -48,6 +54,20 @@ public class RobotContainer {
 
 	public static void initSubsystems() {
 
+
+		NamedCommands.registerCommand("AlignToReef", new AlignToReef());
+		NamedCommands.registerCommand("AlignToStation", new AlignToStation());
+		NamedCommands.registerCommand("ScoreL4", new SetToScore(ArmConfiguration.L4));
+		NamedCommands.registerCommand("ScoreL3", new SetToScore(ArmConfiguration.L3));
+		NamedCommands.registerCommand("ScoreL2", new SetToScore(ArmConfiguration.L2));
+		NamedCommands.registerCommand("RunIntake", intake.runIntake(0.15).until(() -> !intake.isBeamBreakNotTriggered()));
+		NamedCommands.registerCommand("RetractArm", new Retract(ArmConfiguration.HUMAN_PLAYER));
+		NamedCommands.registerCommand("RemoveLowAlgae", new SetToScore(ArmConfiguration.lowAlgae));
+		NamedCommands.registerCommand("RemoveHighAlgae", new SetToScore(ArmConfiguration.highAlgae));
+		NamedCommands.registerCommand("Fire!", new ScoreCoral());
+
+
+
 		config.setName("limelight-front")
 				.withHeightOffset(0.28)
 				.withLengthOffset(0.3)
@@ -69,18 +89,25 @@ public class RobotContainer {
 		autoChooser = new LoggedDashboardChooser<>("Auto Routine", AutoBuilder.buildAutoChooser());
 		reefChooser = new LoggedDashboardChooser<>("Target on Reef", new SendableChooser<>());
 		stationChooser = new LoggedDashboardChooser<>("Human player Station", new SendableChooser<>());
+	
+		stationChooser.addOption("BLUE 13", 13);
+		stationChooser.addOption("BLUE 12", 12);
+		stationChooser.addOption("RED 1", 1);
+		stationChooser.addOption("RED 2", 2);
 
-		stationChooser.addOption("13", 13);
-		stationChooser.addOption("12", 12);
-		stationChooser.addOption("1", 1);
-		stationChooser.addOption("10", 10);
+		reefChooser.addOption("BLUE Side 17", 17);
+		reefChooser.addOption("BLUE Side 18", 18);
+		reefChooser.addOption("BLUE Side 19", 19);
+		reefChooser.addOption("BLUE Side 20", 20);
+		reefChooser.addOption("BLUE Side 21", 21);
+		reefChooser.addOption("BLUE Side 22", 22);
 
-		reefChooser.addOption("Side 17", 17);
-		reefChooser.addOption("Side 18", 18);
-		reefChooser.addOption("Side 19", 19);
-		reefChooser.addOption("Side 20", 20);
-		reefChooser.addOption("Side 21", 21);
-		reefChooser.addOption("Side 22", 22);
+		reefChooser.addOption("RED Side 6", 6);
+		reefChooser.addOption("RED Side 7", 7);
+		reefChooser.addOption("RED Side 8", 8);
+		reefChooser.addOption("RED Side 9", 9);
+		reefChooser.addOption("RED Side 10", 10);
+		reefChooser.addOption("RED Side 11", 11);
 
 		configureBindings();
 	}
@@ -106,7 +133,7 @@ public class RobotContainer {
 		left_js.button(3).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(150))));
 		left_js.button(4).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(93.75))));
 		left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
-		left_js.button(2).whileTrue(new InstantCommand(() -> algae.runIntake(true)));
+		left_js.button(2).whileTrue(new ScoreAlgae());
 
 
 		// left_js.button(1).onTrue(new ScoreCoral());

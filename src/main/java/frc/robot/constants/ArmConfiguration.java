@@ -1,21 +1,20 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 
 public enum ArmConfiguration {
 	// TODO
 	NEUTRAL(MIN_ROTATION, MIN_EXTENSION, 5.6, "NEUTRAL"),
 	L1(MIN_ROTATION, MIN_EXTENSION, 0, "L1"),
 	L2(Rotation2d.fromRadians(1.7), MIN_EXTENSION, 4.69, "L2"),
-	L3(Rotation2d.fromRadians(1.365), Units.inchesToMeters(18), 4.69, "L3"),
+	L3(Rotation2d.fromRadians(1.53), Units.inchesToMeters(18), 4.4, "L3"),
 	L4(Rotation2d.fromRadians(1.2), MAX_EXTENSION, 1.1, "L4"),
 	lowAlgae(Rotation2d.fromRadians(.1615), MIN_EXTENSION, 1.06, "lowAlgae"),
-	highAlgae(Rotation2d.fromRadians(.1415), Units.inchesToMeters(15), 1.32, "highAlgae"),
+	highAlgae(Rotation2d.fromRadians(.55), Units.inchesToMeters(15), 1.32, "highAlgae"),
 	HUMAN_PLAYER(Rotation2d.fromRadians(.82404), MIN_EXTENSION, 4.0, "HP"),
 	CLIMB(Rotation2d.fromDegrees(68), Units.inchesToMeters(22), 0, "CLIMB");
 	public Rotation2d SHOULDER_ROTATION;

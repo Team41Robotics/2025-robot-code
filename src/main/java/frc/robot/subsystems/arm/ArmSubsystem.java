@@ -27,7 +27,7 @@ public class ArmSubsystem extends SubsystemBase {
 	private final PIDController wristPID;
 
 	private double shoulder_previous_voltage;
-	// private double extension_previous_voltage;
+	private double extension_previous_voltage;
 	private double wrist_previous_voltage;
 
 	public ArmSubsystem() {
@@ -39,7 +39,7 @@ public class ArmSubsystem extends SubsystemBase {
 		telescopePID.setIZone(0.1);
 		wristPID = new PIDController(3, 0.0, 0);
 		shoulder_previous_voltage = 0.0;
-		// extension_previous_voltage = 0.0;
+		extension_previous_voltage = 0.0;
 		wrist_previous_voltage = 0.0;
 	}
 
@@ -52,7 +52,7 @@ public class ArmSubsystem extends SubsystemBase {
 			double out = shoulderPID.calculate(
 					getShoulderAngle().getRadians(),
 					shoulderTargetRotation.get().getRadians());
-			io.setShoulderVoltageClamped(rampVoltage(out, shoulder_previous_voltage));
+			io.setShoulderVoltageClamped(rampVoltage(out, shoulder_previous_voltage, 0.1));
 			shoulder_previous_voltage = out;
 			if (shoulderPID.atSetpoint()) {
 				shoulder_previous_voltage = 0.;
@@ -61,17 +61,19 @@ public class ArmSubsystem extends SubsystemBase {
 		if (!targetExtension.isEmpty()) {
 			targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
 			double out = telescopePID.calculate(getExtension(), targetExtension.get());
-			io.setExtensionVoltageClamped(out);
+			io.setExtensionVoltageClamped(rampVoltage(out, extension_previous_voltage, 0.1));
+			if (telescopePID.atSetpoint()){
+				extension_previous_voltage = 0.;
+			}
 		}
 		if (!wristTargetRotation.isEmpty()) {
 			wristTargetRotation = Optional.of(clampWristTargetAngle(wristTargetRotation.get()));
 			double out = wristPID.calculate(inputs.wristRotation, wristTargetRotation.get());
-			io.setWristVoltageClamped(out);
+			io.setWristVoltageClamped(rampVoltage(out, wrist_previous_voltage, 0.1));
 			wrist_previous_voltage = out;
-			// if (wristPID.atSetpoint()) {
-
-			// 	wrist_previous_voltage = 0.;
-			// }
+			if (wristPID.atSetpoint()) {
+			 	wrist_previous_voltage = 0.;
+			}
 		}
 		Logger.processInputs("Arm", inputs);
 		if (!targetExtension.isEmpty()) Logger.recordOutput("Arm/Target Extension", this.targetExtension.get());

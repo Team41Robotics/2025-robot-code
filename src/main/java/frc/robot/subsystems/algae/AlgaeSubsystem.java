@@ -33,13 +33,12 @@ public class AlgaeSubsystem extends SubsystemBase {
 			Logger.recordOutput("Algae/Output", out);
 			io.setAlgaeVoltage(out);
 		}
-		if(hasAlgae()){
+		if (hasAlgae()) {
 			stopMotors();
 		}
 		Logger.processInputs("Algae", inputs);
 		Logger.recordOutput("Algae/Target", targetRotation.get());
 		Logger.recordOutput("Algae/Current Rotation", inputs.algaeRotation.getRadians());
-
 	}
 
 	public void setAlgaeRotation(Rotation2d target) {
@@ -53,15 +52,14 @@ public class AlgaeSubsystem extends SubsystemBase {
 
 	public void runIntake(boolean spit) {
 		io.setIntakeVoltage(spit ? 5.0 : -5.0);
-		
 	}
 
-	public boolean hasAlgae(){
-		if(Math.abs(inputs.intakeCurrent[0]) > x) return true;
+	public boolean hasAlgae() {
+		if (Math.abs(inputs.intakeCurrent[0]) > x) return true;
 		return false;
 	}
 
-	public void stopMotors(){
+	public void stopMotors() {
 		io.setIntakeVelocity(0);
 	}
 }

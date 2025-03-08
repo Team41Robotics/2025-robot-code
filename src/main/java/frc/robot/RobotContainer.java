@@ -1,18 +1,14 @@
 package frc.robot;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.commands.algae.ScoreAlgae;
 import frc.robot.commands.arm.Retract;
 import frc.robot.commands.arm.ScoreCoral;
 import frc.robot.commands.arm.SetToScore;
@@ -21,18 +17,18 @@ import frc.robot.commands.drive.AlignToStation;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.ArmConfiguration;
 import frc.robot.constants.LimelightConfiguration;
-import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
 	public static Robot robot;
 	public static SwerveSubsystem drive = new SwerveSubsystem();
 	public static IMU imu = new IMU();
-	public static AlgaeSubsystem algae = new AlgaeSubsystem();
+	// public static AlgaeSubsystem algae = new AlgaeSubsystem();
 	public static ArmSubsystem arm = new ArmSubsystem();
 	public static IntakeSubsystem intake = new IntakeSubsystem();
 
@@ -54,19 +50,19 @@ public class RobotContainer {
 
 	public static void initSubsystems() {
 
-
 		NamedCommands.registerCommand("AlignToReef", new AlignToReef());
 		NamedCommands.registerCommand("AlignToStation", new AlignToStation());
 		NamedCommands.registerCommand("ScoreL4", new SetToScore(ArmConfiguration.L4));
 		NamedCommands.registerCommand("ScoreL3", new SetToScore(ArmConfiguration.L3));
 		NamedCommands.registerCommand("ScoreL2", new SetToScore(ArmConfiguration.L2));
-		NamedCommands.registerCommand("RunIntake", intake.runIntake(0.15).until(() -> !intake.isBeamBreakNotTriggered()));
+		NamedCommands.registerCommand(
+				"RunIntake", intake.runIntake(0.15).until(() -> !intake.isBeamBreakNotTriggered()));
 		NamedCommands.registerCommand("RetractArm", new Retract(ArmConfiguration.HUMAN_PLAYER));
 		NamedCommands.registerCommand("RemoveLowAlgae", new SetToScore(ArmConfiguration.lowAlgae));
 		NamedCommands.registerCommand("RemoveHighAlgae", new SetToScore(ArmConfiguration.highAlgae));
 		NamedCommands.registerCommand("Fire!", new ScoreCoral());
 
-
+		arm.setShoulderTargetRotation(Rotation2d.fromRadians(1.10));
 
 		config.setName("limelight-front")
 				.withHeightOffset(0.28)
@@ -89,7 +85,7 @@ public class RobotContainer {
 		autoChooser = new LoggedDashboardChooser<>("Auto Routine", AutoBuilder.buildAutoChooser());
 		reefChooser = new LoggedDashboardChooser<>("Target on Reef", new SendableChooser<>());
 		stationChooser = new LoggedDashboardChooser<>("Human player Station", new SendableChooser<>());
-	
+
 		stationChooser.addOption("BLUE 13", 13);
 		stationChooser.addOption("BLUE 12", 12);
 		stationChooser.addOption("RED 1", 1);
@@ -130,12 +126,11 @@ public class RobotContainer {
 		ds.button(7).onTrue(new SetToScore(ArmConfiguration.NEUTRAL));
 		ds.button(6).onTrue(new SetToScore(ArmConfiguration.lowAlgae));
 		ds.button(3).onTrue(new SetToScore(ArmConfiguration.highAlgae));
-		
-		left_js.button(3).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(150))));
-		left_js.button(4).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(93.75))));
-		//left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
-		left_js.button(2).whileTrue(new ScoreAlgae());
 
+		// left_js.button(3).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(150))));
+		// left_js.button(4).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(93.75))));
+		// left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
+		// left_js.button(2).whileTrue(new ScoreAlgae());
 
 		left_js.button(1).onTrue(new ScoreCoral());
 	}

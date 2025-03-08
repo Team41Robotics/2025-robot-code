@@ -1,11 +1,17 @@
 package frc.robot.util;
 
+import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
+import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
+import static frc.robot.constants.Constants.RobotConstants.SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
+import static frc.robot.constants.Constants.RobotConstants.TURBO_ANGULAR_SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.TURBO_SPEED_MULT;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.exp;
 import static java.lang.Math.signum;
 import static java.lang.Math.sin;
-import java.util.Optional;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -17,13 +23,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
-import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
-import static frc.robot.constants.Constants.RobotConstants.SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
-import static frc.robot.constants.Constants.RobotConstants.TURBO_ANGULAR_SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.TURBO_SPEED_MULT;
+import java.util.Optional;
 
 public class Util {
 	// tuned value for sigmoid, higher values make the curve steeper, this is what thomas likes. Use desmos to preview
@@ -124,7 +124,7 @@ public class Util {
 
 		Pose2d returnable = target;
 		Transform2d currentToTarget =
-				new Transform2d(new Translation2d((ROBOT_WIDTH / 2)+0.2, endEffectorOffset), new Rotation2d(0));
+				new Transform2d(new Translation2d((ROBOT_WIDTH / 2) + 0.2, endEffectorOffset), new Rotation2d(0));
 		return returnable.transformBy(currentToTarget);
 	}
 

@@ -1,19 +1,18 @@
 package frc.robot.commands.drive;
 
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.reefChooser;
+import static frc.robot.util.Util.convertAngle;
+import static frc.robot.util.Util.getAdjustedPose;
+import static frc.robot.util.Util.getAprilTagPose;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.reefChooser;
-import static frc.robot.util.Util.convertAngle;
-import static frc.robot.util.Util.getAdjustedPose;
-import static frc.robot.util.Util.getAprilTagPose;
+import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class AlignToReef extends Command {

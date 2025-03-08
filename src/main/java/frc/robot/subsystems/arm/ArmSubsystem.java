@@ -1,18 +1,17 @@
 package frc.robot.subsystems.arm;
 
+import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
+import static frc.robot.util.Util.rampVoltage;
 import static java.lang.Math.PI;
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
-import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
-import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
-import static frc.robot.util.Util.rampVoltage;
+import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -79,7 +78,8 @@ public class ArmSubsystem extends SubsystemBase {
 		if (!shoulderTargetRotation.isEmpty())
 			Logger.recordOutput(
 					"Arm/Target Rotation", this.shoulderTargetRotation.get().getRadians());
-		if(!wristTargetRotation.isEmpty()) Logger.recordOutput("Arm/Target Wrist Rotation", this.wristTargetRotation.get());
+		if (!wristTargetRotation.isEmpty())
+			Logger.recordOutput("Arm/Target Wrist Rotation", this.wristTargetRotation.get());
 	}
 
 	public void zero() {

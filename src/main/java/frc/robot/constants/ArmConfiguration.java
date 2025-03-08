@@ -1,18 +1,18 @@
 package frc.robot.constants;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 
 public enum ArmConfiguration {
 	// TODO
 	NEUTRAL(MIN_ROTATION, MIN_EXTENSION, 5.6, "NEUTRAL"),
 	L1(MIN_ROTATION, MIN_EXTENSION, 0, "L1"),
-	L2(Rotation2d.fromRadians(1.615), MIN_EXTENSION, 4.69, "L2"),
-	L3(Rotation2d.fromRadians(1.435), Units.inchesToMeters(18), 4.69, "L3"),
+	L2(Rotation2d.fromRadians(1.7), MIN_EXTENSION, 4.69, "L2"),
+	L3(Rotation2d.fromRadians(1.365), Units.inchesToMeters(18), 4.69, "L3"),
 	L4(Rotation2d.fromRadians(1.2), MAX_EXTENSION, 1.1, "L4"),
 	lowAlgae(Rotation2d.fromRadians(.1615), MIN_EXTENSION, 1.06, "lowAlgae"),
 	highAlgae(Rotation2d.fromRadians(.1415), Units.inchesToMeters(15), 1.32, "highAlgae"),
@@ -36,5 +36,9 @@ public enum ArmConfiguration {
 		EXTENSION = _extension;
 		WRIST_ROTATION = _wrist_rotation;
 		NAME = _name;
+		// WRIST_ROTATION -= 5.59;
+		// WRIST_ROTATION %= 2*PI;
+		// WRIST_ROTATION += 2*PI;
+		// WRIST_ROTATION %= 2*PI;
 	}
 }

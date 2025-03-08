@@ -61,10 +61,7 @@ public class ArmSubsystem extends SubsystemBase {
 		if (!targetExtension.isEmpty()) {
 			targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
 			double out = telescopePID.calculate(getExtension(), targetExtension.get());
-			io.setExtensionVoltageClamped(rampVoltage(out, extension_previous_voltage, 0.1));
-			if (telescopePID.atSetpoint()){
-				extension_previous_voltage = 0.;
-			}
+			io.setExtensionVoltageClamped(out);
 		}
 		if (!wristTargetRotation.isEmpty()) {
 			wristTargetRotation = Optional.of(clampWristTargetAngle(wristTargetRotation.get()));

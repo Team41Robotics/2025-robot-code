@@ -139,11 +139,7 @@ public class Util {
 		return returnable.transformBy(currentToTarget);
 	}
 
-	public static double rampVoltage(double curr, double prev, double step) {
-		if (Math.abs(curr - prev) > step) {
-			return MathUtil.clamp(curr, prev - step, prev + step);
-		} else {
-			return curr;
-		}
+	public static double ramp(double curr, double prev, double step) {
+		return MathUtil.clamp(curr, prev - step*0.02, prev + step*0.02);
 	}
 }

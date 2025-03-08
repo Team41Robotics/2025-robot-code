@@ -123,7 +123,7 @@ public class ArmIOHardware implements ArmIO {
 		inputs.shoulderRotation = new Rotation2d(
 				Units.rotationsToRadians(shoulderEncoder.getAbsolutePosition().getValueAsDouble()));
 
-		inputs.shoulderPivotVoltage = shoulder1.getMotorVoltage().getValueAsDouble();
+		inputs.shoulderPivotVoltage = -shoulder1.getMotorVoltage().getValueAsDouble();
 
 		inputs.shoulderPivotCurrentAmps =
 				new double[] {shoulder1.getStatorCurrent().getValueAsDouble()};
@@ -180,12 +180,15 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setShoulderVoltageClamped(double voltage) {
-		setShoulderVoltage(MathUtil.clamp(voltage, -4, 4));
+		// setShoulderVoltage(MathUtil.clamp(voltage, -4,4));
+		setShoulderVoltage(MathUtil.clamp(voltage, -2,2));
 	}
 
 	@Override
 	public void setExtensionVoltageClamped(double voltage) {
-		setExtensionVoltage(MathUtil.clamp(voltage, -6.5, 6.5));
+		// setExtensionVoltage(MathUtil.clamp(voltage, -6.5, 6.5));
+		setExtensionVoltage(MathUtil.clamp(voltage,-2, 2));
+
 	}
 
 	@Override

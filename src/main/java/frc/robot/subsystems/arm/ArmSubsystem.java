@@ -11,7 +11,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -19,9 +18,9 @@ public class ArmSubsystem extends SubsystemBase {
 	private final ArmIOHardware io;
 	private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
-	private Optional<Rotation2d> shoulderTargetRotation = Optional.empty();
-	private Optional<Double> wristTargetRotation = Optional.empty();
-	private Optional<Double> targetExtension = Optional.empty();
+	private double shoulderTargetRotation = 0;
+	private double wristTargetRotation = 0;
+	private double targetExtension = 0;
 
 	private final PIDController shoulderPID;
 	private final PIDController telescopePID;
@@ -55,34 +54,31 @@ public class ArmSubsystem extends SubsystemBase {
 		}
 		io.updateInputs(inputs);
 
-		if (!shoulderTargetRotation.isEmpty()) {
-			shoulderTargetRotation = Optional.of(clampShoulderTargetAngle(shoulderTargetRotation.get()));
-			shoulder_ramped = ramp(shoulderTargetRotation.get().getRadians(), shoulder_ramped, 1.);
+		{
+			shoulderTargetRotation = clampShoulderTargetAngle(shoulderTargetRotation);
+			shoulder_ramped = ramp(shoulderTargetRotation, shoulder_ramped, 1.);
 			double out = shoulderPID.calculate(
 					getShoulderAngle().getRadians(),
 					shoulder_ramped);
 
 			io.setShoulderVoltageClamped(out);
 		}
-		if (!targetExtension.isEmpty()) {
-			targetExtension = Optional.of(clampTargetExtension(targetExtension.get())); // Ik its cursed ignore it
-			ext_ramped = ramp(targetExtension.get(), ext_ramped, 0.5);
+		{
+			targetExtension = clampTargetExtension(targetExtension);
+			ext_ramped = ramp(targetExtension, ext_ramped, 0.5);
 			double out = telescopePID.calculate(getExtension(), ext_ramped);
 			io.setExtensionVoltageClamped(out);
 		}
-		if (!wristTargetRotation.isEmpty()) {
-			wristTargetRotation = Optional.of(clampWristTargetAngle(wristTargetRotation.get()));
-			wrist_ramped = ramp(wristTargetRotation.get(), wrist_ramped, 1);
+		{
+			wristTargetRotation = clampWristTargetAngle(wristTargetRotation);
+			wrist_ramped = ramp(wristTargetRotation, wrist_ramped, 1);
 			double out = wristPID.calculate(inputs.wristRotation, wrist_ramped);
 			io.setWristVoltageClamped(out);
 		}
 		Logger.processInputs("Arm", inputs);
-		if (!targetExtension.isEmpty()) Logger.recordOutput("Arm/Target Extension", this.targetExtension.get());
-		if (!shoulderTargetRotation.isEmpty())
-			Logger.recordOutput(
-					"Arm/Target Rotation", this.shoulderTargetRotation.get().getRadians());
-		if (!wristTargetRotation.isEmpty())
-			Logger.recordOutput("Arm/Target Wrist Rotation", this.wristTargetRotation.get());
+		Logger.recordOutput("Arm/Target Extension", this.targetExtension);
+		Logger.recordOutput("Arm/Target Rotation", this.shoulderTargetRotation);
+		Logger.recordOutput("Arm/Target Wrist Rotation", this.wristTargetRotation);
 	}
 
 	public void zero() {
@@ -91,19 +87,19 @@ public class ArmSubsystem extends SubsystemBase {
 	}
 
 	public void setShoulderTargetRotation(Rotation2d rotation) {
-		this.shoulderTargetRotation = Optional.of(rotation);
+		this.shoulderTargetRotation = rotation.getRadians();
 	}
 
 	public void setTargetExtension(double length) {
-		this.targetExtension = Optional.of(length);
+		this.targetExtension = length;
 	}
 
 	public void setWristTargetRotation(double rotation) {
-		this.wristTargetRotation = Optional.of(rotation);
+		this.wristTargetRotation = rotation;
 	}
 
-	public Rotation2d clampShoulderTargetAngle(Rotation2d target) {
-		target = new Rotation2d(MathUtil.clamp(target.getRadians(), 0.175, Math.PI / 2));
+	public double clampShoulderTargetAngle(double target) {
+		target = MathUtil.clamp(target, 0.175, Math.PI / 2);
 		return target;
 	}
 

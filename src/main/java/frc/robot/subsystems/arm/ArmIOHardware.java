@@ -182,12 +182,13 @@ public class ArmIOHardware implements ArmIO {
 	public void setShoulderVoltageClamped(double voltage) {
 		// setShoulderVoltage(MathUtil.clamp(voltage, -4,4));
 		setShoulderVoltage(MathUtil.clamp(voltage, -2,2));
+		// setShoulderVoltage(MathUtil.clamp(voltage, -1,1));
 	}
 
 	@Override
 	public void setExtensionVoltageClamped(double voltage) {
-		// setExtensionVoltage(MathUtil.clamp(voltage, -6.5, 6.5));
-		setExtensionVoltage(MathUtil.clamp(voltage,-2, 2));
+		setExtensionVoltage(MathUtil.clamp(voltage, -6.5, 6.5));
+		// setExtensionVoltage(MathUtil.clamp(voltage,-2, 2));
 
 	}
 

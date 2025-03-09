@@ -119,8 +119,8 @@ public class Util {
 	}
 
 	public static Pose2d getAdjustedPose(Pose2d target, boolean isRight) {
-
-		double endEffectorOffset = isRight ? 0.30 : 0.08;
+		// 0.19
+		double endEffectorOffset = isRight ? 0.36 : 0.02;
 
 		Pose2d returnable = target;
 		Transform2d currentToTarget =
@@ -135,7 +135,7 @@ public class Util {
 		double effectorOffset = -0.2;
 		Pose2d returnable = target;
 		Transform2d currentToTarget =
-				new Transform2d(new Translation2d((ROBOT_WIDTH / 2) + 0.18, effectorOffset), new Rotation2d(Math.PI));
+				new Transform2d(new Translation2d((ROBOT_WIDTH / 2) + 0.045, effectorOffset), new Rotation2d(Math.PI));
 		return returnable.transformBy(currentToTarget);
 	}
 

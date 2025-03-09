@@ -16,6 +16,7 @@ import frc.robot.commands.arm.Retract;
 import frc.robot.commands.arm.ScoreCoral;
 import frc.robot.commands.arm.SetToScore;
 import frc.robot.commands.drive.AlignToReef;
+import frc.robot.commands.drive.AlignToReefSlowly;
 import frc.robot.commands.drive.AlignToStation;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.ArmConfiguration;
@@ -107,7 +108,7 @@ public class RobotContainer {
 		reefChooser.addOption("RED Side 10", 10);
 		reefChooser.addOption("RED Side 11", 11);
 
-		autoChooser.addOption("AlignToTag", new AlignToReef());
+		autoChooser.addOption("AlignToTag", new AlignToReefSlowly());
 
 		configureBindings();
 	}
@@ -116,7 +117,7 @@ public class RobotContainer {
 
 		right_js.button(4)
 				.onTrue(new AlignToStation().until(() -> left_js.button(2).getAsBoolean()));
-		right_js.button(1).onTrue(intake.runIntake(0.15).until(() -> !intake.isBeamBreakNotTriggered())); // INTAKE
+		right_js.button(1).onTrue(intake.runIntake(0.2).until(() -> !intake.isBeamBreakNotTriggered())); // INTAKE
 		right_js.button(2)
 				.onTrue(new AlignToReef().until(() -> left_js.button(2).getAsBoolean()));
 
@@ -136,7 +137,7 @@ public class RobotContainer {
 		// left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
 		// left_js.button(2).whileTrue(new ScoreAlgae());
 
-		left_js.button(1).onTrue(new ScoreCoral());
+		left_js.button(1).whileTrue(new InstantCommand(() -> intake.runVoltage(5)));
 	}
 
 	public static Command getAutonomousCommand() {

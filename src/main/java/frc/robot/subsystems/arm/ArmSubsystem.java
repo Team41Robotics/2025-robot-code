@@ -19,7 +19,7 @@ public class ArmSubsystem extends SubsystemBase {
 	private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
 	private double shoulderTargetRotation = 0;
-	private double wristTargetRotation = 0;
+	private double wristTargetRotation = 4.4;
 	private double targetExtension = 0;
 
 	private final PIDController shoulderPID;
@@ -65,8 +65,8 @@ public class ArmSubsystem extends SubsystemBase {
 		}
 		{
 			targetExtension = clampTargetExtension(targetExtension);
-			ext_ramped = ramp(targetExtension, ext_ramped, 0.5);
-			double out = telescopePID.calculate(getExtension(), ext_ramped);
+			// ext_ramped = ramp(targetExtension, ext_ramped, 0.5);
+			double out = telescopePID.calculate(getExtension(), targetExtension);
 			io.setExtensionVoltageClamped(out);
 		}
 		{

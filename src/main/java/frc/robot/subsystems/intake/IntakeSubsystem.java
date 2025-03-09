@@ -28,6 +28,10 @@ public class IntakeSubsystem extends SubsystemBase {
 		io.setVelocity(velocity);
 	}
 
+	public void runVoltage(double voltage){
+		io.setVoltage(voltage);
+	}
+
 	public void stopMotors() {
 		io.setVelocity(0);
 	}

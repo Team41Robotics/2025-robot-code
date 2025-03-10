@@ -3,21 +3,24 @@ package frc.robot.subsystems.vision;
 import static frc.robot.RobotContainer.drive;
 import static frc.robot.RobotContainer.robot;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.constants.LimelightConfiguration;
-import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
 	private Pose2d robotToField = new Pose2d();
 	private double mt1Timestamp = 0.0;
-	private MedianFilter xFilter = new MedianFilter(30);
-	private MedianFilter YFilter = new MedianFilter(30);
-	private MedianFilter rFilter = new MedianFilter(30);
+	private final MedianFilter xFilter = new MedianFilter(30);
+	private final MedianFilter YFilter = new MedianFilter(30);
+	private final MedianFilter rFilter = new MedianFilter(30);
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;
@@ -59,7 +62,7 @@ public class VisionSubsystem extends SubsystemBase {
 				rFilter.calculate(this.robotToField.getRotation().getRadians()));
 	}
 
-	public Optional<Pose2d> getEstimatePose() {
-		return Optional.of(this.robotToField);
+	public static Matrix<N3, N1> getMeasurementStdDev(double dist, double bearing) { // TODO
+		return VecBuilder.fill(999999, 999999, 999999);
 	}
 }

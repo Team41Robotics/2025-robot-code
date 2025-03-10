@@ -1,19 +1,20 @@
 package frc.robot.subsystems.algae;
 
 import static java.lang.Math.PI;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
 
 public class AlgaeSubsystem extends SubsystemBase {
-	private AlgaeIOSparkMax io;
-	private AlgaeIOInputsAutoLogged inputs = new AlgaeIOInputsAutoLogged();
+	private final AlgaeIOSparkMax io;
+	private final AlgaeIOInputsAutoLogged inputs = new AlgaeIOInputsAutoLogged();
 
-	private PIDController m_PID;
+	private final PIDController m_PID;
 	double x = 80; // TODO NEEDS TUNING
 	private Optional<Rotation2d> targetRotation;
 
@@ -28,7 +29,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 	public void periodic() {
 		io.updateInputs(inputs);
 		if (!targetRotation.isEmpty()) {
-			double out = m_PID.calculate(
+			var out = m_PID.calculate(
 					inputs.algaeRotation.getRadians(), targetRotation.get().getRadians());
 			Logger.recordOutput("Algae/Output", out);
 			io.setAlgaeVoltage(out);
@@ -55,8 +56,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 	}
 
 	public boolean hasAlgae() {
-		if (Math.abs(inputs.intakeCurrent[0]) > x) return true;
-		return false;
+		return Math.abs(inputs.intakeCurrent[0]) > x;
 	}
 
 	public void stopMotors() {

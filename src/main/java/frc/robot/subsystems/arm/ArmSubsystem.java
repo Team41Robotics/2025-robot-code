@@ -1,18 +1,17 @@
 package frc.robot.subsystems.arm;
 
-import static java.lang.Math.PI;
-
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.RobotContainer.robot;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
 import static frc.robot.util.Util.ramp;
+import static java.lang.Math.PI;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -28,22 +27,15 @@ public class ArmSubsystem extends SubsystemBase {
 	private final PIDController wristPID;
 
 	double shoulder_ramped, ext_ramped, wrist_ramped;
-	// private double shoulder_previous_voltage;
-	// private double extension_previous_voltage;
-	// private double wrist_previous_voltage;
 
 	public ArmSubsystem() {
 		io = new ArmIOHardware();
 		shoulderPID = new PIDController(7, 1, 0.);
-		// shoulderPID = new PIDController(7, 0, 0.);
 		shoulderPID.setIZone(0.2);
 		telescopePID = new PIDController(30, 25, 0);
 		telescopePID.setTolerance(0.1);
 		telescopePID.setIZone(0.1);
 		wristPID = new PIDController(3, 0.0, 0);
-		// shoulder_previous_voltage = 0.0;
-		// extension_previous_voltage = 0.0;
-		// wrist_previous_voltage = 0.0;
 	}
 
 	@Override

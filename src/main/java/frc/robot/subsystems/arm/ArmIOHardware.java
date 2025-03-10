@@ -151,14 +151,12 @@ public class ArmIOHardware implements ArmIO {
 
 		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI + 0.05;
 		inputs.wristRotation = inputs.wristRotation % (2 * PI);
-		inputs.wristPivotVoltage = wrist.getAppliedOutput();
+		inputs.wristPivotVoltage = wrist.getAppliedOutput() * wrist.getBusVoltage();
 
-		// inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI - 0.58 - 4.91;
 		// inputs.wristRotation = inputs.wristRotation % (2 * PI);
 		// inputs.wristRotation += 2*PI;
 		// inputs.wristRotation = inputs.wristRotation % (2 * PI);
 		// // inputs.wristRotation = Rotation2d.fromRotations(wristEncoder.getAbsPosition()).plus(new Rotation2d(0.1));
-		// inputs.wristPivotVoltage = wrist.getAppliedOutput() * wrist.getBusVoltage();
 	}
 
 	@Override
@@ -180,16 +178,12 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setShoulderVoltageClamped(double voltage) {
-		// setShoulderVoltage(MathUtil.clamp(voltage, -4,4));
 		setShoulderVoltage(MathUtil.clamp(voltage, -2, 2));
-		// setShoulderVoltage(MathUtil.clamp(voltage, -1,1));
 	}
 
 	@Override
 	public void setExtensionVoltageClamped(double voltage) {
 		setExtensionVoltage(MathUtil.clamp(voltage, -6.5, 6.5));
-		// setExtensionVoltage(MathUtil.clamp(voltage,-2, 2));
-
 	}
 
 	@Override

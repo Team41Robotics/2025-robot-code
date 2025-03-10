@@ -69,7 +69,6 @@ public class RobotContainer {
 				.withHeightOffset(0.28)
 				.withLengthOffset(0.3)
 				.withWidthOffset(0.15);
-		// arm.zero();
 		config2.setName("limelight-back")
 				.withHeightOffset(0.275)
 				.withLengthOffset(-.025)

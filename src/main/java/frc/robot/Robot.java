@@ -27,12 +27,9 @@ public class Robot extends LoggedRobot {
 		RobotContainer.robot = this;
 		Logger.recordMetadata("ProjectName", "Robot2025");
 		if (isReal()) {
-			// Logger.addDataReceiver(new WPILOGWriter("/D/logs"));
 			Logger.addDataReceiver(new NT4Publisher());
 		} else {
-			// setUseTiming(false);
 			String logPath = LogFileUtil.findReplayLog();
-			// Logger.setReplaySource(new WPILOGReader(logPath));
 
 			Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
 		}

@@ -3,12 +3,12 @@ package frc.robot.subsystems.drive;
 import static frc.robot.RobotContainer.drive;
 import static frc.robot.RobotContainer.imu;
 import static frc.robot.constants.Constants.PATH_FOLLOWER_CONFIG;
-import static frc.robot.constants.Constants.ROBOT_CONFIG;
 import static frc.robot.constants.Constants.RobotConstants.ROBOT_LENGTH;
 import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
 import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FileVersionException;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SwerveModuleConfiguration;
@@ -57,15 +58,20 @@ public class SwerveSubsystem extends SubsystemBase {
 				VecBuilder.fill(0.1, 0.1, 0.1),
 				VecBuilder.fill(0.75, 0.75, 0.9)); // TODO
 
-		AutoBuilder.configure(
-				this::getPose,
-				(pose) -> pose_est.resetPosition(new Rotation2d(imu.yaw()), getPositions(), pose),
-				this::getVelocity,
-				this::drive,
-				PATH_FOLLOWER_CONFIG,
-				ROBOT_CONFIG,
-				() -> Util.isRed(),
-				this);
+		try {
+			RobotConfig ROBOT_CONFIG = RobotConfig.fromGUISettings();
+			AutoBuilder.configure(
+					this::getPose,
+					(pose) -> pose_est.resetPosition(new Rotation2d(imu.yaw()), getPositions(), pose),
+					this::getVelocity,
+					this::drive,
+					PATH_FOLLOWER_CONFIG,
+					ROBOT_CONFIG,
+					() -> Util.isRed(),
+					this);
+		} catch (IOException | ParseException e) {
+			DriverStation.reportError("Failed to load robot config", e.getStackTrace());
+		}
 
 		PathPlannerLogging.setLogActivePathCallback((activePath) -> {
 			Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));

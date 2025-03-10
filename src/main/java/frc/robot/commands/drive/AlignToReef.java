@@ -20,9 +20,9 @@ public class AlignToReef extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(0.4, 0.05, 0);
-	private PIDController yPID = new PIDController(0.4, 0.00, 0);
-	private PIDController wPID = new PIDController(0.5, 0.05, 0);
+	private PIDController xPID = new PIDController(0.4, 0.04, 0);
+	private PIDController yPID = new PIDController(0.1, 0.00, 0);
+	private PIDController wPID = new PIDController(0.1, 0.0, 0);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();

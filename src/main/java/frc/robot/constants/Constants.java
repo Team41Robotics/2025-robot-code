@@ -1,8 +1,8 @@
 package frc.robot.constants;
 
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -39,8 +39,8 @@ public final class Constants {
 
 		public static final int WRIST = 0;
 
-		public static final double MAX_EXTENSION = 0.88;
-		public static final double MIN_EXTENSION = 0;
+		public static final double MAX_EXTENSION = 1.09;
+		public static final double MIN_EXTENSION = 0.05;
 
 		public static final Rotation2d MIN_ROTATION = new Rotation2d(0.175); // SHOULDER
 		public static final Rotation2d MAX_ROTATION = new Rotation2d(Math.PI / 2 - .3);
@@ -63,13 +63,13 @@ public final class Constants {
 			new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
 			);
 
-	public static RobotConfig ROBOT_CONFIG;
+	// public static RobotConfig ROBOT_CONFIG;
 
-	static {
-		try {
-			ROBOT_CONFIG = RobotConfig.fromGUISettings();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	// static {
+	// 	try {
+	// 		ROBOT_CONFIG = RobotConfig.fromGUISettings();
+	// 	} catch (Exception e) {
+	// 		e.printStackTrace();
+	// 	}
+	// }
 }

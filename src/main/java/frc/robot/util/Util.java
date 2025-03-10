@@ -1,11 +1,17 @@
 package frc.robot.util;
 
+import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
+import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
+import static frc.robot.constants.Constants.RobotConstants.SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
+import static frc.robot.constants.Constants.RobotConstants.TURBO_ANGULAR_SPEED_MULT;
+import static frc.robot.constants.Constants.RobotConstants.TURBO_SPEED_MULT;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.exp;
 import static java.lang.Math.signum;
 import static java.lang.Math.sin;
-import java.util.Optional;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -17,13 +23,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import static frc.robot.constants.Constants.RobotConstants.ANGULAR_MAX_SPEED;
-import static frc.robot.constants.Constants.RobotConstants.ANGULAR_SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.ROBOT_WIDTH;
-import static frc.robot.constants.Constants.RobotConstants.SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_MAXSPEED;
-import static frc.robot.constants.Constants.RobotConstants.TURBO_ANGULAR_SPEED_MULT;
-import static frc.robot.constants.Constants.RobotConstants.TURBO_SPEED_MULT;
+import java.util.Optional;
 
 public class Util {
 	// tuned value for sigmoid, higher values make the curve steeper, this is what thomas likes. Use desmos to preview
@@ -140,6 +140,6 @@ public class Util {
 	}
 
 	public static double ramp(double curr, double prev, double step) {
-		return MathUtil.clamp(curr, prev - step*0.02, prev + step*0.02);
+		return MathUtil.clamp(curr, prev - step * 0.02, prev + step * 0.02);
 	}
 }

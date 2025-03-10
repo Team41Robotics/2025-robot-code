@@ -1,19 +1,18 @@
 package frc.robot.commands.drive;
 
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.reefChooser;
+import static frc.robot.util.Util.convertAngle;
+import static frc.robot.util.Util.getAdjustedPose;
+import static frc.robot.util.Util.getAprilTagPose;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.reefChooser;
-import static frc.robot.util.Util.convertAngle;
-import static frc.robot.util.Util.getAdjustedPose;
-import static frc.robot.util.Util.getAprilTagPose;
+import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class AlignToReefSlowly extends Command {
@@ -71,9 +70,9 @@ public class AlignToReefSlowly extends Command {
 		Logger.recordOutput("/Odom/adjusted_pose/w", adj_pose.getRotation().getRadians());
 		Logger.recordOutput("/Odom/error", Math.hypot((curr_X - adj_X), (curr_Y - adj_Y)));
 
-		double xVel = xPID.calculate(curr_X, adj_X)*0.1;
-		double yVel = yPID.calculate(curr_Y, adj_Y)*0.1;
-		double wVel = wPID.calculate(curr_rot, target_rot)*0.1;
+		double xVel = xPID.calculate(curr_X, adj_X) * 0.1;
+		double yVel = yPID.calculate(curr_Y, adj_Y) * 0.1;
+		double wVel = wPID.calculate(curr_rot, target_rot) * 0.1;
 
 		drive.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
 				xVel, yVel, wVel, drive.getPose().getRotation()));

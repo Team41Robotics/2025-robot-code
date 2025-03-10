@@ -1,17 +1,18 @@
 package frc.robot.subsystems.arm;
 
-import static frc.robot.RobotContainer.robot;
-import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
-import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
-import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
-import static frc.robot.util.Util.ramp;
 import static java.lang.Math.PI;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.robot;
+import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
+import static frc.robot.util.Util.ramp;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -47,7 +48,7 @@ public class ArmSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		if(robot.isDisabled()) {
+		if (robot.isDisabled()) {
 			shoulder_ramped = getShoulderAngle().getRadians();
 			ext_ramped = getExtension();
 			wrist_ramped = getWristAngle();
@@ -57,15 +58,13 @@ public class ArmSubsystem extends SubsystemBase {
 		{
 			shoulderTargetRotation = clampShoulderTargetAngle(shoulderTargetRotation);
 			shoulder_ramped = ramp(shoulderTargetRotation, shoulder_ramped, 1.);
-			double out = shoulderPID.calculate(
-					getShoulderAngle().getRadians(),
-					shoulder_ramped);
+			double out = shoulderPID.calculate(getShoulderAngle().getRadians(), shoulder_ramped);
 
 			io.setShoulderVoltageClamped(out);
 		}
 		{
 			targetExtension = clampTargetExtension(targetExtension);
-			// ext_ramped = ramp(targetExtension, ext_ramped, 0.5);
+			ext_ramped = ramp(targetExtension, ext_ramped, 0.25);
 			double out = telescopePID.calculate(getExtension(), targetExtension);
 			io.setExtensionVoltageClamped(out);
 		}

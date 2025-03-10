@@ -1,16 +1,15 @@
 package frc.robot.subsystems.vision;
 
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.robot;
 
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.robot;
 import frc.robot.constants.LimelightConfiguration;
+import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;

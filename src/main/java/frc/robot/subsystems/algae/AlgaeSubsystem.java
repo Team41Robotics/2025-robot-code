@@ -15,7 +15,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 	private final AlgaeIOInputsAutoLogged inputs = new AlgaeIOInputsAutoLogged();
 
 	private final PIDController m_PID;
-	double x = 80; // TODO NEEDS TUNING
+	double currentThreshold = 80; // TODO NEEDS TUNING
 	private Optional<Rotation2d> targetRotation;
 
 	public AlgaeSubsystem() {
@@ -56,7 +56,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 	}
 
 	public boolean hasAlgae() {
-		return Math.abs(inputs.intakeCurrent[0]) > x;
+		return Math.abs(inputs.intakeCurrent[0]) > currentThreshold;
 	}
 
 	public void stopMotors() {

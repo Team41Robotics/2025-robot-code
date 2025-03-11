@@ -1,5 +1,15 @@
 package frc.robot.subsystems.arm;
 
+import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
+import static frc.robot.constants.Constants.ArmConstants.SHOULDER_2;
+import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
+import static frc.robot.constants.Constants.ArmConstants.SHOULDER_4;
+import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_1;
+import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_2;
+import static frc.robot.constants.Constants.ArmConstants.WRIST;
+import static frc.robot.constants.Constants.SHOULDER_GEAR_RATIO;
+import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
+import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 import static java.lang.Math.PI;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -13,21 +23,9 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
-import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
-import static frc.robot.constants.Constants.ArmConstants.SHOULDER_2;
-import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
-import static frc.robot.constants.Constants.ArmConstants.SHOULDER_4;
-import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_1;
-import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_2;
-import static frc.robot.constants.Constants.ArmConstants.WRIST;
-import static frc.robot.constants.Constants.SHOULDER_GEAR_RATIO;
-import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
-import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 
 public class ArmIOHardware implements ArmIO {
 
@@ -37,7 +35,7 @@ public class ArmIOHardware implements ArmIO {
 	private static double EXTENSION_GEAR_RATIO = 1 / TELESCOPE_GEAR_RATIO;
 	private static double EXTENSION_SPROCKET_RADIUS = Units.inchesToMeters(1.273);
 
-	private final DigitalInput bottomSwitch;
+	// private final DigitalInput bottomSwitch;
 	// private final DigitalInput topSwitch;
 
 	private final TalonFX shoulder1;
@@ -58,7 +56,7 @@ public class ArmIOHardware implements ArmIO {
 
 	public ArmIOHardware() {
 
-		bottomSwitch = new DigitalInput(9);
+		// bottomSwitch = new DigitalInput(9);
 
 		shoulder1 = new TalonFX(SHOULDER_1);
 		shoulder2 = new TalonFX(SHOULDER_2);
@@ -160,16 +158,16 @@ public class ArmIOHardware implements ArmIO {
 		inputs.telescopeMotor2Voltage = telescope2.getDutyCycle().getValueAsDouble()
 				* telescope2.getSupplyVoltage().getValueAsDouble();
 
-		inputs.telescopeMotor1Current = new double[] {telescope1.getStatorCurrent().getValueAsDouble()};
-		inputs.telescopeMotor2Current = new double[] {telescope2.getStatorCurrent().getValueAsDouble()};
-
+		inputs.telescopeMotor1Current =
+				new double[] {telescope1.getStatorCurrent().getValueAsDouble()};
+		inputs.telescopeMotor2Current =
+				new double[] {telescope2.getStatorCurrent().getValueAsDouble()};
 
 		// inputs.topSwitchOn = topSwitch.get();
 
 		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI + 0.05;
 		inputs.wristRotation = inputs.wristRotation % (2 * PI);
 		inputs.wristPivotVoltage = wrist.getAppliedOutput() * wrist.getBusVoltage();
-
 	}
 
 	@Override

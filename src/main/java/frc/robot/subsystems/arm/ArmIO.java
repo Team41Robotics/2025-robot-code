@@ -1,8 +1,7 @@
 package frc.robot.subsystems.arm;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
 
@@ -49,7 +48,6 @@ public interface ArmIO {
 		public double telescopeMotor2Voltage = 0.0;
 		public double[] telescopeMotor1Current = new double[] {};
 		public double[] telescopeMotor2Current = new double[] {};
-
 
 		public double wristRotation = 0.0;
 		public double wristPivotVoltage = 0.0;

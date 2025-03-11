@@ -1,17 +1,18 @@
 package frc.robot.subsystems.arm;
 
-import static frc.robot.RobotContainer.robot;
-import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
-import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
-import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
-import static frc.robot.util.Util.ramp;
 import static java.lang.Math.PI;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.robot;
+import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
+import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
+import static frc.robot.util.Util.ramp;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -108,6 +109,10 @@ public class ArmSubsystem extends SubsystemBase {
 
 	public Rotation2d getShoulderAngle() {
 		return inputs.shoulderRotation;
+	}
+
+	public double getShoulderAngleRadians() {
+		return inputs.shoulderRotation.getRadians();
 	}
 
 	public double getWristAngle() {

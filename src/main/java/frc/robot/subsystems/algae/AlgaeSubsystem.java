@@ -1,14 +1,13 @@
 package frc.robot.subsystems.algae;
 
 import static java.lang.Math.PI;
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 public class AlgaeSubsystem extends SubsystemBase {
 	private final AlgaeIOSparkMax io;

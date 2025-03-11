@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.commands.arm.MicroAdjust;
 import frc.robot.commands.arm.Retract;
 import frc.robot.commands.arm.ScoreCoral;
 import frc.robot.commands.arm.SetToScore;
@@ -21,6 +22,7 @@ import frc.robot.commands.drive.AlignToStation;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.ArmConfiguration;
 import frc.robot.constants.LimelightConfiguration;
+import frc.robot.subsystems.arm.ArmJoint;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
@@ -119,6 +121,13 @@ public class RobotContainer {
 		right_js.button(1).onTrue(intake.runIntake(0.2).until(() -> !intake.isBeamBreakNotTriggered())); // INTAKE
 		right_js.button(2)
 				.onTrue(new AlignToReef().until(() -> left_js.button(2).getAsBoolean()));
+
+		right_js.pov(90).onTrue(new MicroAdjust(0.05, ArmJoint.SHOULDER));
+		right_js.pov(270).onTrue(new MicroAdjust(-0.05, ArmJoint.SHOULDER));
+		right_js.pov(0).onTrue(new MicroAdjust(0.05, ArmJoint.DIH));
+		right_js.pov(180).onTrue(new MicroAdjust(-0.05, ArmJoint.DIH));
+		left_js.pov(90).onTrue(new MicroAdjust(0.05, ArmJoint.EXTENSION));
+		left_js.pov(270).onTrue(new MicroAdjust(-0.05, ArmJoint.EXTENSION));
 
 		ds.button(1).onTrue(new InstantCommand(() -> target_right = !target_right));
 

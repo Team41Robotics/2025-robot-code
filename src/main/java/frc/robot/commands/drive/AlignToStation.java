@@ -1,27 +1,28 @@
 package frc.robot.commands.drive;
 
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.stationChooser;
-import static frc.robot.util.Util.convertAngle;
-import static frc.robot.util.Util.getAdjustedPoseHumanPlayer;
-import static frc.robot.util.Util.getAprilTagPose;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.stationChooser;
+import static frc.robot.util.Util.convertAngle;
+import static frc.robot.util.Util.getAdjustedPoseHumanPlayer;
+import static frc.robot.util.Util.getAprilTagPose;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class AlignToStation extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(0.2, 0.01, 0);
-	private PIDController yPID = new PIDController(0.2, 0.02, 0);
-	private PIDController wPID = new PIDController(0.2, 0.05, 0.);
+	private PIDController xPID = new PIDController(0.25, 0.02, 0);
+	private PIDController yPID = new PIDController(0.25, 0.02, 0);
+	private PIDController wPID = new PIDController(0.25, 0.05, 0.);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();
@@ -91,10 +92,10 @@ public class AlignToStation extends Command {
 
 		Pose2d current_pose = drive.getPose();
 		double dX = Math.abs(current_pose.getX() - adj_pose.getX());
-		double dY = Math.abs(current_pose.getY() - adj_pose.getY()); // Translational difference
+		double dY = Math.abs(current_pose.getY() - adj_pose.getY()); 
 
 		double angle_offset = Math.abs(convertAngle(current_pose.getRotation().getRadians())
-				- convertAngle(adj_pose.getRotation().getRadians())); // Angular difference
+				- convertAngle(adj_pose.getRotation().getRadians())); 
 
 		if (dX < 0.05 && dY < 0.075 && angle_offset <= Units.degreesToRadians(5)) {
 			System.out.println("Aligned");

@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.arm.MicroAdjust;
 import frc.robot.commands.arm.Retract;
@@ -61,7 +62,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("ScoreL3", new SetToScore(ArmConfiguration.L3));
 		NamedCommands.registerCommand("ScoreL2", new SetToScore(ArmConfiguration.L2));
 		NamedCommands.registerCommand(
-				"RunIntake", intake.runIntake(0.15).until(() -> !intake.isBeamBreakNotTriggered()));
+				"RunIntake", intake.runIntake(0.15).until(() -> intake.isBeamBreakTriggered()));
 		NamedCommands.registerCommand("RetractArm", new Retract(ArmConfiguration.HUMAN_PLAYER));
 		NamedCommands.registerCommand("RemoveLowAlgae", new SetToScore(ArmConfiguration.lowAlgae));
 		NamedCommands.registerCommand("RemoveHighAlgae", new SetToScore(ArmConfiguration.highAlgae));
@@ -118,16 +119,16 @@ public class RobotContainer {
 
 		right_js.button(4)
 				.onTrue(new AlignToStation().until(() -> left_js.button(2).getAsBoolean()));
-		right_js.button(1).onTrue(intake.runIntake(0.2).until(() -> !intake.isBeamBreakNotTriggered())); // INTAKE
+		right_js.button(1).onTrue(intake.runIntake(0.2).until(() -> intake.isBeamBreakTriggered())); // INTAKE
 		right_js.button(2)
 				.onTrue(new AlignToReef().until(() -> left_js.button(2).getAsBoolean()));
 
 		right_js.pov(90).onTrue(new MicroAdjust(0.05, ArmJoint.SHOULDER));
 		right_js.pov(270).onTrue(new MicroAdjust(-0.05, ArmJoint.SHOULDER));
-		right_js.pov(0).onTrue(new MicroAdjust(0.05, ArmJoint.DIH));
-		right_js.pov(180).onTrue(new MicroAdjust(-0.05, ArmJoint.DIH));
-		left_js.pov(90).onTrue(new MicroAdjust(0.05, ArmJoint.EXTENSION));
-		left_js.pov(270).onTrue(new MicroAdjust(-0.05, ArmJoint.EXTENSION));
+		right_js.pov(0).onTrue(new MicroAdjust(0.1, ArmJoint.DIH));
+		right_js.pov(180).onTrue(new MicroAdjust(-0.1, ArmJoint.DIH));
+		left_js.pov(45).onTrue(new MicroAdjust(0.05, ArmJoint.EXTENSION));
+		left_js.pov(180).onTrue(new MicroAdjust(-0.05, ArmJoint.EXTENSION));
 
 		ds.button(1).onTrue(new InstantCommand(() -> target_right = !target_right));
 
@@ -145,7 +146,7 @@ public class RobotContainer {
 		// left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
 		// left_js.button(2).whileTrue(new ScoreAlgae());
 
-		left_js.button(1).whileTrue(new InstantCommand(() -> intake.runVoltage(5)));
+		left_js.button(1).whileTrue(new StartEndCommand(() -> intake.runMotor(L4 ? -0.75 : 0.75), () -> intake.stopMotors()));
 	}
 
 	public static Command getAutonomousCommand() {

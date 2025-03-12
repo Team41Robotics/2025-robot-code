@@ -1,27 +1,28 @@
 package frc.robot.commands.drive;
 
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.reefChooser;
-import static frc.robot.util.Util.convertAngle;
-import static frc.robot.util.Util.getAdjustedPose;
-import static frc.robot.util.Util.getAprilTagPose;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.reefChooser;
+import static frc.robot.util.Util.convertAngle;
+import static frc.robot.util.Util.getAdjustedPose;
+import static frc.robot.util.Util.getAprilTagPose;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class AlignToReef extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(0.4, 0.04, 0);
-	private PIDController yPID = new PIDController(0.1, 0.00, 0);
-	private PIDController wPID = new PIDController(0.1, 0.0, 0);
+	private PIDController xPID = new PIDController(0.5, 0.0, 0);
+	private PIDController yPID = new PIDController(0.4, 0.00, 0);
+	private PIDController wPID = new PIDController(0.4, 0.0, 0);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();

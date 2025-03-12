@@ -1,7 +1,6 @@
 package frc.robot.subsystems.vision;
 
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.robot;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -11,16 +10,17 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.robot;
 import frc.robot.constants.LimelightConfiguration;
-import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
 	private Pose2d robotToField = new Pose2d();
 	private double mt1Timestamp = 0.0;
-	private final MedianFilter xFilter = new MedianFilter(30);
-	private final MedianFilter YFilter = new MedianFilter(30);
-	private final MedianFilter rFilter = new MedianFilter(30);
+	private static final MedianFilter xFilter = new MedianFilter(30);
+	private static final MedianFilter YFilter = new MedianFilter(30);
+	private static final MedianFilter rFilter = new MedianFilter(30);
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;
@@ -43,8 +43,8 @@ public class VisionSubsystem extends SubsystemBase {
 			}
 
 			if (!robot.isDisabled()
-					&& (Math.abs(pose.getY() - YFilter.calculate(pose.getY())) > 0.5
-							|| Math.abs(pose.getX() - xFilter.calculate(pose.getX())) > 0.5)) {
+					&& (Math.abs(pose.getY() - YFilter.calculate(pose.getY())) > 0.75
+							|| Math.abs(pose.getX() - xFilter.calculate(pose.getX())) > 0.75)) {
 				doRejectUpdate = true;
 			}
 

@@ -32,6 +32,7 @@ public class MicroAdjust extends Command{
                         case DIH -> {
                             double adjusted = arm.clampWristTargetAngle(arm.getWristAngle() + increment);
                             arm.setWristTargetRotation(adjusted);
+                            System.out.println("Set new target to " + adjusted);
                             return;
 
                 }

@@ -1,15 +1,5 @@
 package frc.robot.subsystems.arm;
 
-import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
-import static frc.robot.constants.Constants.ArmConstants.SHOULDER_2;
-import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
-import static frc.robot.constants.Constants.ArmConstants.SHOULDER_4;
-import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_1;
-import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_2;
-import static frc.robot.constants.Constants.ArmConstants.WRIST;
-import static frc.robot.constants.Constants.SHOULDER_GEAR_RATIO;
-import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
-import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 import static java.lang.Math.PI;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -23,9 +13,20 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
+import static frc.robot.constants.Constants.ArmConstants.SHOULDER_2;
+import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
+import static frc.robot.constants.Constants.ArmConstants.SHOULDER_4;
+import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_1;
+import static frc.robot.constants.Constants.ArmConstants.TELESCOPE_2;
+import static frc.robot.constants.Constants.ArmConstants.WRIST;
+import static frc.robot.constants.Constants.SHOULDER_GEAR_RATIO;
+import static frc.robot.constants.Constants.TELESCOPE_GEAR_RATIO;
+import static frc.robot.constants.Constants.TELESCOPE_PULLEY_RADIUS;
 
 public class ArmIOHardware implements ArmIO {
 
@@ -165,9 +166,11 @@ public class ArmIOHardware implements ArmIO {
 
 		// inputs.topSwitchOn = topSwitch.get();
 
-		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI + 0.05;
-		inputs.wristRotation = inputs.wristRotation % (2 * PI);
+		
+		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI;
+		//inputs.wristRotation = inputs.wristRotation % (2 * PI);
 		inputs.wristPivotVoltage = wrist.getAppliedOutput() * wrist.getBusVoltage();
+		inputs.wristPivotCurrent = new double[] {wrist.getOutputCurrent()};
 	}
 
 	@Override
@@ -199,6 +202,6 @@ public class ArmIOHardware implements ArmIO {
 
 	@Override
 	public void setWristVoltageClamped(double voltage) {
-		setWristVoltage(MathUtil.clamp(voltage, -2, 2));
+		setWristVoltage(MathUtil.clamp(voltage, -4, 4));
 	}
 }

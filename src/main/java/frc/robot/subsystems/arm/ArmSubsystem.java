@@ -20,7 +20,8 @@ public class ArmSubsystem extends SubsystemBase {
 	private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
 	private double shoulderTargetRotation = 0;
-	private double wristTargetRotation = 4.4;
+
+	private double wristTargetRotation = 4.83;
 	private double targetExtension = 0;
 
 	private final PIDController shoulderPID;
@@ -36,7 +37,8 @@ public class ArmSubsystem extends SubsystemBase {
 		telescopePID = new PIDController(30, 25, 0);
 		telescopePID.setTolerance(0.1);
 		telescopePID.setIZone(0.1);
-		wristPID = new PIDController(3, 0.0, 0);
+		wristPID = new PIDController(4,0.8,0);
+		//wristPID.setIZone(0.2);
 	}
 
 	@Override
@@ -63,14 +65,17 @@ public class ArmSubsystem extends SubsystemBase {
 		}
 		{
 			wristTargetRotation = clampWristTargetAngle(wristTargetRotation);
-			wrist_ramped = ramp(wristTargetRotation, wrist_ramped, 1);
+			wrist_ramped = ramp(wristTargetRotation, wrist_ramped, 3.);
 			double out = wristPID.calculate(inputs.wristRotation, wrist_ramped);
 			io.setWristVoltageClamped(out);
+			Logger.recordOutput("Arm/Output", out);
 		}
 		Logger.processInputs("Arm", inputs);
 		Logger.recordOutput("Arm/Target Extension", this.targetExtension);
 		Logger.recordOutput("Arm/Target Rotation", this.shoulderTargetRotation);
 		Logger.recordOutput("Arm/Target Wrist Rotation", this.wristTargetRotation);
+		Logger.recordOutput("Arm/Error Wrist", this.wristTargetRotation - this.getWristAngle());
+		
 	}
 
 	public void zero() {
@@ -100,7 +105,7 @@ public class ArmSubsystem extends SubsystemBase {
 	}
 
 	public double clampWristTargetAngle(double target) {
-		return MathUtil.clamp(target, PI / 4, 3 * PI / 2);
+		return MathUtil.clamp(target,0.74 ,5.16 );
 	}
 
 	public double getExtension() {
@@ -130,4 +135,10 @@ public class ArmSubsystem extends SubsystemBase {
 	public boolean wristAtSetpoint() {
 		return wristPID.atSetpoint();
 	}
+
+	public void setWristVoltage(double voltage){
+		io.setWristVoltage(voltage);
+	}
+	
+
 }

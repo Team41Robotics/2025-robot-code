@@ -1,9 +1,8 @@
 package frc.robot.commands.arm;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import static frc.robot.RobotContainer.L4;
 import static frc.robot.RobotContainer.intake;
-
-import edu.wpi.first.wpilibj2.command.Command;
 
 public class ScoreCoral extends Command {
 
@@ -13,7 +12,7 @@ public class ScoreCoral extends Command {
 
 	@Override
 	public void execute() {
-		if (intake.isBeamBreakNotTriggered()) {
+		if (!intake.isBeamBreakTriggered()) {
 			return;
 		}
 		if (L4) {
@@ -25,7 +24,7 @@ public class ScoreCoral extends Command {
 
 	@Override
 	public boolean isFinished() {
-		if (intake.isBeamBreakNotTriggered()) {
+		if (intake.isBeamBreakTriggered()) {
 			intake.stopMotors();
 			return true;
 		}

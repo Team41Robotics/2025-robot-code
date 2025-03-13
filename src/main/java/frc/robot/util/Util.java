@@ -131,8 +131,8 @@ public class Util {
 
 	public static Pose2d getAdjustedPoseHumanPlayer(Pose2d target) {
 
-		double effectorOffset = -0.19;
-		double forwardOffset = 0.42;
+		double effectorOffset = -0.29;
+		double forwardOffset = 0.38;
 		Pose2d returnable = target;
 		Transform2d currentToTarget = new Transform2d(
 				new Translation2d((ROBOT_WIDTH / 2) + forwardOffset, effectorOffset), new Rotation2d(Math.PI));

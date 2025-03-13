@@ -1,7 +1,8 @@
 package frc.robot.subsystems.arm;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public interface ArmIO {
 
@@ -53,5 +54,6 @@ public interface ArmIO {
 		public double wristPivotVoltage = 0.0;
 		public double[] wristPivotCurrent = new double[] {}; // amps
 		public double wristAngVel = 0.0; // rad / s
+		public boolean bottomSwitchNotOn = true;
 	}
 }

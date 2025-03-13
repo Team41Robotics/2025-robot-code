@@ -18,9 +18,9 @@ public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
 	private Pose2d robotToField = new Pose2d();
 	private double mt1Timestamp = 0.0;
-	private static final MedianFilter xFilter = new MedianFilter(30);
-	private static final MedianFilter YFilter = new MedianFilter(30);
-	private static final MedianFilter rFilter = new MedianFilter(30);
+	private final MedianFilter xFilter = new MedianFilter(20);
+	private final MedianFilter YFilter = new MedianFilter(20);
+	private final MedianFilter rFilter = new MedianFilter(20);
 
 	private int counter;
 
@@ -46,8 +46,8 @@ public class VisionSubsystem extends SubsystemBase {
 			}
 
 			if (!robot.isDisabled()
-					&& (Math.abs(pose.getY() - YFilter.calculate(pose.getY())) > 0.75
-							|| Math.abs(pose.getX() - xFilter.calculate(pose.getX())) > 0.75)) {
+					&& (Math.abs(pose.getY() - YFilter.calculate(pose.getY())) > 0.5
+							|| Math.abs(pose.getX() - xFilter.calculate(pose.getX())) > 0.5)) {
 				doRejectUpdate = true;
 				counter += 1;
 				System.out.println(config.Name + " " + counter);

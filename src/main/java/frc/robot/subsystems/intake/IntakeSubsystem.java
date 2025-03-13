@@ -1,10 +1,9 @@
 package frc.robot.subsystems.intake;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -44,5 +43,4 @@ public class IntakeSubsystem extends SubsystemBase {
 	public boolean isBeamBreakTriggered() {
 		return inputs.beamBreakStatus;
 	}
-
 }

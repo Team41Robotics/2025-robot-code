@@ -22,8 +22,11 @@ public class VisionSubsystem extends SubsystemBase {
 	private static final MedianFilter YFilter = new MedianFilter(30);
 	private static final MedianFilter rFilter = new MedianFilter(30);
 
+	private int counter;
+
 	public void init(LimelightConfiguration _config) {
 		config = _config;
+		counter = 0;
 	}
 
 	@Override
@@ -46,6 +49,8 @@ public class VisionSubsystem extends SubsystemBase {
 					&& (Math.abs(pose.getY() - YFilter.calculate(pose.getY())) > 0.75
 							|| Math.abs(pose.getX() - xFilter.calculate(pose.getX())) > 0.75)) {
 				doRejectUpdate = true;
+				counter += 1;
+				System.out.println(config.Name + " " + counter);
 			}
 
 			if (!doRejectUpdate) {

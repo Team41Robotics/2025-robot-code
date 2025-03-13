@@ -1,18 +1,16 @@
 package frc.robot.subsystems.arm;
 
-import static java.lang.Math.PI;
-
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.RobotContainer.robot;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
 import static frc.robot.util.Util.ramp;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -37,8 +35,8 @@ public class ArmSubsystem extends SubsystemBase {
 		telescopePID = new PIDController(30, 25, 0);
 		telescopePID.setTolerance(0.1);
 		telescopePID.setIZone(0.1);
-		wristPID = new PIDController(4,0.8,0);
-		//wristPID.setIZone(0.2);
+		wristPID = new PIDController(4, 0.8, 0);
+		// wristPID.setIZone(0.2);
 	}
 
 	@Override
@@ -70,12 +68,12 @@ public class ArmSubsystem extends SubsystemBase {
 			io.setWristVoltageClamped(out);
 			Logger.recordOutput("Arm/Output", out);
 		}
+
 		Logger.processInputs("Arm", inputs);
 		Logger.recordOutput("Arm/Target Extension", this.targetExtension);
 		Logger.recordOutput("Arm/Target Rotation", this.shoulderTargetRotation);
 		Logger.recordOutput("Arm/Target Wrist Rotation", this.wristTargetRotation);
 		Logger.recordOutput("Arm/Error Wrist", this.wristTargetRotation - this.getWristAngle());
-		
 	}
 
 	public void zero() {
@@ -105,7 +103,7 @@ public class ArmSubsystem extends SubsystemBase {
 	}
 
 	public double clampWristTargetAngle(double target) {
-		return MathUtil.clamp(target,0.74 ,5.16 );
+		return MathUtil.clamp(target, 0.74, 5.16);
 	}
 
 	public double getExtension() {
@@ -136,9 +134,7 @@ public class ArmSubsystem extends SubsystemBase {
 		return wristPID.atSetpoint();
 	}
 
-	public void setWristVoltage(double voltage){
+	public void setWristVoltage(double voltage) {
 		io.setWristVoltage(voltage);
 	}
-	
-
 }

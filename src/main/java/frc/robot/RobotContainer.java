@@ -1,11 +1,8 @@
 package frc.robot;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -29,6 +26,7 @@ import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
 	public static Robot robot;
@@ -61,8 +59,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("ScoreL4", new SetToScore(ArmConfiguration.L4));
 		NamedCommands.registerCommand("ScoreL3", new SetToScore(ArmConfiguration.L3));
 		NamedCommands.registerCommand("ScoreL2", new SetToScore(ArmConfiguration.L2));
-		NamedCommands.registerCommand(
-				"RunIntake", intake.runIntake(0.15).until(() -> intake.isBeamBreakTriggered()));
+		NamedCommands.registerCommand("RunIntake", intake.runIntake(0.15).until(() -> intake.isBeamBreakTriggered()));
 		NamedCommands.registerCommand("RetractArm", new Retract(ArmConfiguration.HUMAN_PLAYER));
 		NamedCommands.registerCommand("RemoveLowAlgae", new SetToScore(ArmConfiguration.lowAlgae));
 		NamedCommands.registerCommand("RemoveHighAlgae", new SetToScore(ArmConfiguration.highAlgae));
@@ -146,7 +143,8 @@ public class RobotContainer {
 		// left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
 		// left_js.button(2).whileTrue(new ScoreAlgae());
 
-		left_js.button(1).whileTrue(new StartEndCommand(() -> intake.runMotor(L4 ? -0.75 : 0.75), () -> intake.stopMotors()));
+		left_js.button(1)
+				.whileTrue(new StartEndCommand(() -> intake.runMotor(L4 ? -0.75 : 0.75), () -> intake.stopMotors()));
 	}
 
 	public static Command getAutonomousCommand() {

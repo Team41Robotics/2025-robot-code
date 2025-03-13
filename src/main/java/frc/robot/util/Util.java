@@ -124,18 +124,18 @@ public class Util {
 		double frontOffset = 0.1;
 
 		Pose2d returnable = target;
-		Transform2d currentToTarget =
-				new Transform2d(new Translation2d((ROBOT_WIDTH / 2) + frontOffset, endEffectorOffset), new Rotation2d(0));
+		Transform2d currentToTarget = new Transform2d(
+				new Translation2d((ROBOT_WIDTH / 2) + frontOffset, endEffectorOffset), new Rotation2d(0));
 		return returnable.transformBy(currentToTarget);
 	}
 
 	public static Pose2d getAdjustedPoseHumanPlayer(Pose2d target) {
-		
-		double effectorOffset = -0.27;
-		double forwardOffset = 0.24;
+
+		double effectorOffset = -0.19;
+		double forwardOffset = 0.42;
 		Pose2d returnable = target;
-		Transform2d currentToTarget =
-				new Transform2d(new Translation2d((ROBOT_WIDTH / 2) + forwardOffset, effectorOffset), new Rotation2d(Math.PI));
+		Transform2d currentToTarget = new Transform2d(
+				new Translation2d((ROBOT_WIDTH / 2) + forwardOffset, effectorOffset), new Rotation2d(Math.PI));
 		return returnable.transformBy(currentToTarget);
 	}
 

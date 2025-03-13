@@ -20,8 +20,8 @@ public class AlignToStation extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(0.25, 0.02, 0);
-	private PIDController yPID = new PIDController(0.25, 0.02, 0);
+	private PIDController xPID = new PIDController(0.25, 0.08, 0);
+	private PIDController yPID = new PIDController(0.25, 0.06, 0);
 	private PIDController wPID = new PIDController(0.25, 0.05, 0.);
 
 	private Optional<Pose2d> target_pose;
@@ -92,12 +92,12 @@ public class AlignToStation extends Command {
 
 		Pose2d current_pose = drive.getPose();
 		double dX = Math.abs(current_pose.getX() - adj_pose.getX());
-		double dY = Math.abs(current_pose.getY() - adj_pose.getY()); 
+		double dY = Math.abs(current_pose.getY() - adj_pose.getY());
 
 		double angle_offset = Math.abs(convertAngle(current_pose.getRotation().getRadians())
-				- convertAngle(adj_pose.getRotation().getRadians())); 
+				- convertAngle(adj_pose.getRotation().getRadians()));
 
-		if (dX < 0.05 && dY < 0.075 && angle_offset <= Units.degreesToRadians(5)) {
+		if (dX < 0.04 && dY < 0.05 && angle_offset <= Units.degreesToRadians(5)) {
 			System.out.println("Aligned");
 
 			return true;

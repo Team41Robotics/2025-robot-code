@@ -2,7 +2,6 @@ package frc.robot.constants;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -62,5 +61,4 @@ public final class Constants {
 			new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
 			new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
 			);
-
 }

@@ -57,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
 		}
 		{
 			targetExtension = clampTargetExtension(targetExtension);
-			ext_ramped = ramp(targetExtension, ext_ramped, 0.25);
+			ext_ramped = ramp(targetExtension, ext_ramped, 0.125);
 			double out = telescopePID.calculate(getExtension(), targetExtension);
 			io.setExtensionVoltageClamped(out);
 		}

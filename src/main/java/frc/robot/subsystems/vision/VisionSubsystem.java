@@ -11,16 +11,16 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.robot;
+import static frc.robot.RobotContainer.ds;
 import frc.robot.constants.LimelightConfiguration;
 
 public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
 	private Pose2d robotToField = new Pose2d();
 	private double mt1Timestamp = 0.0;
-	private final MedianFilter xFilter = new MedianFilter(20);
-	private final MedianFilter YFilter = new MedianFilter(20);
-	private final MedianFilter rFilter = new MedianFilter(20);
+	private static final MedianFilter xFilter = new MedianFilter(20);
+	private static final MedianFilter YFilter = new MedianFilter(20);
+	private static final MedianFilter rFilter = new MedianFilter(20);
 
 	private int counter;
 
@@ -45,9 +45,7 @@ public class VisionSubsystem extends SubsystemBase {
 				doRejectUpdate = true;
 			}
 
-			if (!robot.isDisabled()
-					&& (Math.abs(pose.getY() - YFilter.calculate(pose.getY())) > 0.5
-							|| Math.abs(pose.getX() - xFilter.calculate(pose.getX())) > 0.5)) {
+			if ((Math.abs(pose.getY() - YFilter.calculate(pose.getY())) > 0.5 || Math.abs(pose.getX() - xFilter.calculate(pose.getX())) > 0.5) && ds.button(15).getAsBoolean()) {
 				doRejectUpdate = true;
 				counter += 1;
 				System.out.println(config.Name + " " + counter);

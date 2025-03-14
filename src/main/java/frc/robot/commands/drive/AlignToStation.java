@@ -48,14 +48,16 @@ public class AlignToStation extends Command {
 		target_pose = getAprilTagPose(target_id);
 		if (target_pose.isEmpty()
 				&& stored_pose
-						.isEmpty()) { // For reliability, if not receiving new pose from PhotonVision, use previously
-			// saved pose if any as reference
+						.isEmpty()) { 
 			return;
 		} else if (target_pose.isEmpty() && !stored_pose.isEmpty()) {
-			// System.out.println(drive.getPose().getTranslation().getDistance(stored_pose.get().getTranslation()));
 			target_pose = stored_pose;
 		}
+
+		
 		adj_pose = getAdjustedPoseHumanPlayer(target_pose.get());
+	
+		
 		Pose2d current_pose = drive.getPose();
 		double curr_X = current_pose.getX();
 		double curr_Y = current_pose.getY();

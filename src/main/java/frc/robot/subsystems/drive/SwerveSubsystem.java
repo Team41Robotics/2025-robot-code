@@ -13,6 +13,7 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -47,6 +48,9 @@ public class SwerveSubsystem extends SubsystemBase {
 			new Translation2d(-ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2));
 
 	public SwerveDrivePoseEstimator pose_est;
+	private final MedianFilter xFilter = new MedianFilter(10);
+	private final MedianFilter yFilter = new MedianFilter(10);
+	private final MedianFilter rFilter = new MedianFilter(10);
 	/**
 	 * Initializes the SwerveSubsystem with the given initial pose.
 	 *
@@ -226,7 +230,9 @@ public class SwerveSubsystem extends SubsystemBase {
 		return AutoBuilder.followPath(path);
 	}
 
-	public void addLimelightMeasurement(Pose2d est, double timeStamp) {
+	public void addLimelightMeasurement(Pose2d est, double timeStamp, double stdDevX, double stdDevY, double stdDevZ) {
+		pose_est.setVisionMeasurementStdDevs(VecBuilder.fill(stdDevX, stdDevY, stdDevZ));
 		pose_est.addVisionMeasurement(est, timeStamp);
 	}
+
 }

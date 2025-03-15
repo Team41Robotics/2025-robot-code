@@ -7,6 +7,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import static frc.robot.RobotContainer.drive;
@@ -20,9 +21,9 @@ public class AlignToReef extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(0.25, 0.04, 0.08);
-	private PIDController yPID = new PIDController(0.2, 0.0, 0);
-	private PIDController wPID = new PIDController(0.2, 0.02, 0);
+	private PIDController xPID = new PIDController(0.25, 0.08, 0.0);
+	private PIDController yPID = new PIDController(0.25, 0.12, 0);
+	private PIDController wPID = new PIDController(0.25, 0.05, 0.);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();
@@ -95,7 +96,7 @@ public class AlignToReef extends Command {
 		double angle_offset = Math.abs(convertAngle(current_pose.getRotation().getRadians())
 				- convertAngle(adj_pose.getRotation().getRadians())); // Angular difference
 
-		if (dX < 0.09 && dY < 0.06 && angle_offset <= (4 * Math.PI) / 360) {
+		if (dX < 0.09 && dY < 0.06 && angle_offset <= Units.degreesToRadians(2)) {
 			System.out.println("Aligned");
 			return true;
 		}

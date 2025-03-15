@@ -20,9 +20,9 @@ public class AlignToReef extends Command {
 
 	// TODO: Adjust PID gains
 
-	private PIDController xPID = new PIDController(0.2, 0.0, 0);
-	private PIDController yPID = new PIDController(0.2, 0.00, 0);
-	private PIDController wPID = new PIDController(0.2, 0.0, 0);
+	private PIDController xPID = new PIDController(0.25, 0.04, 0.08);
+	private PIDController yPID = new PIDController(0.2, 0.0, 0);
+	private PIDController wPID = new PIDController(0.2, 0.02, 0);
 
 	private Optional<Pose2d> target_pose;
 	private Optional<Pose2d> stored_pose = Optional.empty();
@@ -33,6 +33,7 @@ public class AlignToReef extends Command {
 	public AlignToReef() {
 		addRequirements(drive);
 		wPID.enableContinuousInput(0, 2 * Math.PI);
+		xPID.setTolerance(0.05);
 	}
 
 	@Override

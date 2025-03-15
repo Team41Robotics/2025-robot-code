@@ -1,11 +1,5 @@
 package frc.robot.subsystems.drive;
 
-import static frc.robot.constants.Constants.MODULE_DRIVE_KF;
-import static frc.robot.constants.Constants.MODULE_DRIVE_KP;
-import static frc.robot.constants.Constants.MODULE_TURN_KP;
-import static frc.robot.constants.Constants.RobotConstants.L3_DRIVE_RATIO;
-import static frc.robot.constants.Constants.RobotConstants.L3_TURN_RATIO;
-import static frc.robot.constants.Constants.RobotConstants.SWERVE_WHEEL_RAD;
 import static java.lang.Math.PI;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -14,9 +8,16 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import static frc.robot.constants.Constants.MODULE_DRIVE_KF;
+import static frc.robot.constants.Constants.MODULE_DRIVE_KP;
+import static frc.robot.constants.Constants.MODULE_TURN_KP;
+import static frc.robot.constants.Constants.RobotConstants.L3_DRIVE_RATIO;
+import static frc.robot.constants.Constants.RobotConstants.L3_TURN_RATIO;
+import static frc.robot.constants.Constants.RobotConstants.SWERVE_WHEEL_RAD;
 import frc.robot.constants.SwerveModuleConfiguration;
 
 /**
@@ -40,8 +41,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 
 	public ModuleIOTalonFX(SwerveModuleConfiguration config) {
 
-		driveTalonFX = new TalonFX(config.DRIVE_MOTOR);
-		turnTalonFX = new TalonFX(config.TURN_MOTOR);
+		driveTalonFX = new TalonFX(config.DRIVE_MOTOR, "Ducky");
+		turnTalonFX = new TalonFX(config.TURN_MOTOR, "Ducky");
 
 		driveTalonFX.setPosition(0);
 		turnTalonFX.setPosition(0);
@@ -49,7 +50,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 		driveConfigurator = driveTalonFX.getConfigurator();
 		turnConfigurator = turnTalonFX.getConfigurator();
 
-		turnAbsoluteEncoder = new CANcoder(config.ENCODER);
+		turnAbsoluteEncoder = new CANcoder(config.ENCODER, "Ducky");
 
 		driveConfigurator.apply(new TalonFXConfiguration());
 		turnConfigurator.apply(new TalonFXConfiguration());

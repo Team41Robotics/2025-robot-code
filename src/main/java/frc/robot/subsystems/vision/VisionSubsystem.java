@@ -22,12 +22,20 @@ public class VisionSubsystem extends SubsystemBase {
 	private final double timeThreshold = 5000; // milliseconds 
 
 	private double timeSinceLastTag = System.currentTimeMillis(); // seconds
-	private int counter;
+	private int measurementCounter;
+	private int outlierCounter;
+	private double xSum;
+	private double ySum;
+	private double xMean;
+	private double yMean;
 
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;
-		counter = 0;
+		outlierCounter = 0;
+		measurementCounter = 0;
+		xSum = 0;
+		ySum = 0;
 		resetFilters();
 	}
 
@@ -38,8 +46,11 @@ public class VisionSubsystem extends SubsystemBase {
 		Pose2d pose;
 		if (mt1 != null) {
 			if(mt1.tagCount > 0){
+				measurementCounter ++;
 				timeSinceLastTag = System.currentTimeMillis() - timeSinceLastTag;
 				pose = mt1.pose;
+				xSum += pose.getX();
+				ySum += pose.getY();
 				xFilter.calculate(pose.getX());
 				yFilter.calculate(pose.getY());
 				rFilter.calculate(pose.getRotation().getRadians());
@@ -49,7 +60,7 @@ public class VisionSubsystem extends SubsystemBase {
 				}
 				if(isOutlier(pose) && timeSinceLastTag < timeThreshold){
 					rejectUpdate = true;
-					System.out.println(config.Name + " REJECTED UPDATE, IS OUTLIER " + ++counter);
+					System.out.println(config.Name + " REJECTED UPDATE, IS OUTLIER " + ++outlierCounter);
 				}
 				if(!rejectUpdate){
 					double[] stddevs = NetworkTableInstance.getDefault().getTable(config.Name).getEntry("stddevs").getDoubleArray(new double[12]);

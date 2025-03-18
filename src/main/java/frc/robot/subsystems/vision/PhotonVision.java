@@ -11,11 +11,17 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static frc.robot.RobotContainer.drive;
 import frc.robot.util.Util;
 
 public class PhotonVision extends SubsystemBase{
@@ -72,27 +78,15 @@ public class PhotonVision extends SubsystemBase{
 				Logger.recordOutput("Photon/Estimated Pose", camPose.get().estimatedPose.toPose2d());		
 
 				if(distToTag < 5 && tagAmbiguity < 0.05){
-					//drive.addLimelightMeasurement(camPose.get().estimatedPose.toPose2d(), Timer.getFPGATimestamp(), getStdDevs(distToTag, bearingToTag));
+					drive.addLimelightMeasurement(camPose.get().estimatedPose.toPose2d(), Timer.getFPGATimestamp(), getStdDevs(distToTag));
 				}
 			}
 		}
 	}
 
-	// public Matrix<N3, N1> getStdDevs(Optional<EstimatedRobotPose> pose, List<PhotonPipelineResult> targets){ // TODO
-	// 	if(pose.isEmpty() || targets.size() == 0){
-	// 		return VecBuilder.fill(0.7,0.7,1);
-	// 	}else{
-	// 		var curr_stddevs = VecBuilder.fill(0.7,0.7,1);
-	// 		var ave_dist = 0;
-	// 		for(int i = 0; i < targets.size(); i++){
-	// 			ave_dist += targets.get(i).getBestTarget().bestCameraToTarget.getTranslation().getNorm();
-	// 		}
-	// 		ave_dist /= targets.size();
-
-
-	// 	}
-		
-	// }
+	public Matrix<N3, N1> getStdDevs(double dist){ // TODO
+		return VecBuilder.fill(0.7,0.7,0.7);
+	}
 
 
 }

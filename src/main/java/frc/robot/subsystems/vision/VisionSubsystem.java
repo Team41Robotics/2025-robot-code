@@ -2,9 +2,12 @@ package frc.robot.subsystems.vision;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
@@ -22,20 +25,17 @@ public class VisionSubsystem extends SubsystemBase {
 	private final double timeThreshold = 5000; // milliseconds 
 
 	private double timeSinceLastTag = System.currentTimeMillis(); // seconds
-	private int measurementCounter;
+	private int measurementSentCounter;
 	private int outlierCounter;
-	private double xSum;
-	private double ySum;
-	private double xMean;
-	private double yMean;
-
+	
+	private double stdDevXPrior;
+	private double stdDevYPrior;
+	private double stdDevZPrior;
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;
 		outlierCounter = 0;
-		measurementCounter = 0;
-		xSum = 0;
-		ySum = 0;
+		measurementSentCounter = 0;
 		resetFilters();
 	}
 
@@ -46,11 +46,8 @@ public class VisionSubsystem extends SubsystemBase {
 		Pose2d pose;
 		if (mt1 != null) {
 			if(mt1.tagCount > 0){
-				measurementCounter ++;
 				timeSinceLastTag = System.currentTimeMillis() - timeSinceLastTag;
 				pose = mt1.pose;
-				xSum += pose.getX();
-				ySum += pose.getY();
 				xFilter.calculate(pose.getX());
 				yFilter.calculate(pose.getY());
 				rFilter.calculate(pose.getRotation().getRadians());
@@ -69,7 +66,19 @@ public class VisionSubsystem extends SubsystemBase {
 					double stdDevZ = stddevs[2];
 					this.robotToField = pose;
 					this.mt1Timestamp = mt1.timestampSeconds;		
-					drive.addLimelightMeasurement(robotToField, mt1Timestamp, VecBuilder.fill(stdDevX, stdDevY, stdDevZ));
+					Matrix<N3, N1> stddevsOut;
+					if(areStdsOk(stdDevX, stdDevY, stdDevZ)){
+						stddevsOut = VecBuilder.fill(stdDevX, stdDevY, stdDevZ);
+					}else{
+						double xCoeff = Math.abs(stdDevX - stdDevXPrior) * 5;
+						double yCoeff = Math.abs(stdDevY - stdDevYPrior) * 5;
+						double zCoeff = Math.abs(stdDevZ - stdDevZPrior) * 5;
+						stddevsOut = VecBuilder.fill(stdDevX * xCoeff, stdDevY * yCoeff, stdDevZ * zCoeff);
+					}
+					drive.addLimelightMeasurement(robotToField, mt1Timestamp, stddevsOut);
+					stdDevXPrior = stdDevX;
+					stdDevYPrior = stdDevY;
+					stdDevZPrior = stdDevZ;
 				}
 			}else{
 				timeSinceLastTag = System.currentTimeMillis();
@@ -79,9 +88,6 @@ public class VisionSubsystem extends SubsystemBase {
 		Logger.recordOutput("/Odom/limelight/limelight_pose/" + config.Name, this.robotToField);
 		Logger.recordOutput("Odom/limelight/limelight_y_median", yFilter.lastValue());
 		Logger.recordOutput("Odom/limelight/limelight_x_median", xFilter.lastValue());
-		Logger.recordOutput(
-				"Odom/limelight/limelight_theta_median",
-				rFilter.calculate(this.robotToField.getRotation().getRadians()));
 	
 	}
 
@@ -90,6 +96,10 @@ public class VisionSubsystem extends SubsystemBase {
 		double y = pose.getY();
 
 		return (Math.abs(x - xFilter.lastValue()) > 0.25 || Math.abs(y - yFilter.lastValue()) > 0.25);
+	}
+
+	public boolean areStdsOk(double stdx, double stdy, double stdz){
+		return(Math.abs(stdx - stdDevXPrior) > 0.25 || Math.abs(stdy - stdDevYPrior) > 0.25 || Math.abs(stdz - stdDevZPrior) > 0.25);
 	}
 
 	public void resetFilters(){

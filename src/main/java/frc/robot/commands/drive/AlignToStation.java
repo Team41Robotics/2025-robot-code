@@ -1,19 +1,18 @@
 package frc.robot.commands.drive;
 
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
+import static frc.robot.RobotContainer.stationChooser;
+import static frc.robot.util.Util.convertAngle;
+import static frc.robot.util.Util.getAdjustedPoseHumanPlayer;
+import static frc.robot.util.Util.getAprilTagPose;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import static frc.robot.RobotContainer.drive;
-import static frc.robot.RobotContainer.stationChooser;
-import static frc.robot.util.Util.convertAngle;
-import static frc.robot.util.Util.getAdjustedPoseHumanPlayer;
-import static frc.robot.util.Util.getAprilTagPose;
+import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class AlignToStation extends Command {
@@ -46,18 +45,14 @@ public class AlignToStation extends Command {
 		target_id = stationChooser.get();
 
 		target_pose = getAprilTagPose(target_id);
-		if (target_pose.isEmpty()
-				&& stored_pose
-						.isEmpty()) { 
+		if (target_pose.isEmpty() && stored_pose.isEmpty()) {
 			return;
 		} else if (target_pose.isEmpty() && !stored_pose.isEmpty()) {
 			target_pose = stored_pose;
 		}
 
-		
 		adj_pose = getAdjustedPoseHumanPlayer(target_pose.get());
-	
-		
+
 		Pose2d current_pose = drive.getPose();
 		double curr_X = current_pose.getX();
 		double curr_Y = current_pose.getY();

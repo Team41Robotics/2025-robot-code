@@ -1,16 +1,16 @@
 package frc.robot.subsystems.arm;
 
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.RobotContainer.robot;
 import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.MIN_ROTATION;
 import static frc.robot.util.Util.ramp;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -137,5 +137,4 @@ public class ArmSubsystem extends SubsystemBase {
 	public void setWristVoltage(double voltage) {
 		io.setWristVoltage(voltage);
 	}
-
 }

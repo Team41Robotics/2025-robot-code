@@ -11,6 +11,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FileVersionException;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.MedianFilter;
@@ -21,6 +22,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -230,8 +233,8 @@ public class SwerveSubsystem extends SubsystemBase {
 		return AutoBuilder.followPath(path);
 	}
 
-	public void addLimelightMeasurement(Pose2d est, double timeStamp, double stdDevX, double stdDevY, double stdDevZ) {
-		pose_est.setVisionMeasurementStdDevs(VecBuilder.fill(stdDevX, stdDevY, stdDevZ));
+	public void addLimelightMeasurement(Pose2d est, double timeStamp, Matrix<N3, N1> stddevs) {
+		pose_est.setVisionMeasurementStdDevs(stddevs);
 		pose_est.addVisionMeasurement(est, timeStamp);
 	}
 

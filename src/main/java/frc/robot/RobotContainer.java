@@ -27,6 +27,7 @@ import frc.robot.subsystems.arm.ArmJoint;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.vision.PhotonVision;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
 
@@ -42,6 +43,7 @@ public class RobotContainer {
 	public static LimelightConfiguration config2 = new LimelightConfiguration();
 	public static VisionSubsystem limelight1 = new VisionSubsystem();
 	public static VisionSubsystem limelight2 = new VisionSubsystem();
+	public static PhotonVision photonVision = new PhotonVision();
 
 	public static CommandJoystick left_js = new CommandJoystick(4);
 	public static CommandJoystick right_js = new CommandJoystick(3);

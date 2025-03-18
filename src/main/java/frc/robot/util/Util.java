@@ -112,7 +112,7 @@ public class Util {
 		}
 	}
 
-	static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+	public static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
 	public static Optional<Pose2d> getAprilTagPose(int id) {
 		return Optional.of(fieldLayout.getTagPose(id).get().toPose2d());

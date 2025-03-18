@@ -73,9 +73,9 @@ public class AlignToReef extends Command {
 		Logger.recordOutput("/Odom/adjusted_pose/w", adj_pose.getRotation().getRadians());
 		Logger.recordOutput("/Odom/error", Math.hypot((curr_X - adj_X), (curr_Y - adj_Y)));
 
-		double xVel = xPID.calculate(curr_X, adj_X);
-		double yVel = yPID.calculate(curr_Y, adj_Y);
-		double wVel = wPID.calculate(curr_rot, target_rot);
+		double xVel = xPID.calculate(curr_X, adj_X) * 0.5;
+		double yVel = yPID.calculate(curr_Y, adj_Y) * 0.5;
+		double wVel = wPID.calculate(curr_rot, target_rot) * 0.5;
 
 		drive.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
 				xVel, yVel, wVel, drive.getPose().getRotation()));

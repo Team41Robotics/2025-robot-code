@@ -1,9 +1,10 @@
 package frc.robot.subsystems.vision;
 
-import static frc.robot.RobotContainer.drive;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
@@ -11,8 +12,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import static frc.robot.RobotContainer.drive;
 import frc.robot.constants.LimelightConfiguration;
-import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
@@ -24,13 +25,16 @@ public class VisionSubsystem extends SubsystemBase {
 
 	private final double timeThreshold = 5000; // milliseconds
 
-	private double timeSinceLastTag = System.currentTimeMillis(); // seconds
+	private double timeSinceLastTag = Double.MAX_VALUE;
 	private int measurementSentCounter;
 	private int outlierCounter;
 
 	private double stdDevXPrior;
 	private double stdDevYPrior;
 	private double stdDevZPrior;
+
+	private LinearFilter stdDevXAvg = LinearFilter.movingAverage(50);
+	private LinearFilter stdDevYAvg = LinearFilter.movingAverage(50);
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;
@@ -46,7 +50,7 @@ public class VisionSubsystem extends SubsystemBase {
 		Pose2d pose;
 		if (mt1 != null) {
 			if (mt1.tagCount > 0) {
-				timeSinceLastTag = System.currentTimeMillis() - timeSinceLastTag;
+				timeSinceLastTag = 0;
 				pose = mt1.pose;
 				xFilter.calculate(pose.getX());
 				yFilter.calculate(pose.getY());
@@ -73,9 +77,10 @@ public class VisionSubsystem extends SubsystemBase {
 					if (areStdsOk(stdDevX, stdDevY, stdDevZ)) {
 						stddevsOut = VecBuilder.fill(stdDevX, stdDevY, stdDevZ);
 					} else {
-						double xCoeff = Math.abs(stdDevX - stdDevXPrior) * 5;
-						double yCoeff = Math.abs(stdDevY - stdDevYPrior) * 5;
-						double zCoeff = Math.abs(stdDevZ - stdDevZPrior) * 5;
+						//System.out.println("Standard deviations are ass");
+						double xCoeff = Math.abs(stdDevX - stdDevXPrior) * 50;
+						double yCoeff = Math.abs(stdDevY - stdDevYPrior) * 50;
+						double zCoeff = Math.abs(stdDevZ - stdDevZPrior) * 50;
 						stddevsOut = VecBuilder.fill(stdDevX * xCoeff, stdDevY * yCoeff, stdDevZ * zCoeff);
 					}
 					drive.addLimelightMeasurement(robotToField, mt1Timestamp, stddevsOut);
@@ -84,7 +89,8 @@ public class VisionSubsystem extends SubsystemBase {
 					stdDevZPrior = stdDevZ;
 				}
 			} else {
-				timeSinceLastTag = System.currentTimeMillis();
+				
+				timeSinceLastTag += 20;
 				resetFilters();
 			}
 		}
@@ -97,13 +103,14 @@ public class VisionSubsystem extends SubsystemBase {
 		double x = pose.getX();
 		double y = pose.getY();
 
-		return (Math.abs(x - xFilter.lastValue()) > 0.25 || Math.abs(y - yFilter.lastValue()) > 0.25);
+		double threshold = 0.25; // Needs tuning
+		return (Math.abs(x - xFilter.lastValue()) > threshold || Math.abs(y - yFilter.lastValue()) > threshold);
 	}
 
 	public boolean areStdsOk(double stdx, double stdy, double stdz) {
-		return (Math.abs(stdx - stdDevXPrior) > 0.25
-				|| Math.abs(stdy - stdDevYPrior) > 0.25
-				|| Math.abs(stdz - stdDevZPrior) > 0.25);
+		return (Math.abs(stdx - stdDevXPrior) > 0.5
+				|| Math.abs(stdy - stdDevYPrior) > 0.5
+				|| Math.abs(stdz - stdDevZPrior) > 0.5);
 	}
 
 	public void resetFilters() {

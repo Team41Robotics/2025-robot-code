@@ -33,8 +33,6 @@ public class VisionSubsystem extends SubsystemBase {
 	private double stdDevYPrior;
 	private double stdDevZPrior;
 
-	private LinearFilter stdDevXAvg = LinearFilter.movingAverage(50);
-	private LinearFilter stdDevYAvg = LinearFilter.movingAverage(50);
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;

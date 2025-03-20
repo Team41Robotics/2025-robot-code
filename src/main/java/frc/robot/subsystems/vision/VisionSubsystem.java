@@ -1,10 +1,9 @@
 package frc.robot.subsystems.vision;
 
-import org.littletonrobotics.junction.Logger;
+import static frc.robot.RobotContainer.drive;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
@@ -12,8 +11,11 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
-import static frc.robot.RobotContainer.drive;
 import frc.robot.constants.LimelightConfiguration;
+import frc.robot.util.MovingAverage;
+import frc.robot.util.StandardDeviationTool;
+
+import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
@@ -23,21 +25,22 @@ public class VisionSubsystem extends SubsystemBase {
 	private static final MedianFilter yFilter = new MedianFilter(10);
 	private static final MedianFilter rFilter = new MedianFilter(10);
 
+	private final StandardDeviationTool xMeasuredStdDev = new StandardDeviationTool(10);
+	private final StandardDeviationTool yMeasuredStdDev = new StandardDeviationTool(10);
+	private final StandardDeviationTool zMeasuredStdDev = new StandardDeviationTool(10);
+
+	private final StandardDeviationTool rMeasuredStdDev = new StandardDeviationTool(10);
+
+
 	private final double timeThreshold = 5000; // milliseconds
 
 	private double timeSinceLastTag = Double.MAX_VALUE;
-	private int measurementSentCounter;
 	private int outlierCounter;
-
-	private double stdDevXPrior;
-	private double stdDevYPrior;
-	private double stdDevZPrior;
 
 
 	public void init(LimelightConfiguration _config) {
 		config = _config;
 		outlierCounter = 0;
-		measurementSentCounter = 0;
 		resetFilters();
 	}
 
@@ -69,27 +72,39 @@ public class VisionSubsystem extends SubsystemBase {
 					double stdDevX = stddevs[0];
 					double stdDevY = stddevs[1];
 					double stdDevZ = stddevs[2];
+					double stdDevYaw = stddevs[5];
+
+					xMeasuredStdDev.addSample(stdDevX);
+					yMeasuredStdDev.addSample(stdDevY);
+					zMeasuredStdDev.addSample(stdDevZ);
+					rMeasuredStdDev.addSample(stdDevYaw);
 					this.robotToField = pose;
 					this.mt1Timestamp = mt1.timestampSeconds;
 					Matrix<N3, N1> stddevsOut;
-					if (areStdsOk(stdDevX, stdDevY, stdDevZ)) {
+					if (areStdsOk(stdDevX, stdDevY)) {
 						stddevsOut = VecBuilder.fill(stdDevX, stdDevY, stdDevZ);
 					} else {
-						//System.out.println("Standard deviations are ass");
-						double xCoeff = Math.abs(stdDevX - stdDevXPrior) * 50;
-						double yCoeff = Math.abs(stdDevY - stdDevYPrior) * 50;
-						double zCoeff = Math.abs(stdDevZ - stdDevZPrior) * 50;
+						double xCoeff = Math.abs(0.25 - xMeasuredStdDev.getStdDeviation()) * 500;
+						double yCoeff = Math.abs(0.25 - yMeasuredStdDev.getStdDeviation()) * 500;
+						double zCoeff = Math.abs(0.25 - zMeasuredStdDev.getStdDeviation()) * 500;
 						stddevsOut = VecBuilder.fill(stdDevX * xCoeff, stdDevY * yCoeff, stdDevZ * zCoeff);
 					}
+					Logger.recordOutput("Odom/limelight/std dev x raw " + config.Name, stdDevX);
+					Logger.recordOutput("Odom/limelight/std dev y raw " + config.Name, stdDevY);
+					Logger.recordOutput("Odom/limelight/std dev x out " + config.Name, stddevsOut.get(0, 0));
+					Logger.recordOutput("Odom/limelight/std dev y out " + config.Name, stddevsOut.get(1, 0));
+					Logger.recordOutput("Odom/limelight/ave stddev x" + config.Name, xMeasuredStdDev.getStdDeviation());
+					Logger.recordOutput("Odom/limelight/ave stddev y" + config.Name, yMeasuredStdDev.getStdDeviation());
 					drive.addLimelightMeasurement(robotToField, mt1Timestamp, stddevsOut);
-					stdDevXPrior = stdDevX;
-					stdDevYPrior = stdDevY;
-					stdDevZPrior = stdDevZ;
+
 				}
 			} else {
-				
+
 				timeSinceLastTag += 20;
 				resetFilters();
+				// xStdDevAvg.empty();
+				// yStdDevAvg.empty();
+				// zStdDevAvg.empty();
 			}
 		}
 		Logger.recordOutput("/Odom/limelight/limelight_pose/" + config.Name, this.robotToField);
@@ -105,10 +120,10 @@ public class VisionSubsystem extends SubsystemBase {
 		return (Math.abs(x - xFilter.lastValue()) > threshold || Math.abs(y - yFilter.lastValue()) > threshold);
 	}
 
-	public boolean areStdsOk(double stdx, double stdy, double stdz) {
-		return (Math.abs(stdx - stdDevXPrior) > 0.5
-				|| Math.abs(stdy - stdDevYPrior) > 0.5
-				|| Math.abs(stdz - stdDevZPrior) > 0.5);
+	public boolean areStdsOk(double stdx, double stdy) {
+		return (Math.abs(stdx - xMeasuredStdDev.getStdDeviation()) > 0.25
+				|| Math.abs(stdy - yMeasuredStdDev.getStdDeviation()) > 0.25);
+	
 	}
 
 	public void resetFilters() {

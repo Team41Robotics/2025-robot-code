@@ -1,11 +1,8 @@
 package frc.robot;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -30,6 +27,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.vision.PhotonVision;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
 	public static Robot robot;
@@ -43,7 +41,7 @@ public class RobotContainer {
 	public static LimelightConfiguration config2 = new LimelightConfiguration();
 	public static VisionSubsystem limelight1 = new VisionSubsystem();
 	public static VisionSubsystem limelight2 = new VisionSubsystem();
-	public static PhotonVision photonVision = new PhotonVision();
+	// public static PhotonVision photonVision = new PhotonVision();
 
 	public static CommandJoystick left_js = new CommandJoystick(4);
 	public static CommandJoystick right_js = new CommandJoystick(3);

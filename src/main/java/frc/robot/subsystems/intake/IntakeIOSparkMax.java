@@ -15,7 +15,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 	public IntakeIOSparkMax() {
 		m_PID = new PIDController(1, 0, 0); // TODO
 		m_motor = new SparkFlex(41, MotorType.kBrushless);
-		beamBreak = new DigitalInput(4);
+		beamBreak = new DigitalInput(6);
 	}
 
 	@Override

@@ -57,9 +57,13 @@ public class ArmSubsystem extends SubsystemBase {
 		}
 		{
 			targetExtension = clampTargetExtension(targetExtension);
-			ext_ramped = ramp(targetExtension, ext_ramped, 0.0675);
+			ext_ramped = ramp(targetExtension, ext_ramped, 0.0675/4);
 			double out = telescopePID.calculate(getExtension(), targetExtension);
-			io.setExtensionVoltageClamped(out);
+			if(inputs.telescopeVelocity < 0 && getExtension() <= 0.25){
+				io.setExtensionVoltageClamped(out/12);
+			}else{
+				io.setExtensionVoltage(out);
+			}
 		}
 		{
 			wristTargetRotation = clampWristTargetAngle(wristTargetRotation);

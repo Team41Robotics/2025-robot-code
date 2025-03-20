@@ -142,4 +142,5 @@ public class Util {
 	public static double ramp(double curr, double prev, double step) {
 		return MathUtil.clamp(curr, prev - step * 0.02, prev + step * 0.02);
 	}
+
 }

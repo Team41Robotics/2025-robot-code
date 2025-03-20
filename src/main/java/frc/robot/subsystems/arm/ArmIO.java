@@ -54,5 +54,6 @@ public interface ArmIO {
 		public double[] wristPivotCurrent = new double[] {}; // amps
 		public double wristAngVel = 0.0; // rad / s
 		public boolean bottomSwitchNotOn = true;
+		public boolean topSwitchNotOn = true;
 	}
 }

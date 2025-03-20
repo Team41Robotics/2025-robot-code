@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import static frc.robot.constants.Constants.ArmConstants.MAX_EXTENSION;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_1;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_2;
 import static frc.robot.constants.Constants.ArmConstants.SHOULDER_3;
@@ -37,7 +38,7 @@ public class ArmIOHardware implements ArmIO {
 	private static double EXTENSION_SPROCKET_RADIUS = Units.inchesToMeters(1.273);
 
 	private final DigitalInput bottomSwitch;
-	// private final DigitalInput topSwitch;
+	private final DigitalInput topSwitch;
 
 	private final TalonFX shoulder1;
 	private final TalonFX shoulder2;
@@ -58,6 +59,7 @@ public class ArmIOHardware implements ArmIO {
 	public ArmIOHardware() {
 
 		bottomSwitch = new DigitalInput(5);
+		topSwitch = new DigitalInput(7);
 
 		shoulder1 = new TalonFX(SHOULDER_1);
 		shoulder2 = new TalonFX(SHOULDER_2);
@@ -149,6 +151,10 @@ public class ArmIOHardware implements ArmIO {
 			inputs.telescopePosition = 0;
 			telescope1.setPosition(0);
 			telescope2.setPosition(0);
+		}else if(!inputs.topSwitchNotOn){
+			inputs.telescopePosition = MAX_EXTENSION;
+			telescope1.setPosition(Units.radiansToRotations(MAX_EXTENSION / (EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS)));
+			telescope2.setPosition(Units.radiansToRotations(MAX_EXTENSION / (EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS)));
 		}else{
 			inputs.telescopePosition = extension
 				+ (Units.rotationsToRadians(telescope1.getPosition().getValueAsDouble())
@@ -172,7 +178,7 @@ public class ArmIOHardware implements ArmIO {
 		inputs.telescopeMotor2Current =
 				new double[] {telescope2.getStatorCurrent().getValueAsDouble()};
 
-		// inputs.topSwitchOn = topSwitch.get();
+		inputs.topSwitchNotOn = topSwitch.get();
 
 		inputs.wristRotation = wristEncoder.getAbsPosition() * 2 * PI;
 		// inputs.wristRotation = inputs.wristRotation % (2 * PI);
@@ -191,6 +197,11 @@ public class ArmIOHardware implements ArmIO {
 	public void setExtensionVoltage(double voltage) {
 		telescope1.setVoltage(voltage);
 	}
+
+	public void setExtensionVelocity(double velocity){
+		telescope1.set(velocity);
+	}
+
 
 	@Override
 	public void setWristVoltage(double voltage) {

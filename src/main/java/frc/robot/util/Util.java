@@ -120,7 +120,7 @@ public class Util {
 
 	public static Pose2d getAdjustedPose(Pose2d target, boolean isRight) {
 		// 0.19
-		double endEffectorOffset = isRight ? 0.34 : -0.05;
+		double endEffectorOffset = isRight ? 0.34 : -0.02;
 		double frontOffset = 0.15;
 
 		Pose2d returnable = target;

@@ -2,6 +2,7 @@ package frc.robot.commands.drive;
 
 import static frc.robot.RobotContainer.drive;
 import static frc.robot.RobotContainer.reefChooser;
+import static frc.robot.RobotContainer.useVision;
 import static frc.robot.util.Util.convertAngle;
 import static frc.robot.util.Util.getAdjustedPose;
 import static frc.robot.util.Util.getAprilTagPose;
@@ -33,7 +34,8 @@ public class AlignToReef extends Command {
 	public AlignToReef() {
 		addRequirements(drive);
 		wPID.enableContinuousInput(0, 2 * Math.PI);
-		xPID.setTolerance(0.05);
+		xPID.setTolerance(0.25);
+		yPID.setTolerance(0.02);
 	}
 
 	@Override
@@ -70,7 +72,9 @@ public class AlignToReef extends Command {
 		Logger.recordOutput("/Odom/adjusted_pose/x", adj_X);
 		Logger.recordOutput("/Odom/adjusted_pose/y", adj_Y);
 		Logger.recordOutput("/Odom/adjusted_pose/w", adj_pose.getRotation().getRadians());
-		Logger.recordOutput("/Odom/error", Math.hypot((curr_X - adj_X), (curr_Y - adj_Y)));
+		Logger.recordOutput("/Odom/error X", (curr_X - adj_X));
+		Logger.recordOutput("/Odom/error Y", (curr_Y - adj_Y));
+		Logger.recordOutput("Odom/error w", (curr_rot - target_rot));
 
 		double xVel = xPID.calculate(curr_X, adj_X) ;
 		double yVel = yPID.calculate(curr_Y, adj_Y) ;
@@ -89,18 +93,15 @@ public class AlignToReef extends Command {
 		}
 
 		Pose2d current_pose = drive.getPose();
-		double dX = Math.abs(current_pose.getX() - adj_pose.getX());
-		double dY = Math.abs(current_pose.getY() - adj_pose.getY()); // Translational difference
-
 		double angle_offset = Math.abs(convertAngle(current_pose.getRotation().getRadians())
 				- convertAngle(adj_pose.getRotation().getRadians())); // Angular difference
 
-		if (dX < 0.09 && dY < 0.06 && angle_offset <= Units.degreesToRadians(2)) {
+		if (xPID.atSetpoint() && yPID.atSetpoint() && angle_offset <= Units.degreesToRadians(2)) {
 			System.out.println("Aligned");
 			return true;
 		}
 
-		System.out.println("Still working on it " + " Angular Dist: " + angle_offset);
+		System.out.println("Still working on it");
 		return false;
 	}
 

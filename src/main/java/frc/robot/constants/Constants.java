@@ -58,7 +58,7 @@ public final class Constants {
 	public static final double SHOULDER_GEAR_RATIO = (54 / 18) * (54 / 18) * (72 / 9); // Full Gear ratio
 
 	public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG = new PPHolonomicDriveController(
-			new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-			new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+			new PIDConstants(1.5, 0.0, 0.0), // Translation PID constants
+			new PIDConstants(1.5, 0.0, 0.0) // Rotation PID constants
 			);
 }

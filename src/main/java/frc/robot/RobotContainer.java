@@ -49,6 +49,7 @@ public class RobotContainer {
 
 	public static boolean L4 = false;
 	public static boolean target_right = true; // By default, will target right side of reef
+	public static boolean useVision = false;
 
 	public static LoggedDashboardChooser<Command> autoChooser;
 	public static LoggedDashboardChooser<Integer> stationChooser;
@@ -110,7 +111,7 @@ public class RobotContainer {
 		reefChooser.addOption("RED Side 11", 11);
 
 		autoChooser.addOption("AlignToTag", new AlignToReefSlowly());
-
+		Pathfinding.setPathfinder(new LocalADStarAK());
 		configureBindings();
 	}
 

@@ -50,6 +50,7 @@ public class Robot extends LoggedRobot {
 	@Override
 	public void autonomousInit() {
 		drive.zero();
+		RobotContainer.useVision = false;
 		m_autonomousCommand = RobotContainer.getAutonomousCommand();
 
 		if (m_autonomousCommand != null) {
@@ -62,6 +63,7 @@ public class Robot extends LoggedRobot {
 
 	@Override
 	public void teleopInit() {
+		RobotContainer.useVision = true;
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}

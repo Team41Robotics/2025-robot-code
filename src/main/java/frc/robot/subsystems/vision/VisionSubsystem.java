@@ -2,7 +2,10 @@ package frc.robot.subsystems.vision;
 
 import static frc.robot.RobotContainer.drive;
 
+import java.util.concurrent.RejectedExecutionHandler;
+
 import edu.wpi.first.math.Matrix;
+import static frc.robot.RobotContainer.useVision;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -56,6 +59,9 @@ public class VisionSubsystem extends SubsystemBase {
 				xFilter.calculate(pose.getX());
 				yFilter.calculate(pose.getY());
 				rFilter.calculate(pose.getRotation().getRadians());
+				if (!useVision){
+					rejectUpdate = true;
+				}
 				if (mt1.rawFiducials[0].ambiguity > 1) {
 					rejectUpdate = true;
 					System.out.println("REJECTED UPDATE, IS TOO UNCERTAIN");

@@ -104,5 +104,7 @@ public class SwerveModule {
 		io.logTargetState(inputs, target_state, target_vel);
 		io.updateInputs(inputs);
 		Logger.processInputs("Drive/Module" + name, inputs);
+		Logger.recordOutput("Drive/Current", inputs.driveCurrentAmps);
+		
 	}
 }

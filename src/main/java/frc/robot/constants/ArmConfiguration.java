@@ -15,7 +15,7 @@ public enum ArmConfiguration {
 	L3(Rotation2d.fromRadians(1.475), 0.443, 4.83, "L3"),
 	L4(Rotation2d.fromRadians(1.28), MAX_EXTENSION, 1.3, "L4"),
 	lowAlgae(Rotation2d.fromRadians(.175), MIN_EXTENSION, 1.188, "lowAlgae"),
-	highAlgae(Rotation2d.fromRadians(.55), Units.inchesToMeters(15), 1.32, "highAlgae"),
+	highAlgae(Rotation2d.fromRadians(.55), Units.inchesToMeters(12), 1.32, "highAlgae"),
 	HUMAN_PLAYER(Rotation2d.fromRadians(.657), MIN_EXTENSION, 4.02, "HP"),
 	CLIMB(Rotation2d.fromDegrees(68), Units.inchesToMeters(22), 0, "CLIMB");
 	public Rotation2d SHOULDER_ROTATION;

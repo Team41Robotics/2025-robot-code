@@ -28,10 +28,11 @@ public class StandardDeviationTool {
     public double getStdDeviation(){
         double _sum = 0;
         for(int i = 0; i < window.size(); i++){
-            _sum += (window.get(i) - mean) * (window.get(i) - mean);
+            _sum += ((window.get(i) - mean) * (window.get(i) - mean));
         }
         _sum /= window.size();
-        return Math.sqrt(_sum);
+        
+        return Math.sqrt(Math.abs(_sum));
     }
 
 

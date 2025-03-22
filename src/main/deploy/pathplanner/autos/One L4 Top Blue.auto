@@ -11,24 +11,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ScoreL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Fire!"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "RetractArm"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "BlueReefToStation"
@@ -37,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "RunIntake"
+            "name": "RetractArm"
           }
         }
       ]

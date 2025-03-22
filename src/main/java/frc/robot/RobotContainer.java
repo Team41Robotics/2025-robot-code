@@ -41,7 +41,7 @@ public class RobotContainer {
 	public static LimelightConfiguration config2 = new LimelightConfiguration();
 	public static VisionSubsystem limelight1 = new VisionSubsystem();
 	public static VisionSubsystem limelight2 = new VisionSubsystem();
-	// public static PhotonVision photonVision = new PhotonVision();
+	public static PhotonVision photonVision = new PhotonVision();
 
 	public static CommandJoystick left_js = new CommandJoystick(4);
 	public static CommandJoystick right_js = new CommandJoystick(3);
@@ -119,7 +119,7 @@ public class RobotContainer {
 
 		right_js.button(4)
 				.onTrue(new AlignToStation().until(() -> left_js.button(2).getAsBoolean()));
-		right_js.button(1).onTrue(intake.runIntake(0.2).until(() -> intake.isBeamBreakTriggered())); // INTAKE
+		right_js.button(1).onTrue(intake.runIntake(0.2).until(() -> intake.isBeamBreakTriggered() || left_js.button(1).getAsBoolean())); // INTAKE
 		right_js.button(2)
 				.onTrue(new AlignToReef().until(() -> left_js.button(2).getAsBoolean()));
 

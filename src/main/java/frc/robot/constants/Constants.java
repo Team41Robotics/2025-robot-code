@@ -38,8 +38,8 @@ public final class Constants {
 
 		public static final int WRIST = 0;
 
-		public static final double MAX_EXTENSION = 0.98;
-		public static final double MIN_EXTENSION = 0.02;
+		public static final double MAX_EXTENSION = 1.03;
+		public static final double MIN_EXTENSION = 0.;
 
 		public static final Rotation2d MIN_ROTATION = new Rotation2d(0.175); // SHOULDER
 		public static final Rotation2d MAX_ROTATION = new Rotation2d(Math.PI / 2 - .3);
@@ -51,14 +51,12 @@ public final class Constants {
 
 	public static final double DRIVER_TURN_KP = 1.;
 
-	public static final double CAMERA_HEIGHT = Units.inchesToMeters(13.5);
-	public static final double MAX_ARM_EXTEND = 1; // WIP
 	public static final double TELESCOPE_PULLEY_RADIUS = Units.inchesToMeters(1.273); // WIP
 	public static final double TELESCOPE_GEAR_RATIO = 5;
 	public static final double SHOULDER_GEAR_RATIO = (54 / 18) * (54 / 18) * (72 / 9); // Full Gear ratio
 
 	public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG = new PPHolonomicDriveController(
-			new PIDConstants(1.5, 0.0, 0.0), // Translation PID constants
-			new PIDConstants(1.5, 0.0, 0.0) // Rotation PID constants
+			new PIDConstants(2.5, 0, 0.0), // Translation PID constants TODO
+			new PIDConstants(.8, 0.0, 0.0) // Rotation PID constants TS PMO ONG
 			);
 }

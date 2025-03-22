@@ -13,7 +13,7 @@ public enum ArmConfiguration {
 	L1(MIN_ROTATION, MIN_EXTENSION, 0, "L1"),
 	L2(Rotation2d.fromRadians(1.57), MIN_EXTENSION, 4.87, "L2"),
 	L3(Rotation2d.fromRadians(1.475), 0.443, 4.83, "L3"),
-	L4(Rotation2d.fromRadians(1.28), MAX_EXTENSION, 1.3, "L4"),
+	L4(Rotation2d.fromRadians(1.28), MAX_EXTENSION, 1.41, "L4"),
 	lowAlgae(Rotation2d.fromRadians(.175), MIN_EXTENSION, 1.188, "lowAlgae"),
 	highAlgae(Rotation2d.fromRadians(.55), Units.inchesToMeters(12), 1.32, "highAlgae"),
 	HUMAN_PLAYER(Rotation2d.fromRadians(.657), MIN_EXTENSION, 4.02, "HP"),

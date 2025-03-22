@@ -59,9 +59,7 @@ public class VisionSubsystem extends SubsystemBase {
 				xFilter.calculate(pose.getX());
 				yFilter.calculate(pose.getY());
 				rFilter.calculate(pose.getRotation().getRadians());
-				if (!useVision){
-					rejectUpdate = true;
-				}
+			
 				if (mt1.rawFiducials[0].ambiguity > 1) {
 					rejectUpdate = true;
 					System.out.println("REJECTED UPDATE, IS TOO UNCERTAIN");
@@ -108,9 +106,7 @@ public class VisionSubsystem extends SubsystemBase {
 
 				timeSinceLastTag += 20;
 				resetFilters();
-				// xStdDevAvg.empty();
-				// yStdDevAvg.empty();
-				// zStdDevAvg.empty();
+	
 			}
 		}
 		Logger.recordOutput("/Odom/limelight/limelight_pose/" + config.Name, this.robotToField);
@@ -118,6 +114,11 @@ public class VisionSubsystem extends SubsystemBase {
 		Logger.recordOutput("Odom/limelight/limelight_x_median", xFilter.lastValue());
 	}
 
+	/**
+	 * Returns whether or not to consider a measurement an outlier 
+	 * @param pose
+	 * @return boolean representing if measurement is an outlier
+	 */
 	public boolean isOutlier(Pose2d pose) {
 		double x = pose.getX();
 		double y = pose.getY();
@@ -126,12 +127,24 @@ public class VisionSubsystem extends SubsystemBase {
 		return (Math.abs(x - xFilter.lastValue()) > threshold || Math.abs(y - yFilter.lastValue()) > threshold);
 	}
 
+	
+	 
+	/**
+	 * Returns whether or not to trust measurement based on standard deviations
+	 * @param stdx
+	 * @param stdy
+	 * @return boolean representing whether or not the measurement is trustworthy
+	 */
 	public boolean areStdsOk(double stdx, double stdy) {
 		return (Math.abs(stdx - xMeasuredStdDev.getStdDeviation()) > 0.25
 				|| Math.abs(stdy - yMeasuredStdDev.getStdDeviation()) > 0.25);
 	
 	}
 
+	/**
+	 * Reset median filters 
+	 */
+	
 	public void resetFilters() {
 		xFilter.reset();
 		yFilter.reset();

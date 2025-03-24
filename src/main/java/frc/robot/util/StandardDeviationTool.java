@@ -34,8 +34,4 @@ public class StandardDeviationTool {
         
         return Math.sqrt(Math.abs(_sum));
     }
-
-
-
-
 }

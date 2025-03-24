@@ -38,7 +38,7 @@ public final class Constants {
 
 		public static final int WRIST = 0;
 
-		public static final double MAX_EXTENSION = 1.03;
+		public static final double MAX_EXTENSION = 1.0;
 		public static final double MIN_EXTENSION = 0.;
 
 		public static final Rotation2d MIN_ROTATION = new Rotation2d(0.175); // SHOULDER
@@ -46,7 +46,7 @@ public final class Constants {
 	}
 
 	public static final double MODULE_DRIVE_KP = 0.05;
-	public static final double MODULE_DRIVE_KF = 0.23;
+	public static final double MODULE_DRIVE_KF = 0.23/2;
 	public static final double MODULE_TURN_KP = 3;
 
 	public static final double DRIVER_TURN_KP = 1.;
@@ -56,7 +56,7 @@ public final class Constants {
 	public static final double SHOULDER_GEAR_RATIO = (54 / 18) * (54 / 18) * (72 / 9); // Full Gear ratio
 
 	public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG = new PPHolonomicDriveController(
-			new PIDConstants(2.5, 0, 0.0), // Translation PID constants TODO
-			new PIDConstants(.8, 0.0, 0.0) // Rotation PID constants TS PMO ONG
+			new PIDConstants(1, 0, 0.0), // Translation PID constants TODO
+			new PIDConstants(1, 0.0, 0.0) // Rotation PID constants TS PMO ONG
 			);
 }

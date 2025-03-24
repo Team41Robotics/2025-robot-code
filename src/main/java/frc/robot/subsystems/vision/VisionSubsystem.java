@@ -138,13 +138,12 @@ public class VisionSubsystem extends SubsystemBase {
 	public boolean areStdsOk(double stdx, double stdy) {
 		return (Math.abs(stdx - xMeasuredStdDev.getStdDeviation()) > 0.25
 				|| Math.abs(stdy - yMeasuredStdDev.getStdDeviation()) > 0.25);
-	
 	}
 
 	/**
 	 * Reset median filters 
 	 */
-	
+
 	public void resetFilters() {
 		xFilter.reset();
 		yFilter.reset();

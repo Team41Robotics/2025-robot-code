@@ -10,6 +10,7 @@ import static java.lang.Math.PI;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -17,6 +18,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Velocity;
 import frc.robot.constants.SwerveModuleConfiguration;
 
 /**
@@ -61,7 +63,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 		turnTalonFX.clearStickyFaults();
 		turnAbsoluteEncoder.clearStickyFaults();
 
-		driveConfig.Slot0.kP = MODULE_DRIVE_KP; // Drive kP
+		driveConfig.Slot0.kP =MODULE_DRIVE_KP; // Drive kP
 		driveConfig.Slot0.kV = MODULE_DRIVE_KF; // Drive FeedForwards
 
 		// driveConfig.Feedback.SensorToMechanismRatio =
@@ -123,7 +125,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 
 	@Override
 	public void setDriveVelocity(double mps) {
-		driveTalonFX.set(-mps);
+		VelocityVoltage request = new VelocityVoltage(-mps * DRIVE_GEAR_RATIO / (2 * PI * SWERVE_WHEEL_RAD) ).withSlot(0);
+		driveTalonFX.setControl(request);
 	}
 
 	@Override

@@ -49,9 +49,7 @@ public class SwerveSubsystem extends SubsystemBase {
 			new Translation2d(-ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2));
 
 	public SwerveDrivePoseEstimator pose_est;
-	private final MedianFilter xFilter = new MedianFilter(10);
-	private final MedianFilter yFilter = new MedianFilter(10);
-	private final MedianFilter rFilter = new MedianFilter(10);
+
 	/**
 	 * Initializes the SwerveSubsystem with the given initial pose.
 	 *
@@ -123,6 +121,8 @@ public class SwerveSubsystem extends SubsystemBase {
 		desired_speeds = speed;
 		SwerveModuleState[] states = kinematics.toSwerveModuleStates(speed);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, SWERVE_MAXSPEED);
+		// SwerveDriveKinematics.desaturateWheelSpeeds(states, 0.1);
+
 		for (int i = 0; i < 4; i++) {
 			modules[i].setState(states[i]);
 		}

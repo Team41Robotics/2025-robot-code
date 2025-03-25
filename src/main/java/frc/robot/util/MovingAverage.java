@@ -25,6 +25,9 @@ public class MovingAverage {
     }
 
     public double getAverage(){
+        if(window.size() == 0){
+            return 0;
+        }
         return sum / window.size();
     }
 

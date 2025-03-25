@@ -30,6 +30,9 @@ public class StandardDeviationTool {
         for(int i = 0; i < window.size(); i++){
             _sum += ((window.get(i) - mean) * (window.get(i) - mean));
         }
+        if(window.size() == 0){
+            return 999;
+        }
         _sum /= window.size();
         
         return Math.sqrt(Math.abs(_sum));

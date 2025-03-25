@@ -32,10 +32,10 @@ public class ArmSubsystem extends SubsystemBase {
 		io = new ArmIOHardware();
 		shoulderPID = new PIDController(7, 1, 0.);
 		shoulderPID.setIZone(0.2);
-		telescopePID = new PIDController(4, 0, 0);
+		telescopePID = new PIDController(6, 0, 0);
 		telescopePID.setTolerance(0.1);
 		telescopePID.setIZone(0.1);
-		wristPID = new PIDController(4, 0.8, 0);
+		wristPID = new PIDController(6, 1.2, 0);
 		// wristPID.setIZone(0.2);
 	}
 
@@ -57,13 +57,9 @@ public class ArmSubsystem extends SubsystemBase {
 		}
 		{
 			targetExtension = clampTargetExtension(targetExtension);
-			ext_ramped = ramp(targetExtension, ext_ramped, 0.0675/2);
-			double out = telescopePID.calculate(getExtension(), targetExtension);
-			if(targetExtension < getExtension()){
-				io.setExtensionVelocity(out/10);
-			}else{
-				io.setExtensionVelocity(out);
-			}
+			ext_ramped = ramp(targetExtension, ext_ramped, 0.85);
+			double out = telescopePID.calculate(getExtension(), ext_ramped);
+			io.setExtensionVelocity(out);
 		}
 		{
 			wristTargetRotation = clampWristTargetAngle(wristTargetRotation);

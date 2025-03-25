@@ -38,6 +38,7 @@ public class ArmIOHardware implements ArmIO {
 	private static double EXTENSION_SPROCKET_RADIUS = Units.inchesToMeters(1.273);
 
 	private final DigitalInput bottomSwitch;
+	private final DigitalInput topSwitch;
 
 	private final TalonFX shoulder1;
 	private final TalonFX shoulder2;
@@ -58,6 +59,7 @@ public class ArmIOHardware implements ArmIO {
 	public ArmIOHardware() {
 
 		bottomSwitch = new DigitalInput(6);
+		topSwitch = new DigitalInput(8);
 
 		shoulder1 = new TalonFX(SHOULDER_1);
 		shoulder2 = new TalonFX(SHOULDER_2);
@@ -105,6 +107,9 @@ public class ArmIOHardware implements ArmIO {
 
 		telescope2.setControl(new Follower(telescope1.getDeviceID(), false));
 
+		telescope1.setNeutralMode(NeutralModeValue.Brake);
+		telescope2.setNeutralMode(NeutralModeValue.Brake);
+
 		telescope1.setPosition(0);
 		telescope2.setPosition(0);
 
@@ -149,11 +154,10 @@ public class ArmIOHardware implements ArmIO {
 			inputs.telescopePosition = 0;
 			telescope1.setPosition(0);
 			telescope2.setPosition(0);
-		// }else if(!inputs.topSwitchNotOn){
-		// 	inputs.telescopePosition = MAX_EXTENSION;
-		// 	telescope1.setPosition(Units.radiansToRotations(MAX_EXTENSION / (EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS)));
-		// 	telescope2.setPosition(Units.radiansToRotations(MAX_EXTENSION / (EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS)));
-		// }else{
+		}else if(!inputs.topSwitchNotOn){
+			inputs.telescopePosition = MAX_EXTENSION;
+			telescope1.setPosition(Units.radiansToRotations(MAX_EXTENSION / (EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS)));
+			telescope2.setPosition(Units.radiansToRotations(MAX_EXTENSION / (EXTENSION_GEAR_RATIO * TELESCOPE_PULLEY_RADIUS)));
 		}else{
 			inputs.telescopePosition = extension
 				+ (Units.rotationsToRadians(telescope1.getPosition().getValueAsDouble())

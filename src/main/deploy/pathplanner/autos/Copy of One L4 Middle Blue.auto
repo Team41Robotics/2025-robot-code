@@ -45,6 +45,30 @@
           "data": {
             "name": "RunIntake"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of BlueReefToStation"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fire!"
+          }
         }
       ]
     }

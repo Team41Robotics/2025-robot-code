@@ -13,7 +13,7 @@ public class ScoreCoral extends Command {
 
 	@Override
 	public void execute() {
-		if (!intake.isBeamBreakTriggered()) {
+		if (intake.isBeamBreakTriggered()) {
 			return;
 		}
 		if (L4) {
@@ -25,7 +25,7 @@ public class ScoreCoral extends Command {
 
 	@Override
 	public boolean isFinished() {
-		if (!intake.isBeamBreakTriggered()) {
+		if (intake.isBeamBreakTriggered()) {
 			intake.stopMotors();
 			return true;
 		}

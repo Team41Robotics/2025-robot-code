@@ -62,7 +62,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("ScoreL4", new SetToScore(ArmConfiguration.L4));
 		NamedCommands.registerCommand("ScoreL3", new SetToScore(ArmConfiguration.L3));
 		NamedCommands.registerCommand("ScoreL2", new SetToScore(ArmConfiguration.L2));
-		NamedCommands.registerCommand("RunIntake", intake.runIntake(0.15).until(() -> intake.isBeamBreakTriggered()));
+		NamedCommands.registerCommand("RunIntake", intake.runIntake(0.15).until(() -> !intake.isBeamBreakTriggered()));
 		NamedCommands.registerCommand("RetractArm", new Retract(ArmConfiguration.HUMAN_PLAYER));
 		NamedCommands.registerCommand("RemoveLowAlgae", new SetToScore(ArmConfiguration.lowAlgae));
 		NamedCommands.registerCommand("RemoveHighAlgae", new SetToScore(ArmConfiguration.highAlgae));

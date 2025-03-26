@@ -17,6 +17,7 @@ import frc.robot.commands.arm.SetToScore;
 import frc.robot.commands.drive.AlignToReef;
 import frc.robot.commands.drive.AlignToReefSlowly;
 import frc.robot.commands.drive.AlignToStation;
+import frc.robot.commands.drive.BackUp;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.ArmConfiguration;
 import frc.robot.constants.LimelightConfiguration;
@@ -62,11 +63,12 @@ public class RobotContainer {
 		NamedCommands.registerCommand("ScoreL4", new SetToScore(ArmConfiguration.L4));
 		NamedCommands.registerCommand("ScoreL3", new SetToScore(ArmConfiguration.L3));
 		NamedCommands.registerCommand("ScoreL2", new SetToScore(ArmConfiguration.L2));
-		NamedCommands.registerCommand("RunIntake", intake.runIntake(0.15).until(() -> !intake.isBeamBreakTriggered()));
+		NamedCommands.registerCommand("RunIntake", intake.runIntake(0.25).until(() -> !intake.isBeamBreakTriggered()));
 		NamedCommands.registerCommand("RetractArm", new Retract(ArmConfiguration.HUMAN_PLAYER));
 		NamedCommands.registerCommand("RemoveLowAlgae", new SetToScore(ArmConfiguration.lowAlgae));
 		NamedCommands.registerCommand("RemoveHighAlgae", new SetToScore(ArmConfiguration.highAlgae));
 		NamedCommands.registerCommand("Fire!", new ScoreCoral());
+		NamedCommands.registerCommand("BackUp", new BackUp());
 
 		arm.setShoulderTargetRotation(Rotation2d.fromRadians(1.10));
 

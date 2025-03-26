@@ -29,15 +29,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "RetractArm"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueReefToStation"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "RetractArm"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BlueReefToStation"
+                }
+              }
+            ]
           }
         },
         {
@@ -50,6 +57,12 @@
           "type": "path",
           "data": {
             "pathName": "Copy of BlueReefToStation"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BackUp"
           }
         },
         {

@@ -58,8 +58,8 @@ public class ArmIOHardware implements ArmIO {
 
 	public ArmIOHardware() {
 
-		bottomSwitch = new DigitalInput(6);
-		topSwitch = new DigitalInput(8);
+		bottomSwitch = new DigitalInput(8);
+		topSwitch = new DigitalInput(6);
 
 		shoulder1 = new TalonFX(SHOULDER_1);
 		shoulder2 = new TalonFX(SHOULDER_2);
@@ -150,6 +150,7 @@ public class ArmIOHardware implements ArmIO {
 		inputs.shoulderPivotMotor4Voltage = -shoulder4.getMotorVoltage().getValueAsDouble();
 
 		inputs.bottomSwitchNotOn = bottomSwitch.get();
+		inputs.topSwitchNotOn = topSwitch.get();
 		if(!inputs.bottomSwitchNotOn){
 			inputs.telescopePosition = 0;
 			telescope1.setPosition(0);

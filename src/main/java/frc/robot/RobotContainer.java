@@ -28,6 +28,9 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.vision.PhotonVision;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.LocalADStarAK;
+
+import java.time.Instant;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -68,7 +71,9 @@ public class RobotContainer {
 		NamedCommands.registerCommand("RemoveLowAlgae", new SetToScore(ArmConfiguration.lowAlgae));
 		NamedCommands.registerCommand("RemoveHighAlgae", new SetToScore(ArmConfiguration.highAlgae));
 		NamedCommands.registerCommand("Fire!", new ScoreCoral());
-		NamedCommands.registerCommand("BackUp", new BackUp());
+		NamedCommands.registerCommand("BackUp", new BackUp());	
+		NamedCommands.registerCommand("Toggle Vision Front", new InstantCommand(() -> limelight1.toggleVision()));
+		NamedCommands.registerCommand("Toggle Vision Back", new InstantCommand(() -> limelight2.toggleVision()));
 
 		arm.setShoulderTargetRotation(Rotation2d.fromRadians(1.10));
 

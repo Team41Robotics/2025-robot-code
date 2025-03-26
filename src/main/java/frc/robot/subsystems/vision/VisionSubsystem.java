@@ -24,6 +24,7 @@ public class VisionSubsystem extends SubsystemBase {
 	private LimelightConfiguration config;
 	private Pose2d robotToField = new Pose2d();
 	private double mt1Timestamp = 0.0;
+	private boolean shouldWeUseVision = true;
 	private static final MedianFilter xFilter = new MedianFilter(10);
 	private static final MedianFilter yFilter = new MedianFilter(10);
 	private static final MedianFilter rFilter = new MedianFilter(10);
@@ -59,7 +60,11 @@ public class VisionSubsystem extends SubsystemBase {
 				xFilter.calculate(pose.getX());
 				yFilter.calculate(pose.getY());
 				rFilter.calculate(pose.getRotation().getRadians());
-			
+				
+				if(!shouldWeUseVision){
+					rejectUpdate = true;
+				}
+
 				if (mt1.rawFiducials[0].ambiguity > 1) {
 					rejectUpdate = true;
 					System.out.println("REJECTED UPDATE, IS TOO UNCERTAIN");
@@ -149,4 +154,9 @@ public class VisionSubsystem extends SubsystemBase {
 		yFilter.reset();
 		rFilter.reset();
 	}
+
+	public void toggleVision(){
+		shouldWeUseVision = !shouldWeUseVision;
+	}
+
 }

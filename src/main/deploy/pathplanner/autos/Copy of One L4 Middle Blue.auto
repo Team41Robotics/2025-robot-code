@@ -7,13 +7,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueMidToReef"
+            "pathName": "Copy of BlueMidToReef"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ScoreL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "BackUp"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ScoreL4"
+                }
+              }
+            ]
           }
         },
         {
@@ -54,33 +67,52 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Toggle Vision Front"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Copy of BlueReefToStation"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "BackUp"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "BackUp"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ScoreL4"
+                }
+              }
+            ]
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 2.0
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Fire!"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Toggle Vision Front"
           }
         }
       ]

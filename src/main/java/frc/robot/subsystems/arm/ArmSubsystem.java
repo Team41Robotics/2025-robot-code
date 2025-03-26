@@ -35,7 +35,7 @@ public class ArmSubsystem extends SubsystemBase {
 		telescopePID = new PIDController(6, 0, 0);
 		telescopePID.setTolerance(0.1);
 		telescopePID.setIZone(0.1);
-		wristPID = new PIDController(6, 1.2, 0);
+		wristPID = new PIDController(5, 1.2, 0);
 		// wristPID.setIZone(0.2);
 	}
 

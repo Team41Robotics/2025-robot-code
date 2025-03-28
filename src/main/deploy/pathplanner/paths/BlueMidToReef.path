@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.06066198310082,
-        "y": 5.271567598764562
+        "x": 5.0191445537969255,
+        "y": 5.237382751169803
       },
       "prevControl": {
-        "x": 5.778303141591301,
-        "y": 6.231091016493463
+        "x": 5.736785712287406,
+        "y": 6.196906168898704
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,19 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ScoreL4",
+      "waypointRelativePos": 0.6509115462525229,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ScoreL4"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 1.5,
     "maxAcceleration": 1.5,

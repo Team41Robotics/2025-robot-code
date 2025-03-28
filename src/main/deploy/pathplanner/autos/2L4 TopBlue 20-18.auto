@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueTop-20"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "BackUp"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreL4"
+            "pathName": "BlueMidToReef"
           }
         },
         {
@@ -69,31 +57,6 @@
           "type": "path",
           "data": {
             "pathName": "Copy of BlueReefToStation"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "BackUp"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ScoreL4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
           }
         },
         {

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.commands.algae.ScoreAlgae;
 import frc.robot.commands.arm.MicroAdjust;
 import frc.robot.commands.arm.Retract;
 import frc.robot.commands.arm.ScoreCoral;
@@ -21,6 +22,7 @@ import frc.robot.commands.drive.BackUp;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.constants.ArmConfiguration;
 import frc.robot.constants.LimelightConfiguration;
+import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmJoint;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
@@ -37,7 +39,7 @@ public class RobotContainer {
 	public static Robot robot;
 	public static SwerveSubsystem drive = new SwerveSubsystem();
 	public static IMU imu = new IMU();
-	// public static AlgaeSubsystem algae = new AlgaeSubsystem();
+	public static AlgaeSubsystem algae = new AlgaeSubsystem();
 	public static ArmSubsystem arm = new ArmSubsystem();
 	public static IntakeSubsystem intake = new IntakeSubsystem();
 
@@ -124,11 +126,11 @@ public class RobotContainer {
 
 	private static void configureBindings() {
 
-		right_js.button(4)
-				.onTrue(new AlignToStation().until(() -> left_js.button(2).getAsBoolean()));
+		// right_js.button(4)
+		// 		.onTrue(new AlignToStation().until(() -> left_js.button(2).getAsBoolean()));
 		right_js.button(1).onTrue(intake.runIntake(0.2).until(() -> !intake.isBeamBreakTriggered() || left_js.button(1).getAsBoolean())); // INTAKE
-		right_js.button(2)
-				.onTrue(new AlignToReef().until(() -> left_js.button(2).getAsBoolean()));
+		// right_js.button(2)
+		// 		.onTrue(new AlignToReef().until(() -> left_js.button(2).getAsBoolean()));
 
 		right_js.pov(90).onTrue(new MicroAdjust(0.05, ArmJoint.SHOULDER));
 		right_js.pov(270).onTrue(new MicroAdjust(-0.05, ArmJoint.SHOULDER));
@@ -148,10 +150,12 @@ public class RobotContainer {
 		ds.button(6).onTrue(new SetToScore(ArmConfiguration.lowAlgae));
 		ds.button(3).onTrue(new SetToScore(ArmConfiguration.highAlgae));
 
-		// left_js.button(3).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(150))));
-		// left_js.button(4).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromDegrees(93.75))));
-		// left_js.button(1).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
-		// left_js.button(2).whileTrue(new ScoreAlgae());
+		left_js.button(3).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromRadians(.25))));
+		left_js.button(4).onTrue(new InstantCommand(() -> algae.setAlgaeRotation(Rotation2d.fromRadians(1.52))));
+		right_js.button(4).whileTrue(new InstantCommand(() -> algae.runIntake(false)).until(algae::hasAlgae));
+		left_js.button(2).whileTrue(new StartEndCommand(()-> algae.runIntake(true), ()-> algae.stopMotors()));
+		
+
 
 		left_js.button(1)
 				.whileTrue(new StartEndCommand(() -> intake.runMotor(L4 ? -0.75 : 0.75), () -> intake.stopMotors()));

@@ -2,6 +2,7 @@ package frc.robot.subsystems.algae;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -16,12 +17,12 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class AlgaeIOSparkMax implements AlgaeIO {
 
-	private final DutyCycleEncoder pivotEncoder;
+	private final CANcoder pivotEncoder;
 	private final TalonFX intakeMotor;
 	private final SparkMax pivotMotor;
 
 	public AlgaeIOSparkMax() {
-		pivotEncoder = new DutyCycleEncoder(0);
+		pivotEncoder = new CANcoder(28);
 		intakeMotor = new TalonFX(27);
 		pivotMotor = new SparkMax(42, MotorType.kBrushless);
 
@@ -38,7 +39,7 @@ public class AlgaeIOSparkMax implements AlgaeIO {
 
 	@Override
 	public void updateInputs(AlgaeIOInputs inputs) {
-		inputs.algaeRotation = new Rotation2d(MathUtil.angleModulus(pivotEncoder.get() * 2 * Math.PI));
+		inputs.algaeRotation = new Rotation2d(MathUtil.angleModulus(pivotEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI));
 		inputs.algaePivotVoltage = pivotMotor.getAppliedOutput() * pivotMotor.getBusVoltage();
 		inputs.algaeAngVel = pivotMotor.getEncoder().getVelocity() * 2 * Math.PI / 60.0;
 		inputs.algaePivotCurrent = new double[] {pivotMotor.getOutputCurrent()};

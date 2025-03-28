@@ -19,7 +19,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
 	public AlgaeSubsystem() {
 		io = new AlgaeIOSparkMax();
-		targetRotation = Optional.of(new Rotation2d(95 / 180. * PI));
+		targetRotation = Optional.of(new Rotation2d(0.25));
 		m_PID = new PIDController(2, 0, 0); // todo
 		m_PID.enableContinuousInput(0, Math.PI * 2);
 	}
